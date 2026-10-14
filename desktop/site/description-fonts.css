@@ -1,0 +1,14 @@
+/* Descriptions use the supplied Neue Plak family. Display headings and counters retain their own typefaces. */
+@font-face{font-family:'OFS Neue Plak';src:url('assets/fonts/neue-plak/Neue%20Plak%20Light.ttf') format('truetype');font-style:normal;font-weight:300 500;font-display:swap}
+@font-face{font-family:'OFS Neue Plak';src:url('assets/fonts/neue-plak/Neue%20Plak%20SemiBold.ttf') format('truetype');font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:'OFS Neue Plak';src:url('assets/fonts/neue-plak/Neue%20Plak%20Bold.ttf') format('truetype');font-style:normal;font-weight:700 800;font-display:swap}
+@font-face{font-family:'OFS Neue Plak';src:url('assets/fonts/neue-plak/Neue%20Plak%20Black.ttf') format('truetype');font-style:normal;font-weight:900;font-display:swap}
+@font-face{font-family:'OFS Neue Plak';src:url('assets/fonts/neue-plak/Neue%20Plak%20Text%20Italic.ttf') format('truetype');font-style:italic;font-weight:300 500;font-display:swap}
+@font-face{font-family:'OFS Neue Plak';src:url('assets/fonts/neue-plak/Neue%20Plak%20Text%20SemiBold%20Italic.ttf') format('truetype');font-style:italic;font-weight:600 900;font-display:swap}
+:root{--of-description-font:'OFS Neue Plak',Arial,sans-serif}
+:is(p,label,input,select,textarea,option,button,li,td,th,dt,dd,legend,figcaption,blockquote,.rule-text,.rule-text div,.settings-note,.asset-import,.availability-reason,.combat-caption,.combat-ribbon,.zone-placeholder,.session-status,.history-row,.preview-note,.card-hover-hud>span,.tile-label,.tile>.muted,.deck-analysis,.card .tag,.pile-label,.slot-label,.extra-heading,.life-caption,.od-model>span,.fighter-icons,#deckCompatibility,#sessionStatus,#phaseHelp,#decisionHint,#actionError,#loadError,#sideError,#sideHint,#sideOpponent,#sideStarting,#previewActionCost,#previewActionZone,#previewActionEffect,#cardInfo,#editorCardMeta,#editorCardText):not(.main-options *):not(.counts *):not(.board-count):not(.count):not(.count *):not(.board-count *):not(.life *):not(.fight-life *):not(.od-circle):not(.od-circle *):not(.od-circles *){font-family:var(--of-description-font)!important}
+:is(p,label,li,td,dd,.rule-text) :is(b,strong){font-family:var(--of-description-font)!important;font-weight:700}
+:is(p,label,li,td,dd,.rule-text) :is(em,i){font-family:var(--of-description-font)!important;font-style:italic}
+/* Comfortable spacing for longer rules without changing the scale controls. */
+#editorCardText,#cardInfo,.rule-text,.availability-reason,.preview-note{line-height:1.55}
+.combat-summary,.combat-breakdown,.combat-totals,.history-row,.session-launch,.selection-settings details,.reading-tools,.audio-preview-actions{font-family:var(--of-description-font)!important}

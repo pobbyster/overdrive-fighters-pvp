@@ -1,0 +1,15 @@
+.desktop-editor .board-cards{grid-template-columns:repeat(10,minmax(0,1fr))}
+.desktop-editor .board-card-controls{position:absolute;bottom:4px;right:3px;z-index:3;opacity:0;transition:opacity .15s;margin:0}
+.desktop-editor .board-card:hover .board-card-controls,.desktop-editor .board-card:focus-within .board-card-controls{opacity:1}
+.desktop-editor .board-card-controls button{min-height:20px!important;padding:1px 6px!important;border-radius:2px;background:#100b18ee}
+.desktop-editor .board-art{min-height:0!important}
+.desktop-editor .deck-section[data-drop-zone="main"]{min-height:300px}
+.desktop-editor .deck-section[data-drop-zone="main"] .board-cards{max-height:calc(100vh - 410px);overflow:auto;padding-top:5px;padding-bottom:4px}
+.desktop-editor .deck-section[data-drop-zone="fighter"]{min-height:155px}
+.desktop-editor .deck-section[data-drop-zone="extra"]{min-height:135px}
+.desktop-editor .tile-actions button{min-height:19px!important;border-radius:2px;padding:3px 2px!important}
+.desktop-editor .toolbar input{font-size:12px}
+.desktop-editor .counts .count{min-height:65px}
+@media(max-width:1150px){.desktop-editor .board-cards{grid-template-columns:repeat(7,minmax(0,1fr))}}
+@media(max-width:850px){.desktop-editor .board-cards{grid-template-columns:repeat(6,minmax(0,1fr))}.desktop-editor .deck-section[data-drop-zone="main"] .board-cards{max-height:440px}.desktop-editor .board-card-controls{opacity:1}}
+@media(max-width:560px){.desktop-editor .board-cards{grid-template-columns:repeat(5,minmax(0,1fr))}}

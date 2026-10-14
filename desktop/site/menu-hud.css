@@ -1,0 +1,17 @@
+.arena-header nav{padding:6px;background:#f9f9fc;border:1px solid #fff;border-radius:22px;gap:6px;box-shadow:0 0 0 1px #ff85b740,0 0 16px #ff4b9260,0 0 38px #ff4b9235,0 10px 54px #ff4b9225}
+.arena-header nav button,.arena-header nav a{font-family:system-ui,sans-serif;font-size:16px;font-weight:750;text-transform:uppercase;border-radius:16px;color:#35313e;transition:background .18s,color .18s,box-shadow .18s,transform .18s}
+.arena-header nav button:hover,.arena-header nav a:hover,.arena-header nav button:focus-visible,.arena-header nav a:focus-visible{background:#ff4b92;color:#170b12;box-shadow:0 3px 12px #ff4b9255;transform:translateY(-2px)}
+.arena-submenu{padding:6px;background:#f9f9fc;border:1px solid white;border-radius:22px;box-shadow:0 0 16px #ff4b9260,0 10px 30px #0006;top:calc(100% + 4px)}.arena-submenu::before{content:'';position:absolute;top:-10px;left:0;right:0;height:12px}.arena-submenu a{font-family:inherit;font-size:inherit;font-weight:750;text-transform:uppercase;border:1px solid transparent;border-radius:16px;box-shadow:none;min-height:48px;padding:14px 16px;line-height:1.5}.arena-submenu a:hover,.arena-submenu a:focus-visible{background:#ff4b92;color:#170b12;box-shadow:0 3px 12px #ff4b9255}
+.support-button{font-family:Impact,'Arial Narrow',sans-serif;font-style:italic;font-weight:500;font-size:28px;line-height:1.1;letter-spacing:.015em;text-transform:uppercase}
+@media(max-width:650px){.support-button{font-size:24px}.arena-submenu a{font-size:12px;padding:10px 6px}.arena-header nav{gap:4px;padding:4px}}
+@media(max-width:1100px){.arena-header nav button,.arena-header nav a{font-size:14px}}
+@media(max-width:650px){.arena-header nav button,.arena-header nav a{font-size:12px}}
+.site-header{grid-template-columns:180px minmax(0,1fr) auto;gap:18px;align-items:center}.site-header .brand{min-width:0}.site-header .brand-logo{width:180px;transition:filter .2s ease;will-change:filter}.site-header nav{width:100%;min-width:0}.site-header nav>button,.site-header .arena-nav{flex:1;min-width:0}.site-header nav button{font-size:13px;padding:12px 8px}.site-header .header-community{gap:14px}.site-header .social-links{gap:2px}.site-header .social-icon{width:28px;padding:4px}.site-header .social-icon svg{width:20px;height:20px}
+@keyframes logo-neon{0%,100%{filter:drop-shadow(0 3px 10px #ff4b9238)}50%{filter:drop-shadow(0 4px 15px #ff4b9260)}}
+@media(hover:hover){.site-header .brand-logo:hover{animation:logo-neon 2.4s ease-in-out infinite}}
+@media(max-width:1100px){.site-header{grid-template-columns:1fr;justify-items:center;gap:16px}.site-header .brand{justify-content:center}.site-header .header-community{justify-content:center}.site-header nav button{font-size:14px;padding:12px 8px}}
+@media(max-width:650px){.site-header{padding:16px;gap:14px}.site-header .brand-logo{width:175px}.site-header nav>button,.site-header .arena-nav{flex:1 1 30%}.site-header nav button{font-size:12px;padding:10px 6px}.site-header .header-community{gap:14px;flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.site-header .brand-logo{transition:none}.site-header .brand-logo:hover{animation:none;filter:drop-shadow(0 4px 12px #ff4b9248)}}
+.site-header .arena-submenu a{font-size:13px}
+@media(max-width:1100px){.site-header .arena-submenu a{font-size:14px}}
+@media(max-width:650px){.site-header .arena-submenu a{font-size:12px}}

@@ -1,0 +1,14 @@
+/* Fighting game health HUD: continuous fill, mirrored for the opponent. */
+.fight-life{position:relative;height:36px;background:#291b30;border:2px solid #dbcfdf;border-radius:3px;box-shadow:0 3px 0 #0008,inset 0 0 9px #000;overflow:hidden;transform:skewX(-12deg)}
+.fight-life-fill{height:100%;width:var(--hp);background:linear-gradient(0deg,#dc5b1b,#ffb32c 55%,#fff2a0);border-right:2px solid #fff5bd;box-shadow:0 0 14px #ff9b3760;transition:width .35s ease}
+.fight-life::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(10% - 1px),#0002 calc(10% - 1px),#0002 10%);pointer-events:none}
+.fight-life>strong{position:absolute;inset:0;display:flex;gap:5px;align-items:center;justify-content:center;font:italic 22px Impact,'Arial Narrow',sans-serif;text-shadow:0 2px 3px #000;transform:skewX(12deg);z-index:1}.fight-life strong small{font:12px Arial,sans-serif;color:#fff2dc}
+.enemy-hud .fight-life-fill{margin-left:auto;border-right:0;border-left:2px solid #fff5bd}.fight-life.critical .fight-life-fill{background:linear-gradient(#ff7b76,#e62053)}
+.pile img.discard-top{width:100%;max-width:70px;height:auto;border-radius:4px;margin:0 auto 7px}
+@media(max-width:700px){.fight-life{height:29px}.fight-life>strong{font-size:18px}.fight-life strong small{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.fight-life-fill{transition:none}}
+.zone-row{grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;align-items:center}.zone-row>.extra-row{grid-column:2/7;gap:12px}.zone-row>.pile{position:relative;justify-self:center;width:100%;max-width:100px;aspect-ratio:751/1048;min-height:0;padding:0;border:2px solid #6c607b;border-radius:5px;background:#0c0c13;overflow:hidden}.zone-row>.pile img,.zone-row>.pile img.discard-top{width:100%;max-width:none;height:100%;object-fit:contain;margin:0}.pile-label{position:absolute;left:0;right:0;bottom:0;padding:5px 2px;background:#100c1eee;font-size:10px;line-height:1.3}.fighter-slot .card.tapped{transform:rotate(90deg) scale(.72)}
+@media(max-width:1100px){.zone-row,.zone-row>.extra-row{gap:7px}}
+@media(max-width:700px){.zone-row,.zone-row>.extra-row{gap:4px}.zone-row>.pile{border-width:1px}.pile-label{font-size:7px;padding:2px}}
+.zone-row>.pile{align-self:end}
+.card-hover-hud{position:fixed;z-index:180;pointer-events:none;padding:9px;background:#111019f5;border:1px solid #ff4b92;border-radius:12px;box-shadow:0 10px 45px #000b,0 0 20px #ff4b9230}.card-hover-hud img{display:block;width:100%;height:auto;border-radius:6px}.card-hover-hud span{display:block;text-align:center;padding-top:7px;color:#faf7ff;font-size:13px;font-weight:bold}

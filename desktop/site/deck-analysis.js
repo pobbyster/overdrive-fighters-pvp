@@ -1,0 +1,16 @@
+(() => {
+ const panel=document.createElement('details');panel.className='deck-analysis panel';panel.id='deckAnalysis';panel.open=true;document.getElementById('deckPanel').append(panel);
+ const sc=c=>OverdriveCardScripts.scripts[c.number]||{},entries=()=>Object.entries(deck.main).map(([id,q])=>({c:get(id),q})).filter(x=>x.c);
+ function analyze(){const list=entries(),total=list.reduce((n,x)=>n+x.q,0),types={},zones={},costs={},words={},warnings=[];let sum=0,fixed=0;
+  for(const {c,q} of list){types[c.type]=(types[c.type]||0)+q;if(c.type==='Golpe')zones[c.zone]=(zones[c.zone]||0)+q;const cost=Number.isInteger(c.cost)?String(c.cost):'X';costs[cost]=(costs[cost]||0)+q;if(cost!=='X'){sum+=c.cost*q;fixed+=q;}
+   const script=sc(c),ops=[...(script.onPlay||[]),...(script.hit||[]),...(script.onBlock||[])];for(const [name,present] of Object.entries({Foco:script.focusThreshold||ops.some(o=>o.focus),Fluir:script.flow||ops.some(o=>o.when==='flow'),'Ímpeto':script.impetus||script.impetusValue,Quebra:script.break,REVIDE:script.revideAttack||script.revideImpetus||ops.some(o=>o.when==='revide'),Defletir:script.deflect,COMBO:script.comboZone}))if(present)words[name]=(words[name]||0)+q;
+  }
+  const reachable=new Set(list.filter(x=>x.c.type==='Golpe'&&!sc(x.c).comboZone).map(x=>x.c.zone));let changed=true;while(changed){changed=false;for(const {c} of list)if(c.type==='Golpe'&&sc(c).comboZone&&reachable.has(sc(c).comboZone)&&!reachable.has(c.zone)){reachable.add(c.zone);changed=true;}}
+  for(const {c} of list)if(sc(c).comboZone&&!reachable.has(sc(c).comboZone))warnings.push(c.name+': não há caminho para iniciar o COMBO na Zona '+sc(c).comboZone+'.');
+  if(!deck.fighter)warnings.push('Escolha um lutador.');if(total!==40)warnings.push(total<40?'Faltam '+(40-total)+' ações no principal.':'O principal excede 40 ações.');if((types.Golpe||0)===0&&total)warnings.push('O principal não contém Golpes.');if((costs['4']||0)+(costs['5']||0)+(costs['6']||0)+(costs['7']||0)>total*.4)warnings.push('Muitas ações custam mais que as 3 energias iniciais. Avalie opções para os primeiros turnos.');
+  const fighter=deck.fighter&&get(deck.fighter),sequence=fighter&&sc(fighter).sequence;if(sequence)for(const zone of new Set(sequence))if(!zones[zone])warnings.push('A sequência de Overdrive exige '+zone+', mas não há Golpes dessa Zona no principal.');
+  const section=(title,map)=>'<h4>'+title+'</h4>'+Object.entries(map).map(([name,n])=>'<div class="analysis-bar"><span>'+esc(name)+'</span><i style="--share:'+(total?n/total*100:0)+'%"></i><b>'+n+'</b></div>').join('');
+  panel.innerHTML='<summary>Análise do deck · '+total+' ações</summary><p>Custo médio fixo: <b>'+(fixed?(sum/fixed).toFixed(2):'—')+'</b>'+(costs.X?' · '+costs.X+' custo(s) X':'')+'</p>'+section('Custos',Object.fromEntries(Object.entries(costs).sort(([a],[b])=>a.localeCompare(b))))+section('Tipos',types)+section('Zonas dos Golpes',zones)+section('Palavras-chave',words)+(warnings.length?'<h4>Avisos</h4><ul>'+[...new Set(warnings)].map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul>':'<p>Distribuição sem os avisos avaliados.</p>')+'<small>A análise de COMBO considera as Zonas e suas condições; outros efeitos e custos ainda precisam ser cumpridos.</small>';
+ }
+ const original=renderDeck;renderDeck=function(){original();analyze();};analyze();
+})();

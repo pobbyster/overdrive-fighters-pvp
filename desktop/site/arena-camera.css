@@ -1,0 +1,39 @@
+.battlefield{perspective:1600px;perspective-origin:50% 0}
+.table-surface{transform:rotateX(27deg) scale(.84);margin-bottom:0}
+.table-surface .zone-row{display:grid!important;grid-template-columns:62px minmax(0,1fr) 62px!important}
+#enemyDeck,#ownDiscard{grid-column:1;grid-row:1}
+#enemyExtra,#ownExtra{grid-column:2;grid-row:1;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));width:100%}
+#enemyDiscard,#ownDeck{grid-column:3;grid-row:1}
+.table-surface .enemy-hud{grid-template-columns:40px minmax(0,1fr) 135px}
+.table-surface .arena-chain{min-height:105px;padding:10px}
+.table-surface .arena-chain>.zone-placeholder{padding:20px;font-size:12px}
+.table-surface .combat-stack{width:calc(65px + var(--block-count)*10px);height:calc(92px + var(--block-count)*10px)}
+.table-surface .combat-stack .card,.table-surface .successive-card>.card{width:65px;max-width:65px}
+.table-surface .block-card{left:calc(var(--block-index)*10px);top:calc(var(--block-index)*10px)}
+.table-surface .combat-ribbon{padding:7px;margin-top:7px}
+.table-surface .od-circle small{top:26px}
+.hand-area{margin-top:5px}
+.poster-half img{width:100%;height:100%;top:0;left:0;right:auto;transform:none;object-fit:cover}
+.poster-own img{object-position:center 30%}
+.poster-enemy img{object-position:center 0%}
+.fighter-panel>.fighter-portrait{width:100%;aspect-ratio:1/2;object-fit:cover;object-position:center top;border-radius:7px}
+.selection-settings.panel{background:#faf9fd;color:#302638;border:1px solid #fff;border-radius:24px;box-shadow:0 0 0 2px #ff4b9238,0 0 22px #ff4b9255,0 0 55px #ff4b9228,0 18px 45px #0004;padding:28px;transition:box-shadow .25s ease}
+.selection-settings.panel:hover{box-shadow:0 0 0 2px #ff4b9250,0 0 28px #ff4b9270,0 0 65px #64d6ff25,0 18px 45px #0004}
+.selection-settings h2{font-family:Impact,'Arial Narrow',sans-serif;font-style:italic;font-weight:500;letter-spacing:.015em;text-transform:uppercase;font-size:28px;color:#302638}
+.selection-settings>.eyebrow{color:#b32161}
+.selection-settings label{color:#302638;font-weight:600}
+.selection-settings p{color:#62576e}
+.selection-settings select{background:#20172b;color:#fff;border:1px solid #66506f;border-radius:12px;padding:12px;cursor:pointer;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s}
+.selection-settings select:hover{background:#39213e;border-color:#d12d77;box-shadow:0 0 12px #ff4b9235;transform:translateY(-1px)}
+.selection-settings select:focus-visible{outline:2px solid #c5266a;outline-offset:3px;border-color:#c5266a}
+.selection-settings option{background:#20172b;color:#fff}
+.selection-settings .check{padding:10px 8px;border-radius:10px;transition:background .18s,color .18s}
+.selection-settings .check:hover{background:#f4ddea;color:#8e1c52}
+.selection-settings input[type="checkbox"]{accent-color:#bb2466;width:16px;height:16px;cursor:pointer}
+.selection-settings details{border-top-color:#ded1e2;color:#302638}
+.selection-settings summary{padding:10px 8px;border-radius:10px;cursor:pointer;transition:background .18s,color .18s}
+.selection-settings summary:hover,.selection-settings summary:focus-visible{background:#f4ddea;color:#8e1c52}
+@media(prefers-reduced-motion:reduce){.selection-settings.panel,.selection-settings select,.selection-settings .check,.selection-settings summary{transition:none}.selection-settings select:hover{transform:none}}
+@media(max-width:1000px){.table-surface{transform:rotateX(21deg) scale(.88);margin-bottom:0}.table-surface .enemy-hud{grid-template-columns:30px minmax(0,1fr) 110px}.table-surface .zone-row{grid-template-columns:50px minmax(0,1fr) 50px!important}}
+@media(max-width:700px){.battlefield{perspective:none}.table-surface{transform:none;margin-bottom:0}.table-surface .zone-row{grid-template-columns:45px minmax(0,1fr) 45px!important}.table-surface .enemy-hud{grid-template-columns:minmax(0,1fr) 26px}.table-surface .pile{width:45px}.table-surface .extra-slot,.table-surface .fighter-slot{max-width:42px}}
+

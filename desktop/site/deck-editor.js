@@ -1,0 +1,83 @@
+(() => {
+ document.body.classList.add('desktop-editor');
+ document.title='Editor de Decks | Overdrive Fighters';
+ const header=document.querySelector('header');
+ header.innerHTML='<a class="back-button" href="home.html" aria-label="Voltar ao menu principal">✕ Menu</a><h1>Editor de Decks</h1><div id="editorTools" class="editor-tools"></div>';
+ for(const id of ['saveDeck','saveNewDeck','openLibrary','clearDeck'])document.getElementById('editorTools').append(document.getElementById(id));
+ const catalog=document.getElementById('catalogView'),workspace=document.getElementById('workspace');
+ const aside=document.getElementById('deckPanel'),catalogColumn=workspace.firstElementChild;
+ catalogColumn.className='desktop-catalog';
+ const filterWrap=document.createElement('div');filterWrap.className='desktop-filters';
+ for(const selector of ['.toolbar','.energy-filter','.catalog-options'])filterWrap.append(catalog.querySelector(selector));
+ catalogColumn.prepend(filterWrap);
+ catalog.querySelector('.catalog-layout').hidden=true;
+ const center=document.createElement('section');center.className='deck-board';center.setAttribute('aria-label','Lutador e baralhos');
+ center.append(document.getElementById('deckContents'));
+ const help=document.createElement('p');help.className='deck-board-help';help.textContent='Arraste cartas para as áreas ou use + Principal / + Adicional. Use ⇄ para transferir uma cópia e − para remover.';center.append(help);
+ const preview=document.createElement('section');preview.className='editor-preview';preview.innerHTML='<div class="eyebrow">CARTA EM DESTAQUE</div><img id="editorArt" alt="Prévia da carta" hidden><h2 id="editorCardName">Escolha seu lutador</h2><p id="editorCardMeta">Passe o mouse ou dê foco a uma carta para ler seus detalhes.</p><p id="editorCardText"></p>';
+ aside.prepend(preview);
+ workspace.replaceChildren(aside,center,catalogColumn);
+ aside.querySelector(':scope > h2').textContent='Meu deck';
+ aside.querySelector('.curve-panel').open=false;
+ aside.querySelectorAll(':scope > .help').forEach(el=>el.hidden=true);
+ document.getElementById('mobileDropDock').hidden=true;
+ document.getElementById('deckName').placeholder='Nome do deck';
+ const previewCard=id=>{
+  const c=get(id);if(!c)return;
+  const art=document.getElementById('editorArt');art.src=imageURL(id);art.alt=c.name;art.hidden=false;
+  document.getElementById('editorCardName').textContent=c.name;
+  document.getElementById('editorCardMeta').textContent=[c.type,c.color,c.type==='Lutador'?'Poder '+c.power:'Custo '+c.cost,c.zone].filter(Boolean).join(' · ');
+  document.getElementById('editorCardText').textContent=c.searchText||'Consulte o texto na arte da carta.';
+ };
+ const originalRender=renderDeck;
+ const originalCards=renderCards;
+ renderCards=function(){originalCards();document.querySelectorAll('#cardsGrid img').forEach(img=>img.loading='eager');};
+ renderDeck=function(){
+  originalRender();
+  for(const section of document.querySelectorAll('#deckContents .deck-section')){
+   const zone=section.dataset.dropZone,map=zone==='fighter'?(deck.fighter?{[deck.fighter]:1}:{}):deck[zone],max=zone==='main'?40:zone==='extra'?15:1;
+   section.querySelector('h3').innerHTML=`${zone==='fighter'?'Lutador':zone==='main'?'Baralho principal':'Baralho adicional'} <span class="board-count">${count(map)} / ${max}</span>`;
+   section.querySelectorAll('.visual-deck-row').forEach(row=>row.remove());
+   const grid=document.createElement('div');grid.className='board-cards';
+   for(const [id,q] of Object.entries(map))for(let i=0;i<q;i++){
+    const c=get(id),tile=document.createElement('div');tile.className='board-card';
+    tile.innerHTML=`<button class="board-art" data-detail="${id}" data-pointer-drag="${id}" data-drag-source="${zone}" aria-label="Ver ${esc(c.name)}">${cardHTML(c,true)}</button><div class="board-card-controls">${zone==='fighter'?'':`<button data-move="${id}" data-zone="${zone}" aria-label="Mover ${esc(c.name)} para ${zone==='main'?'adicional':'principal'}">⇄</button>`}<button data-remove="${id}" data-zone="${zone}" aria-label="Remover ${esc(c.name)}">−</button></div>`;
+    grid.append(tile);
+   }
+   section.append(grid);
+  }
+  document.getElementById('mobileDropDock').hidden=true;
+  let validation='';
+  if(!deck.fighter)validation='Escolha um lutador para liberar suas cores.';
+  else if(count(deck.main)!==40)validation=`Principal: faltam ${40-count(deck.main)} ações.`;
+  else if(count(deck.extra)!==0&&count(deck.extra)!==15)validation=`Adicional opcional: complete 15 cartas ou deixe vazio.`;
+  else validation='Estrutura completa. A Arena verificará os scripts das cartas.';
+  help.textContent=validation+' Arraste cartas, use os botões +, ⇄ ou −.';
+ };
+ for(const event of ['pointerover','focusin'])workspace.addEventListener(event,e=>{
+  const target=e.target.closest('[data-detail],[data-add],[data-pointer-drag]');if(target)previewCard(target.dataset.detail||target.dataset.add||target.dataset.pointerDrag);
+ });
+ // Capture only mouse gestures on card art; keyboard, touch, controls and drag stay available.
+ workspace.addEventListener('click',e=>{
+  const art=e.target.closest('.board-art,.art-button');
+  if(!art||e.button!==0||e.detail===0||e.pointerType==='touch')return;
+  e.preventDefault();e.stopImmediatePropagation();
+  if(Date.now()<suppressClickUntil)return;
+  const id=art.dataset.detail;
+  if(id)add(id,'main');
+ },true);
+ workspace.addEventListener('contextmenu',e=>{
+  const art=e.target.closest('.board-art,.art-button');if(!art)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  const id=art.dataset.detail,c=get(id);if(!c)return;
+  if(e.shiftKey){if(c.type!=='Lutador')add(id,'extra');return;}
+  if(c.type==='Lutador'){if(deck.fighter===id)remove(id,'fighter');return;}
+  const zone=art.dataset.dragSource==='extra'?'extra':art.dataset.dragSource==='main'?'main':deck.main[id]?'main':'extra';
+  if(deck[zone][id])remove(id,zone);
+ },true);
+ const shortcuts=document.createElement('p');shortcuts.className='mouse-shortcuts';
+ shortcuts.textContent='Mouse: esquerdo adiciona ao principal · direito remove 1 cópia · Shift + direito adiciona ao adicional.';
+ center.prepend(shortcuts);
+ setView('builder');
+ if(deck.fighter)previewCard(deck.fighter);
+})();

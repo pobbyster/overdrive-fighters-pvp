@@ -1,0 +1,18 @@
+# Apply from the root of the generated pvp-release repository.
+# No paid resources are provisioned by this blueprint.
+services:
+  - type: web
+    name: overdrive-fighters-pvp
+    runtime: node
+    plan: free
+    region: virginia
+    numInstances: 1
+    buildCommand: npm ci --omit=dev --ignore-scripts
+    startCommand: npm start
+    healthCheckPath: /pvp-health
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OFS_PVP_HOST
+        value: 0.0.0.0

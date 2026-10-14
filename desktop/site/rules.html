@@ -1,0 +1,703 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guia de Regras | Overdrive Fighters</title><link rel="stylesheet" href="arena.css"><link rel="stylesheet" href="desktop-revision.css"><meta name="overdrive-version" content="0.6.0"><link rel="stylesheet" href="game-settings.css"><link rel="stylesheet" href="improvements.css"><script src="game-settings.js" defer></script><script src="session-entry.js" defer></script><link rel="stylesheet" href="description-fonts.css"></head><body class="desktop-screen"><header class="screen-header"><a href="home.html" class="back-button" aria-label="Voltar ao menu principal">← Menu</a><h1>Guia de Regras</h1><span class="screen-label">OVERDRIVE FIGHTERS</span></header><main><p class="current-rules-note">Regras atuais do simulador: abertura com 7 energias em Deathmatch, 3 em Advanced ou 2 em Standard. Habilidades escolhidas de lutadores exigem virar e impedem Overdrive enquanto virados. O PDF original v0.2 permanece disponível como referência.</p><section class="reading-page"><div class="eyebrow">DOCUMENTO OFICIAL · V0.2 · 21 PÁGINAS</div><h2>Guia Compreensível de Regras</h2><p>Consulte o PDF original ou leia os 21 capítulos abaixo. Textos, valores e sequências próprios de cada carta devem ser consultados nas cartas.</p><div class="reading-tools"><a class="primary" href="assets/guia-oficial-v02.pdf" target="_blank" rel="noopener">Abrir PDF original</a><button id="togglePdf" aria-expanded="false">Mostrar PDF nesta tela</button><a href="tutorial.html">Aprender no tutorial →</a></div><iframe id="rulesPdf" title="Guia Compreensível de Regras oficial" src="about:blank" data-src="assets/guia-oficial-v02.pdf" hidden></iframe><label class="rule-search">Pesquisar no guia<input id="ruleSearch" type="search" placeholder="Ex.: Revide, mulligan, Quebra…"></label><p id="ruleResults" role="status">21 capítulos</p><div id="ruleChapters"><details class="rule-chapter panel"><summary>1. Fundamentos e convenções</summary><div class="rule-text">1.1.1 Overdrive Fighters é um jogo entre dois jogadores, cada qual representado por um lutador. O 
+objetivo é derrotar o lutador adversário ou provocar a derrota do adversário por Deck Out. 
+1.1.2 Uma partida é um duelo completo. Uma match melhor de três reú ne partidas entre os mesmos 
+jogadores. “Round”, no contexto de trocas de baralho desta edição, designa cada uma dessas 
+partidas. 
+1.1.3 Cada turno pertence a um jogador. O dono do turno é o jogador ativo , também chamado 
+jogador de ataque ou jogador com prioridade de ataque. O adversário é o jogador de defesa. 
+1.1.4 Os papéis do turno não mudam durante um Revide. Para descrever o combate em andamento, 
+este livro usa atacante do combate e defensor do combate. Em um Revide, o jogador de defesa é 
+o atacante daquele combate. 
+1.1.5 Prioridade de ataque identifica o dono do turno; prioridade de ação identifica quem pode agir na 
+janela atual. Ter prioridade de ação não autoriza uma ação que suas regras proíbam. 
+1.2.1 O texto de uma carta prevalece sobre uma regra ger al quando houver contradição direta. A 
+exceção aplica-se somente ao que o texto efetivamente modificar. 
+1.2.2 Uma proibição prevalece sobre uma permissão. Uma carta que permita fazer algo não afasta 
+uma proibição aplicável, salvo se expressamente a modificar. 
+1.2.3 “Pode” indica escolha. Uma instrução obrigatória deve ser executada quando possível. 
+Impossibilidades são tratadas conforme 15.3. 
+1.2.4 “Você”, “seu” e “sua”, no texto de uma ação ou habilidade, referem -se ao jogador responsável 
+por ela. “Adversário” refere-se ao outro jogador. 
+1.2.5 Um custo deve ser pago antes da resolução. Pagar um custo não garante que a ação 
+resolverá. Cancelamento não restitui custos. 
+1.2.6 Uma referência ao “próximo turno”, sem especificar jogador, significa o turno individ ual 
+imediatamente seguinte. “Seu próximo turno” significa o próximo turno de ataque do jogador referido.</div></details><details class="rule-chapter panel"><summary>2. Componentes e características</summary><div class="rule-text">2.1.1 Cada jogador utiliza um lutador, um baralho principal de exatamente 40 ações e meios de 
+indicar vida, estado das energias e progresso de Overdrive. Pode utilizar o baralho adicional previsto 
+em 3.2. 
+2.1.2 A Tag possui função estética e não altera o estado do jogo. 
+2.1.3 Os únicos tipos de ações desta edição são Golpe, Guarda e Truque. O lutador não é uma 
+ação e não faz parte das 40 cartas. 
+2.2.1 O lutador define a cor permitida para as ações de seu baralho, possui Poder, habilidades 
+próprias e uma sequência de Overdrive. Todo lutador começa com 20 pontos de vida. 
+2.2.2 Poder é um atributo do lutador, distinto dos val ores de ataque e bloqueio das ações. Consulte 
+seu valor impresso e os modificadores aplicáveis. 
+2.2.3 O lutador não realiza ataques diretos por uma regra geral. Seus golpes são realizados por 
+ações ou por instruções expressas de habilidades, inclusive Overdrive. 
+2.3.1 Uma ação pode apresentar nome, cor ou indicação genérica, tipo, subtipo, custo normal, custo 
+alternativo, custo obrigatório, símbolo de energia, Zona de Combate, valor de ataque, valor de 
+bloqueio, habilitação para bloquear, palavras-chave e texto de efeito. 
+
+2.3.2 Nome identifica a carta para limites de cópias e referências textuais. Um subtipo ou facção não 
+concede regras adicionais sem uma instrução correspondente. 
+2.3.3 Golpes constituem o meio geral de iniciar combates. Truques produzem efe itos e respostas; 
+não são golpes por seu tipo. Guardas são ações defensivas utilizadas contra golpes e têm custo 
+impresso. 
+2.3.4 A existência de um valor de bloqueio, isoladamente, não basta para permitir que uma carta 
+bloqueie. É necessária a habilitação para bloquear indicada na carta. 
+2.3.5 Uma ação genérica pode ser utilizada por lutadores de qualquer cor. Na Estamina, gera energia 
+da cor do lutador ao qual pertence. Pode ter palavras -chave gerais, mas não palavras -chave 
+específicas de arquétipos. 
+2.3.6 Buff de Zona é uma modificação aplicável a golpes da Zona de Combate indicada. Seu texto 
+determina os efeitos ou alterações de ataque e bloqueio, bem como sua duração.</div></details><details class="rule-chapter panel"><summary>3. Construção de baralho e matches</summary><div class="rule-text">3.1.1 O baralho principal contém exatamente 40 ações . O lutador fica separado e não é contado 
+nesse total. 
+3.1.2 Podem ser incluídas no máximo três cópias de uma ação com o mesmo nome. 
+3.1.3 Podem ser incluídas no máximo dez ações genéricas no total. Cada nome genérico também 
+respeita o limite de três cópias. 
+3.1.4 Todas as ações não genéricas devem ser da mesma cor do lutador. 
+3.1.5 Não são utilizadas cartas de postura nesta edição. 
+3.2.1 O baralho adicional é opcional. Quando utilizado, é composto pelas 15 cartas previstas no guia 
+e serve para trocas entre partidas de uma match melhor de três. 
+3.2.2 As trocas são feitas após terminar um round e antes de preparar a partida seguinte. Não são 
+permitidas durante uma partida. 
+3.2.3 Depois das trocas, o baralho principal deve continuar atendendo a todas as exigências de 3.1. 
+3.2.4 O baralho adicional não é uma fonte de cartas durante a partida. Uma referência a Zona Extra 
+não se refere ao baralho adicional.</div></details><details class="rule-chapter panel"><summary>4. Zonas e informação</summary><div class="rule-text">4.1.1 Cada jogador organiza suas cartas nas zonas correspondentes. A Arena recebe as a ções e os 
+combates. A organização deve permitir identificar cartas participantes de cada combate, ações 
+pendentes e estados de energia. 
+4.1.2 A Zona de Lutador contém o lutador virado para cima. 
+4.1.3 A Zona de Baralho contém o baralho principal virado par a baixo. Sua ordem e as identidades 
+das cartas ainda não reveladas são informação oculta. 
+4.1.4 A mão contém as cartas disponíveis ao jogador que não estejam em outra zona. Suas 
+identidades são informação oculta, salvo revelação por efeito. 
+4.1.5 O descart e contém ações usadas, descartadas ou canceladas, conforme os procedimentos 
+pertinentes. Identidades e ordem são públicas. 
+
+4.1.6 O banimento contém as cartas banidas, mantidas separadas das demais zonas. Suas 
+identidades são públicas, salvo efeito que dete rmine o contrário. Estar banida não autoriza jogar a 
+carta. 
+4.1.7 A Estamina, também referida como Zona de Energia, contém as ações que representam 
+energias. As identidades das cartas são públicas mesmo quando inativas e viradas para baixo. 
+4.1.8 A Arena c ontém cartas e efeitos de combate, salvo ocultação expressa. A pilha de ativação 
+registra a ordem das pendências; a cadeia de combates registra os combates em andamento ou 
+suspensos. Consulte o capítulo 7. 
+4.2.1 As Zonas Extras possuem capacidade total de quatro cartas por jogador. Um espaço disponível 
+recebe uma carta preparada. 
+4.2.2 Uma vez em cada turno de ataque próprio, antes de declarar o fim do turno, o jogador pode 
+preparar uma carta da mão, colocando -a virada para baixo em um espaço disponível. Es sa 
+preparação pode ocorrer em qualquer fase na qual ainda não tenha sido declarado o encerramento. 
+4.2.3 Uma carta preparada dessa forma não pode ser usada no turno em que foi preparada. Torna -
+se disponível no turno individual seguinte. 
+4.2.4 Golpes, Guard as e Truques preparados e disponíveis podem ser utilizados conforme suas 
+permissões, incluindo bloqueio quando habilitados. Estar na Zona Extra não dispensa custos ou 
+restrições. 
+4.2.5 O dono pode consultar suas cartas preparadas. Uma carta colocada direta mente da mão é 
+oculta, exceto pela regra de informação já revelada de 4.2.6. 
+4.2.6 Se uma carta já era pública antes de ser preparada da mão, o adversário pode consultar sua 
+identidade durante o turno em que foi adicionada. Essa obrigação de informação não se estende 
+automaticamente aos turnos posteriores. 
+4.2.7 Uma carta colocada na Zo na Extra por um efeito que a revelou tem identidade pública. Uma 
+exceção expressa de ocultação prevalece. 
+4.2.8 Um efeito que coloque cartas na Zona Extra segue suas instruções próprias e continua sujeito à 
+capacidade de quatro. Preparação mecânica e colocação por efeito são procedimentos distintos. 
+4.3.1 Vida, Poder atual, estado das energias, progresso de Overdrive, custos anunciados, alvos, 
+bloqueadores e efeitos públicos em vigor devem ser representados de maneira verificável. 
+4.3.2 Informação pública deve ser fornecida corretamente. Informação oculta não se torna pública 
+apenas porque um jogador a conhece ou a memorizou. 
+4.3.3 Jogar do descarte ou banimento exige permissão expressa de um efeito. Não existe 
+autorização geral para jogar dessas zonas. 
+4.3.4 Ao mudar de zona, uma carta passa a ser tratada como uma nova ocorrência. Modificadores 
+anteriores não a acompanham, salvo instrução expressa. Informação anterior pode ser usada nos 
+termos de 15.3.4.</div></details><details class="rule-chapter panel"><summary>5. Preparação da partida</summary><div class="rule-text">5.1.1 Confira a legalidade d os baralhos, coloque os lutadores nas Zonas de Lutador e separe o 
+baralho adicional, se utilizado. A Tag pode ser colocada junto ao lutador. 
+5.1.2 Embaralhe as 40 ações. Em partidas competitivas, apresente o baralho ao adversário para 
+corte conforme o guia. Coloque-o virado para baixo na Zona de Baralho. 
+5.1.3 Cada jogador retira as cinco primeiras cartas do topo e as coloca ativas, viradas para cima, na 
+própria Estamina. Essas cartas saem das 40 ações do baralho. 
+
+5.1.4 Cada jogador compra as quatro primeiras cartas restantes. Esta é uma compra mecânica. 
+5.1.5 Cada jogador pode realizar um único mulligan: troca até duas cartas da mão pelo mesmo 
+número de cartas escolhidas de sua Estamina. As cartas que entram na Estamina ficam ativas. O 
+mulligan não é uma compra adicional nem um novo embaralhamento. 
+5.1.6 Use um método para determinar quem terá o primeiro turno de ataque. Ajuste a vida de ambos 
+para 20 e os indicadores de Overdrive para zero. O primeiro jogador inicia o turno 1. 
+5.1.7 A preparação inicial não  é repetida nos turnos seguintes. Depois de cinco energias e quatro 
+cartas na mão, cada jogador tem 31 cartas no baralho, antes de efeitos adicionais.</div></details><details class="rule-chapter panel"><summary>6. Estrutura do turno</summary><div class="rule-text">6.1.1 Os turnos são individuais e alternam entre os jogadores. O primeiro turno é o turno 1; o primeiro 
+turno do segundo jogador é o turno 2; o próximo turno do primeiro jogador é o turno 3. 
+6.1.2 Cada turno compreende Fase de Preparação, Fase de Combates e Fim de Turno. Janelas de 
+resposta são regidas pelo capítulo 7. 
+6.2 Fase de Preparação 
+6.2.1 O jogador de ataque reativa todas as próprias energias inativas. O adversário não reativa suas 
+energias por esse procedimento. 
+6.2.2 São tratados os efeitos que se ativam no começo do turno, conforme suas instruções e as 
+regras de gatilhos. 
+6.2.3 No início do turno 2, o segundo jogador compra mecanicamente até ter quatro cartas na mão. 
+Se já tiver quatro ou mais, não compra. 
+6.2.4 Não existe reposição automática da mão nos demais inícios de turno. 
+6.2.5 A partir do turno 3, o jogador de ataque que tiver menos de sete energias deve retirar uma carta 
+do topo de seu baralho e adicioná -la ativa à Estamina. Apenas o jogador de ataque executa essa 
+adição. 
+6.2.6 Se o baralho estiver vazio, nenhuma carta é adicionada. Isso não causa Deck Out. Sete é o 
+limite absoluto de energias. 
+6.2.7 Colocar uma carta da mão na Estamina durante a partida exige efeito expresso. O mulligan é a 
+exceção da preparação inicial. 
+6.3 Fase de Combates 
+6.3.1 O jogador de ataque pode iniciar golpes, jogar Truques, ativar habilidades, realizar reposição, 
+preparar uma carta e ativar Overdrive, respeitando as respectivas permissões. 
+6.3.2 O jogador de defesa participa por bloqueios, Guardas, Truques, habilidades e oportunidades de 
+Revide. Prioridade recebida em uma janela não o autoriza a iniciar um golpe sem Revide ou efeito 
+expresso. 
+6.3.3 Cada golpe possui seu próprio combate. Combates podem ficar suspensos por Revides, 
+conforme o capítulo 11. 
+
+6.4 Encerramento e Fim de Turno 
+6.4.1 O dono do turno pode declarar que deseja encerrar. Pendências e respostas legais devem ser 
+concluídas. Ambos precisam passar consecutivamente sem pendências para concluir a transição 
+pertinente. 
+6.4.2 Após a declaração de fim de turno,  não é permitida a preparação mecânica de uma carta na 
+Zona Extra. 
+6.4.3 Quando o jogador de ataque gastar sua última energia ativa, resolva a ação, seu combate, 
+respostas, gatilhos e eventuais Revides pendentes. Depois, o turno segue automaticamente ao 
+encerramento, sem iniciar novas ações independentes gratuitas ou de custo alternativo. 
+6.4.4 O encerramento automático não impede bloqueios, respostas e procedimentos necessários 
+para concluir essas pendências. 
+6.4.5 Efeitos de fim de turno acontecem depois de concluídos os combates e pendências. São 
+resolvidos conforme os capítulos 7 e 15. 
+6.4.6 Efeitos com duração “até o fim do turno” permanecem durante esses procedimentos. Expiram 
+quando o turno efetivamente acaba. 
+6.4.7 Encerrado o turno, o adversário passa a ser o jogador ativo e inicia sua Fase de Preparação.</div></details><details class="rule-chapter panel"><summary>7. Prioridade, pilha de ativação e cadeia de combates</summary><div class="rule-text">7.1.1 Prioridade de ação é a oportunidade de anunciar uma ação ou habilidade legal ou passar. Não 
+é transferida no meio da resolução de um efeito. 
+7.1.2 Após uma resolução, o dono do turno recebe prioridade, inclusive durante um Revide e quando 
+houver outras pendências. A retomada direta prevista em 11.3 constitui exceção à abertura de uma 
+nova janela. 
+7.1.3 Quando o jogador ativo declara que não tem ações a realizar naquele momento, permite a 
+resposta do adversário no estado de jogo aberto. Existem janelas antes e depois dos procedimentos 
+pertinentes da preparação e do fim de turno, além das janelas de combate. 
+7.1.4 Essas janelas não permitem int erromper uma resolução que já começou. Uma instrução 
+expressa de efeito pode criar procedimento específico. 
+7.1.5 Se um jogador agir, o adversário pode responder legalmente. É possível responder a um 
+Truque com outro Truque. 
+7.2.1 A pilha de ativação regis tra ações e habilidades aguardando resolução. Resolve primeiro a 
+última anunciada, quando ambos os jogadores passam consecutivamente na janela pertinente. 
+7.2.2 Resolver uma pendência não resolve automaticamente todas as outras. O dono do turno 
+recebe prioridade depois da resolução, ressalvadas as retomadas diretas de Revide. 
+7.2.3 Quando ambos passam sem pendências, o jogo pode avançar para a etapa ou fase seguinte. 
+Um passe não cancela uma ação nem elimina uma oportunidade de bloqueio ainda não concluída. 
+7.2.4 Gatilhos simultâneos são inseridos conforme 15.2. Não se interrompe uma resolução para 
+inseri-los. 
+7.3.1 A cadeia de combates permite acompanhar o golpe atual e golpes suspensos. Ela não cria uma 
+Zona de Combate física para cada região do corpo. 
+7.3.2 Uma ação suspensa por Revide conserva seus custos pagos, escolhas e posição de 
+pendência. Ela não precisa ser anunciada ou paga novamente. 
+
+7.3.3 Cartas e anotações devem permitir reconhecer a qual combate pertencem os bloqueadores, 
+modificadores e gatil hos. Efeitos “neste combate” não se transferem a outro combate sem texto 
+expresso.</div></details><details class="rule-chapter panel"><summary>8. Jogar cartas, ativar habilidades e pagar custos</summary><div class="rule-text">8.1.1 Para jogar uma carta, anuncie -a de uma zona permitida, declare as escolhas e  alvos exigidos, 
+indique o método de pagamento, verifique a legalidade e pague integralmente os custos. A carta 
+passa a participar das pendências da Arena. 
+8.1.2 As zonas normalmente disponíveis são a mão e a Zona Extra com carta já disponível. Descarte 
+e banimento exigem permissão expressa. 
+8.1.3 Para ativar uma habilidade, anuncie sua fonte, escolhas e alvos, verifique suas condições e 
+pague seus custos. Descartes exigidos por Finta e Desvio são custos. 
+8.1.4 Uma ação anunciada e paga conta como jogada me smo que depois seja cancelada. Isso é 
+relevante para Fluir. 
+8.2.1 Cada carta ativa na Estamina paga uma unidade de energia ao ser inativada, virando para 
+baixo. O custo normal utiliza energias próprias da cor pertinente ao lutador. 
+8.2.2 Energias inativas não pagam custo normal. Elas podem ser reativadas por preparação, efeito 
+ou utilização adversária como custo alternativo ou obrigatório. 
+8.2.3 O custo alternativo substitui todo o custo normal. Seu número indica quantas energias inativas 
+do adversário serão reativadas. A cor dessas energias não importa. 
+8.2.4 O custo obrigatório é adicional ao custo normal e deve ser atendido. Optar por custo alternativo 
+não transforma uma exigência obrigatória em facultativa; observe qualquer substituição expressa no 
+texto. 
+8.2.5 O jogador cujas energias serão reativadas escolhe quais energias inativas serão utilizadas. Não 
+é permitido escolher energias já ativas para satisfazer essa exigência. 
+8.2.6 Não se combina parte do custo normal com parte do alternativo para compor um pagamento 
+misto, salvo permissão expressa. 
+8.2.7 Toda Guarda tem custo. Seu uso como Guarda exige as energias inativas adversárias 
+indicadas. Custos ou efeitos adicionais podem utilizar energias ativas ou inativas conforme a 
+descrição. 
+8.2.8 Bloquear co m um Golpe ou Truque habilitado não exige pagar automaticamente seu custo 
+normal de uso. Custos de bloqueio ou efeitos adicionais expressos continuam obrigatórios. A Guarda 
+segue 8.2.7. 
+8.2.9 Se não puder pagar o custo exigido de uma Guarda, o jogador não pode utilizá -la como 
+Guarda, inclusive somente para obter seu bloqueio. 
+8.3.1 Modificadores de custos são calculados pelo capítulo 16. Não é permitido pagar um custo 
+insuficiente ou anunciar uma utilização sem seus requisitos legais. 
+8.3.2 Custos pagos não são restituídos por cancelamento, falha parcial ou invalidação posterior de 
+alvo. Uma correção de jogada ilegal pode restituí-los por retrocesso autorizado. 
+8.3.3 Após pagar com energias inativas adversárias, aplique compra e Revide quando cabíveis antes 
+de resolver a ação. Consulte 11.1.</div></details><details class="rule-chapter panel"><summary>9. Combate e bloqueio</summary><div class="rule-text">9.1 Declaração do golpe 
+9.1.1 O atacante do combate anuncia o golpe, declara as escolhas exigidas e paga seus custos. O 
+golpe aguarda as respostas e procedimentos necessários para resolver. 
+9.1.2 Golpes comuns são iniciados pelo dono do turno na Fase de Combates. O adversário realiza 
+golpes por Revide ou autorização expressa. 
+9.1.3 A Zona de Combate representa a região do corpo à qual o golpe se refere. É um símbolo 
+relevante para efeitos e Overdrive, sem representar deslocamento físico entre espaços da Arena. 
+9.2 Declaração dos bloqueadores 
+9.2.1 Após o anúncio do golpe, o defensor do combate pode declarar seus bloqueadores ou jogar um 
+Truque primeiro. Se jogar um Truque, conserva a possibilidade de declarar bloqueadores depois de 
+resolvidas as respostas pertinentes. 
+9.2.2 Pode bloquear com qualquer quantidade de cartas habilitadas da mão e com cartas habilitadas 
+e disponíveis nas Zonas Extras. Pague os custos exigidos. 
+9.2.3 Todos os bloqueadores da declaração são apresentados conjuntamente. Seus valores atuais 
+contribuem para o bloqueio conforme os efeitos aplicáveis. 
+9.2.4 Após a declaração conjunta, não se adicionam ou retiram bloquead ores por escolha ordinária. 
+Efeitos e habilidades podem expressamente alterar essa composição. Finta é uma dessas exceções. 
+9.2.5 Um efeito ou habilidade pode gerar bloqueio sem uma carta bloqueadora. Essa possibilidade 
+conta para “Se Bloquear”, mas não satisfaz automaticamente condições que exijam bloqueio 
+utilizando ações, como Ímpeto. 
+9.3 Respostas e resolução 
+9.3.1 Depois dos bloqueios, os jogadores podem usar Truques e habilidades nas janelas legais. A 
+última resposta anunciada resolve primeiro. 
+9.3.2 Cada utilização de energias inativas pode gerar compra e Revide conforme a identidade dos 
+jogadores do turno, mesmo que o atacante do combate seja outro. 
+9.3.3 Encerradas as respostas e concluídos os bloqueios, o combate resolve. Não se altera a 
+decisão de bloquear ao conhecer o resultado do dano. 
+9.3.4 Ao concluir um combate, suas ações vão ao descarte, salvo instrução expressa de destino 
+diferente. Cada jogador ordena as próprias cartas recolhidas. 
+9.3.5 Cartas e efeitos pertencentes a um combate suspen so permanecem identificados até que ele 
+seja retomado e concluído.</div></details><details class="rule-chapter panel"><summary>10. Dano e resultados</summary><div class="rule-text">10.1.1 Determine o ataque e bloqueio atuais depois das resoluções e modificadores aplicáveis. O 
+dano de combate básico é máximo entre zero e ataque menos bloqueio. 
+10.1.2 Aplique substituições e prevenção antes de causar o dano. Dano efetivamente causado reduz 
+a vida do lutador afetado. 
+
+10.1.3 A ordem do resultado é: dano, Quebra e efeitos condicionados ao resultado . Se a 
+aplicação do dano terminar a partida, não se continuam procedimentos posteriores. 
+10.1.4 O cálculo do dano considera o estado resultante das resoluções pertinentes. Não se calcula 
+dano de um golpe antes de concluir suas respostas pendentes. 
+10.2.1 “Se Bater” exige dano efetivamente causado ao adversário . Ataque superior ao bloqueio com 
+dano totalmente prevenido não satisfaz a condição. 
+10.2.2 Não existe uma condição separada chamada “Se Bater com Sucesso” nesta edição. 
+10.2.3 “Se Bloquear” pode ser satisfeito por bloqueio com ações ou por efeito ou habil idade. 
+Condições mais específicas seguem seu próprio texto. 
+10.2.4 “Se Bloquear com Sucesso” é satisfeito quando todo o dano do golpe é evitado, inclusive 
+mediante prevenção. Não exige exclusivamente que o bloqueio numérico alcance o ataque. 
+10.2.5 Dano de efeito é distinto do cálculo ataque menos bloqueio. Sua quantidade, alvo e fonte 
+seguem o efeito. Pode ser prevenido ou substituído conforme as permissões aplicáveis. 
+10.2.6 O dano de efeito de Ímpeto pode satisfazer “Se Bater” e ativar Quebra do golpe 
+correspondente quando causar dano. Isso não autoriza duplicar um gatilho pelo mesmo evento. 
+10.3.1 Exemplo: ataque 7 contra bloqueio 3 produz 4 de dano antes de prevenção. Prevenção de 4 
+evita todo o dano: não ocorre “Se Bater” e há bloqueio com sucesso. 
+10.3.2 Exemplo: um golpe com Ímpeto é bloqueado por uma ação. O dano adicional previsto por 
+Ímpeto é dano de efeito; sua prevenção é examinada separadamente do dano básico do golpe.</div></details><details class="rule-chapter panel"><summary>11. Revide</summary><div class="rule-text">11.1.1 Quando o jogador de ataque utiliza energias inativa s do jogador de defesa para realizar uma 
+ação, o jogador de defesa recebe imediatamente a compra mecânica correspondente e uma 
+oportunidade de Revide. 
+11.1.2 A compra é obrigatória quando há capacidade na mão. É limitada a quatro cartas na mão. 
+Mesmo que nenhuma carta possa ser comprada, a oportunidade de Revide permanece. 
+11.1.3 Uma utilização de três energias inativas gera compra correspondente a três, limitada pela 
+mão, e uma única oportunidade de Revide. Não gera três oportunidades por utilizar três energias. 
+11.1.4 O jogador pode escolher realizar ou recusar o Revide. Não pode acumular, reservar ou 
+transferir a oportunidade para outro momento. Se recusar ou não puder realizar, ela termina. 
+11.1.5 Um golpe disponível na Zona Extra ou um Overdrive que rea lize golpe pode ser usado no 
+Revide. Nenhuma dessas escolhas é obrigatória. 
+11.2.1 Revide permite realizar um golpe antes da resolução da ação que o provocou. Essa ação fica 
+suspensa, com seus custos e escolhas conservados. 
+11.2.2 O golpe de Revide pode ser bloqueado normalmente. O dono do turno pode utilizar Guardas e 
+Truques em resposta, sujeito aos custos e permissões. 
+11.2.3 O jogador de defesa pode utilizar energias inativas do dono do turno durante Revide. Essa 
+utilização não gera compra nem Revide para o dono do turno. 
+11.2.4 O dono do turno que utiliza energias inativas do jogador de defesa durante aquele combate 
+gera normalmente compra e uma nova oportunidade de Revide para o jogador de defesa. 
+11.2.5 A exceção de 11.2.3 de pende do jogador que utiliza as energias, não concede imunidade ao 
+combate inteiro. 
+
+11.2.6 Um Revide compreende um golpe e os procedimentos necessários para concluir seu 
+combate. Não concede um turno novo nem altera o dono do turno. Respostas legais contin uam 
+disponíveis. 
+11.3.1 Se houver um novo Revide, resolva primeiro o mais recente. Depois retome a pendência 
+imediatamente anterior, repetindo até alcançar a ação original. 
+11.3.2 Não abra nova janela entre a conclusão do Revide e a retomada da ação suspen sa. Janelas 
+normais existem dentro de cada combate e em suas respostas. 
+11.3.3 Ao terminar o golpe e as pendências do Revide, recolha suas cartas e retome o combate ou 
+ação suspensa. Não se pagam novamente seus custos. 
+11.3.4 Exemplo: A, dono do turno, usa  energias inativas de B para uma ação. B recebe compra e 
+realiza Revide. A utiliza uma Guarda pagando com energias inativas de B. B recebe outra 
+oportunidade e pode realizar um segundo Revide. Resolve -se primeiro esse segundo combate, 
+depois a Guarda e as pendências anteriores, respeitando suas posições na cadeia.</div></details><details class="rule-chapter panel"><summary>12. Compra, reposição e Deck Out</summary><div class="rule-text">12.1.1 Compras mecânicas incluem a compra inicial, a compra excepcional do turno 2, a compra por 
+Revide e a reposição por energias. Essas compras respeitam o limite de quatro cartas na mão. 
+12.1.2 Compras por efeitos podem ultrapassar quatro. Ter mais de quatro cartas não obriga descarte. 
+Enquanto a mão estiver com quatro ou mais, não há capacidade para compra mecânica. 
+12.1.3 Determine primeiro a quantidade permitida da compra mecânica. Ela é limitada pela diferença 
+entre quatro e a quantidade atual na mão, com mínimo zero. 
+12.2.1 Uma vez durante seu turno, o jogador de ataque pode realizar reposição, utilizando de uma a 
+quatro energias próprias ativas para comprar a mesma quantidade de cartas. 
+12.2.2 A reposição pode ser usada em qualquer momento legal do turno com uma janela disponível. 
+Não interrompe um efeito em resolução e pode receber respostas, efeitos e gatilhos. 
+12.2.3 Só pode gastar a quantidade de energias  correspondente às cartas que a compra mecânica 
+permite obter. Com três cartas na mão, pode gastar apenas uma energia para reposição. Com quatro 
+ou mais, não pode usar reposição para gastar energias sem comprar. 
+12.2.4 Inative as energias como custo. O eve nto de compra aguarda as respostas pertinentes. 
+Cancelamento não restitui esse custo nem transforma a reposição em uma compra por efeito. 
+12.3.1 Uma compra de várias cartas é um único evento. Se o baralho tiver menos cartas que a 
+quantidade exigida, o jogador perde por Deck Out ao tentar executar esse evento. 
+12.3.2 Se a quantidade determinada for zero, não ocorre compra e não há Deck Out por esse 
+procedimento. 
+12.3.3 Um baralho vazio, sozinho, não causa derrota. Retirar para a Estamina não é comprar e não 
+causa Deck Out. 
+12.3.4 Exemplo: B tem três cartas na mão e três energias reativadas por A. B deve comprar uma 
+carta e recebe uma oportunidade de Revide. Se seu baralho estiver vazio, perde ao tentar essa 
+compra. 
+12.3.5 Exemplo: um efeito manda comprar três  cartas, mas há somente duas no baralho. A compra 
+exigida é insuficientemente atendida e ocorre Deck Out, conforme a regra de evento único aprovada.</div></details><details class="rule-chapter panel"><summary>13. Overdrive</summary><div class="rule-text">13.1.1 A sequência de Overdrive está indicada no lutador. Seus símbolos determinam a ordem de  
+Zonas de Combate que os golpes devem cumprir. 
+13.1.2 Um golpe avança a sequência ao resolver, desde que seu símbolo corresponda ao próximo 
+símbolo exigido. Causar dano não é requisito para esse avanço. 
+13.1.3 Um golpe totalmente bloqueado pode avançar a sequência. Um golpe cancelado não avança, 
+porque não resolveu. 
+13.1.4 Um golpe que resolve com símbolo diferente do exigido zera a sequência. Mesmo que esse 
+símbolo corresponda ao primeiro símbolo, o mesmo golpe não inicia uma nova sequência. 
+13.1.5 O progresso persiste entre turnos e pode avançar durante Revide. 
+13.2.1 Ao completar a sequência, o Overdrive fica disponível. Golpes posteriores da mesma Zona do 
+último golpe da sequência conservam essa disponibilidade; um golpe de Zona diferente reinici a o 
+marcador em zero. 
+13.2.2 Para ativar o Overdrive, consuma todos os contadores de progresso e retorne a sequência a 
+zero. Esse é seu custo geral de ativação, observadas instruções expressas do lutador. 
+13.2.3 Os contadores são consumidos mesmo se o Overdrive for negado ou cancelado. 
+13.2.4 Um Overdrive de habilidade pode ser ativado em resposta a ação, efeito ou habilidade em 
+uma janela legal. Não interrompe resolução em andamento. 
+13.2.5 Um Overdrive que seja golpe ou realize golpe só pode ser utilizado no turno de ataque de seu 
+controlador ou durante seu Revide. 
+13.2.6 Um golpe de Overdrive pode ser bloqueado normalmente. Um Overdrive de habilidade pode 
+ser negado por efeitos aplicáveis. 
+13.2.7 Se o Overdrive ocasionar uma ação que realize um golpe, ess e golpe pode iniciar ou avançar 
+uma nova sequência ao resolver, conforme seu símbolo e as regras gerais. 
+13.3.1 Quebra zera a sequência do jogador que sofreu o ataque causador de dano. Isso inclui retirar 
+uma sequência já completa. Consulte 14.1. 
+13.3.2 Exemplo com sequência hipotética A -B-C: golpes resolvidos A e B deixam dois passos 
+completos. Um golpe C totalmente bloqueado completa a sequência. Um novo C mantém a 
+disponibilidade; um novo A zera o marcador e não inicia a sequência nesse mesmo golpe.</div></details><details class="rule-chapter panel"><summary>14. Palavras-chave</summary><div class="rule-text">14.1 Gerais 
+14.1.1 - Quebra. Quando o golpe com Quebra causar dano ao adversário, zere a sequência de 
+Overdrive do jogador atingido. Aplique depois do dano e antes dos efeitos condicionados ao 
+resultado. 
+14.1.2 Dano inteiramente prevenido nã o ativa Quebra. O dano de efeito de Ímpeto pode ativá -la 
+conforme 10.2.6. 
+14.1.3 - Defletir. Se esta Guarda bloquear com sucesso a partir da própria Zona Extra, cause ao 
+atacante do combate dano igual ao valor atual de bloqueio da Guarda, incluindo modific adores 
+aplicáveis. 
+
+14.1.4 Defletir exige a origem Zona Extra e o resultado bloqueio com sucesso. O dano produzido é 
+dano de efeito e segue prevenção e substituição aplicáveis. 
+14.1.5 - Finta. Em uma janela de resposta de combate, descarte da mão a carta co m Finta e uma 
+Guarda do mesmo custo para cancelar a Guarda alvo. 
+14.1.6 A comparação de custos utiliza os custos normais modificados, sem substituir por custos 
+alternativos nem incluir custos obrigatórios adicionais. É feita no anúncio; alterações posterio res não 
+desfazem o pagamento. 
+14.1.7 A Guarda cancelada deixa de contribuir com bloqueio, e seus efeitos pendentes são 
+cancelados. Seus custos não são devolvidos. Seus efeitos já resolvidos não são retroativamente 
+desfeitos pelo cancelamento de pendências. 
+14.1.8 - Desvio. Em uma janela de resposta de combate, descarte da mão a carta com Desvio e um 
+Golpe da mesma Zona do Golpe alvo para cancelar esse Golpe. 
+14.1.9 A carta com Finta ou Desvio precisa estar na mão para pagar esses custos. Essas habilidades 
+não podem ser utilizadas fora de uma janela de combate por sua regra geral. 
+14.2 Específicas de arquétipos 
+14.2.1 - Fluir. A condição é satisfeita se o jogador já jogou uma ação antes desta no turno atual. 
+Uma ação jogada e posteriormente cancelada conta. Uma ação de turno anterior não conta. 
+14.2.2 - Preparo. A condição é satisfeita se houver uma ou mais cartas nas Zonas Extras do lutador 
+do jogador. O efeito associado é determinado pelo texto da ação. 
+14.2.3 - Foco. A condição é satisfeita se o Poder atual do lutador do controlador da ação for maior ou 
+igual a X. X e o efeito associado constam da carta. Consulte 16.1 para modificadores. 
+14.2.4 - Ímpeto. Se este Golpe for bloqueado utilizando ações, cause X de dano de efeito, conforme 
+o texto. Qualquer bloqueio com ações satisfaz a condição; não é necessário bloquear todo o dano do 
+golpe. 
+14.2.5 Bloqueio exclusivamente por efeito ou habilidade, sem ações bloqueadoras, não satisfaz a 
+condição geral de Ímpeto. 
+14.2.6 As condições de Fluir, Preparo e Foco não criam um benefício universal: o benefício e o 
+momento em que a condição precisa ser verificada dependem da redação da carta.</div></details><details class="rule-chapter panel"><summary>15. Gatilhos, resolução e cancelamento</summary><div class="rule-text">15.1.1 Uma habilidade ativada é anunciada por escolha do jogador, atendendo seus requisitos e 
+custos. Uma habilidade desencadeada, ou gatilho, ocorre quando seu evento ou condição acontece. 
+15.1.2 Habilidades estáticas ou passivas funcionam con forme sua fonte e descrição, sem 
+necessidade de serem anunciadas repetidamente. Modificações persistentes seguem o capítulo 16. 
+15.1.3 Gatilhos ocorridos durante uma resolução são tratados depois de concluir essa resolução. 
+Não se interrompe um efeito para resolver um gatilho recém-produzido. 
+15.2.1 Se vários gatilhos ocorrerem simultaneamente, o dono do turno escolhe a ordem dos que 
+controla e coloca seu grupo primeiro na pilha. O adversário escolhe a ordem dos próprios e coloca 
+seu grupo depois. 
+15.2.2 Como resolve primeiro a última pendência inserida, os gatilhos do adversário ficam acima e 
+resolvem primeiro, sujeitos às respostas legais. 
+
+15.2.3 A ordenação de gatilhos não muda a ordem obrigatória dano -Quebra-efeitos de resultado e 
+não permite continuar após a partida já ter terminado. 
+15.3.1 Quando um efeito começa a resolver, execute suas instruções na ordem escrita até o fim, sem 
+interrupções ordinárias. Uma ação ainda pendente pode receber respostas; uma ação já em 
+resolução não recebe uma resposta tardia. 
+15.3.2 Se uma instrução for impossível, execute o restante possível. Se uma instrução depender de 
+algo que não aconteceu, essa instrução dependente também não é executada. 
+15.3.3 Um alvo que se tornar inválido não é substituído automaticamente. A ação resolve somente as 
+partes que ainda puder executar. 
+15.3.4 Se um efeito consultar uma carta específica que deixou a zona relevante, use as 
+características que ela tinha imediatamente antes de sair, quando disponíveis e verificáveis. Essa 
+informação anterior não transforma a carta ausente em alvo válido. 
+15.3.5 Uma ação ou habilidade já ativada permanece pendente se sua fonte deixar a zona, salvo 
+dependência expressa no texto. 
+15.4.1 Cancelar uma ação ou habilidade impede sua resolução. Os custos permanecem pagos. 
+15.4.2 Cancelar um golpe impede seu dano e seu avanço de Overdrive por resolução. Cancelar uma 
+Guarda por Finta remove sua contribuição de bloqueio e cancela seus efeitos pendentes. 
+15.4.3 Uma carta cancelada vai ao descarte quando as cartas do com bate correspondente forem 
+recolhidas. Uma habilidade representada somente por efeito deixa de existir ao ser cancelada. 
+15.4.4 Cancelar uma pendência não desfaz automaticamente outros efeitos que já resolveram. 
+Corrigir jogada ilegal é procedimento diferente de cancelamento. 
+15.5.1 Quando um efeito descartar várias cartas simultaneamente, seu controlador determina a 
+ordem delas no descarte. No recolhimento ordinário de combate, cada jogador ordena suas próprias 
+cartas.</div></details><details class="rule-chapter panel"><summary>16. Efeitos contínuos, substituição e prevenção</summary><div class="rule-text">16.1 Características e cálculo 
+16.1.1 Um efeito contínuo modifica características, permissões, restrições ou regras durante a 
+duração indicada. Ele não resolve novamente cada vez que o estado do jogo muda. 
+16.1.2 Para determinar uma característica, aplique nesta ordem: valores e características impressos; 
+efeitos que substituem ou estabelecem valores ou características; aumentos e reduções; 
+multiplicações e divisões; limites mínimos e máximos expressos. 
+16.1.3 Na mesma etapa, aplique primeiro o ef eito que começou a vigorar antes. Se um efeito 
+depender do resultado de outro para determinar sua aplicação, aplique primeiro aquele do qual 
+depende. 
+16.1.4 Ataque, bloqueio e custos não podem ser inferiores a zero. Resultados fracionários são 
+arredondados para baixo, salvo instrução contrária. 
+16.1.5 Verifique permissões e restrições depois dessas modificações. Uma proibição prevalece sobre 
+uma permissão. 
+16.1.6 Exemplo: ataque impresso 4; efeito estabelece ataque 6; outro concede +2; outro dobra o 
+ataque. O resultado é (6 + 2) × 2 = 16. 
+
+16.2 Duração 
+16.2.1 A duração expressa determina quando o efeito termina. “Neste combate” termina depois de 
+resolver o combate referido. “Até o fim do turno” termina quando o turno efetivamente acaba, depois 
+de seus procedimentos finais. 
+16.2.2 “Até o começo do seu próximo turno” termina no começo do próximo turno de ataque do 
+jogador referido. 
+16.2.3 Um efeito condicionado à presença de sua fonte funciona somente enquanto ela estiver na 
+zona exigida. Isso é distinto de uma habilidade já ativada que permaneça pendente, conforme 15.3.5. 
+16.2.4 Uma modificação persistente sem duração deve ter sua duração esclarecida no texto oficial da 
+carta. Este livro não presume duração indefinida para redação incompleta. 
+16.2.5 Uma mudança de zona encerra os modificadores ligados à ocorrência anterior da carta, salvo 
+instrução que os aplique na zona de destino. 
+16.3 Substituição e prevenção 
+16.3.1 Um efeito de substituição altera um evento antes de acontecer. Um efeito de prevenção 
+impede parte ou todo um dano antes de ser aplicado. 
+16.3.2 Identifique os efeitos aplicáveis ao evento. Se houver vários, o jogador afetado escolhe qual 
+aplicar primeiro. Se o evento afetar uma carta, escolhe seu controlador; se ela não tiver controlador, 
+seu dono. 
+16.3.3 Depois de aplicar o efeito escolhido, verifique novamente quais efeitos são aplicáveis ao 
+evento modificado. Repita até não restar outro efeito aplicável e execute o evento resultante. 
+16.3.4 Um mesmo efeito de substituição não pode modificar repet idamente o mesmo evento. Uma 
+ordem expressa prevalece sobre a escolha geral. 
+16.3.5 Somente o evento resultante é considerado ocorrido. Um evento substituído não é tratado 
+como ocorrido em sua forma anterior. 
+16.3.6 Exemplo: um efeito dobra um dano e outro  previne 2. Na ausência de ordem expressa, o 
+jogador que receberia o dano escolhe a ordem dos efeitos aplicáveis. Duplicar antes de prevenir 
+pode produzir um resultado diferente de prevenir antes de duplicar.</div></details><details class="rule-chapter panel"><summary>17. Estados do jogo e término da partida</summary><div class="rule-text">17.1.1 O estado do jogo compreende vida, cartas e zonas, informação pública e oculta, energias 
+ativas e inativas, Poder, progresso de Overdrive, turno, fase, prioridade, ações pendentes, combates 
+suspensos e efeitos em vigor. 
+17.1.2 Alterações devem ser registra das quando acontecem. É necessário distinguir custos pagos, 
+efeitos ainda pendentes e resultados já ocorridos. 
+17.1.3 Marcadores de vida e Overdrive não substituem as próprias regras: um marcador incorreto 
+deve ser corrigido conforme informação verificável e capítulo 19. 
+17.2.1 Um jogador perde imediatamente quando a vida de seu lutador chega a zero ou menos. O 
+dano é determinado depois das resoluções pertinentes, e a derrota é verificada quando ele é 
+efetivamente aplicado. 
+17.2.2 Se ambos forem derrotados simultaneamente, a partida é empate. Derrotas em eventos 
+sucessivos não são automaticamente simultâneas: a partida já terminada não prossegue para 
+produzir a segunda derrota. 
+
+17.2.3 O jogador também perde por Deck Out conforme 12.3. O adversário vence quando somente o 
+outro jogador é derrotado. 
+17.2.4 Ao terminar a partida, não se resolvem ações, Revides, gatilhos ou procedimentos de fim de 
+turno ainda pendentes. 
+17.2.5 Um loop obrigatório sem progresso pode causar empate conforme o capítulo 18. 
+Desqualificação é uma decisão de procedimento competitivo, distinta da derrota mecânica por vida 
+ou Deck Out.</div></details><details class="rule-chapter panel"><summary>18. Loops e atalhos</summary><div class="rule-text">18.1.1 Um loop é uma sequência de eventos capaz de voltar a uma condição que permita repetir a 
+sequência. A repetição pode ser obrigatória ou depender de escolhas opcionais. 
+18.1.2 Um loop obrigatório que não altere o estado do jogo provoca empate imediato. A ausência de 
+perda de vida ou cartas é um indício importante, mas outras alterações relevantes também compõem 
+o estado. 
+18.1.3 Um loop obrigatório que altere o estado prossegue até terminar a partida ou deixar de ser 
+executável. Se retornar a um estado anterior equivalente sem possibilidade de interrupção, 
+caracteriza repetição obrigatória sem progresso e provoca empate. 
+18.2.1 Para um loop opcional, o jogador deve declarar a sequência, um número finito de repetições e 
+o estado resultante pretendido. 
+18.2.2 O adversário pode indicar uma repetição e uma janela em que deseja intervir. Execute o 
+atalho somente até esse ponto e retome as decisões normais. 
+18.2.3 Não é permitido declarar “infinitas vezes”. A possibilidade de repetir uma sequência não 
+equivale a obter um resultado infinito. 
+18.2.4 Um loop dependente de informação desconhecida, resultados aleatórios ou novas decisões 
+não pode presumir resultados futuros ainda não ocorridos. 
+18.2.5 Um atalho não elimina custos, gatilhos, compras obrigatórias, limites de mão mecânica ou 
+verificação de derrota.</div></details><details class="rule-chapter panel"><summary>19. Procedimentos, correções e infrações</summary><div class="rule-text">19.1 Princípios 
+19.1.1 Uma correção busca restaurar um estado verificável sem conceder escolhas retroativas 
+fundamentadas em informação recém-adquirida. 
+19.1.2 Em partidas competitivas, somente o juiz autoriza retrocessos. Os jogadores devem 
+comunicar o erro e preservar as informações necessárias à avaliação. 
+19.1.3 Um retrocesso deve abranger as consequências da jogada corrigida. Não se desfaz somente 
+a parte favorável a um jogador. 
+19.1.4 Cancelamento é uma interação de jogo. Retrocesso é uma correção de procedimento. 
+Somente o segundo pode restaurar custos indevidamente pagos. 
+19.2 Compra indevida 
+19.2.1 Compra indevida acidental recebe advertência do juiz. A carta retorna ao local devido quando 
+sua identidade e posição forem verificáveis. 
+
+19.2.2 Se a carta ou posição não for verificável, o juiz determina a correção adequada. Os jogadores 
+não escolhem livremente uma carta para devolver. 
+19.2.3 Compra indevida intencional é trapaça e resulta em desqualificação imediata após a 
+determinação da intenção pelo juiz. 
+19.3 Custo incorreto e jogada ilegal 
+19.3.1 Quando possível, o jogo retrocede ao momento anterior à jogada com custo incorreto. 
+Recursos pagos incorretamente retornam aos estados originais. 
+19.3.2 O jogador é orientado a pagar corretamente ou retornar a carta à zona de origem adequada. A 
+referência usual é a mão; uma carta oriunda de outra zona deve retornar àquela zona. 
+19.3.3 Uma jogada ilegal detectada imediatamente permite retrocesso verificável e aviso ao jogador. 
+19.3.4 Se o erro ocorreu em turnos anteriores e a mesa ficou complexa demais para reverter, 
+mantém-se o estado atual. Uma situação atualmente ilegal deve ser corrigida se houver correção 
+verificável. 
+19.4 Gatilho esquecido 
+19.4.1 Um gatilho é considerado esquecido quando o jogo avança além do momento em que se u 
+controlador precisava demonstrar seu efeito ou realizar uma escolha exigida. 
+19.4.2 Ao descobrir o gatilho, o adversário normalmente escolhe entre colocá -lo na fila de efeitos 
+naquele momento ou ignorá-lo. A inserção não interrompe um efeito em resolução. 
+19.5 Informação oculta exposta 
+19.5.1 Uma informação oculta indevidamente exposta é mostrada aos dois jogadores para igualar a 
+informação, conforme a política adotada. 
+19.5.2 A carta retorna à posição correta ou é reembaralhada, dependendo de sua origem e da 
+necessidade de restaurar aleatoriedade. 
+19.5.3 Não se embaralham automaticamente cartas oriundas da mão ou Zona Extra. 
+Reembaralhamento é utilizado quando necessário para restaurar uma posição que deveria ser 
+desconhecida. 
+19.6 Registro e partidas sem juiz 
+19.6.1 Advertências e avisos são registrados em partidas competitivas. Repetição pode justificar 
+investigação, mas não cria automaticamente uma penalidade agravada sem política expressa. 
+19.6.2 Desqualificação por trapaça exige determinação de intenção. Um erro acidental não é 
+automaticamente trapaça. 
+19.6.3 Em partidas sem juiz, os jogadores aplicam correções verificáveis por acordo. Se não houver 
+acordo, suspendem a part ida para consultar um responsável. Nenhum jogador impõe sozinho um 
+retrocesso ou penalidade ao adversário. 
+19.6.4 Este capítulo não estabelece duração de rounds, critérios de desempate de match, política de 
+atrasos ou penalidades adicionais. Esses aspectos  organizacionais exigem regulamento próprio de 
+evento.</div></details><details class="rule-chapter panel"><summary>20. Glossário</summary><div class="rule-text">Termo Definição e referência 
+Ação Carta de Golpe, Guarda ou Truque; 2.1.3. 
+Ação jogada Ação anunciada legalmente e paga, mesmo se cancelada depois; 8.1.4. 
+Arena Área das ações e combates; 4.1.8. 
+Atacante do combate Quem realiza o golpe atual; pode ser o jogador de defesa em Revide; 1.1.4. 
+Banimento Área separada de cartas banidas; jogar dela exige efeito; 4.1.6 e 4.3.3. 
+Baralho adicional Conjunto opcional de 15 cartas para trocas entre partidas; 3.2. 
+Bloqueador Carta habilitada e declarada para bloquear; 9.2. 
+Bloqueio Valor ou efeito defensivo aplicável ao golpe; 9.2 e 10. 
+Buff de Zona Modificação ligada à Zona de Combate indicada; 2.3.6. 
+Cadeia de combates Registro de combates atuais e suspensos; 7.3. 
+Cancelar Impedir resolução sem restituir custos; 15.4. 
+Carta preparada Carta colocada na Zona Extra; 4.2. 
+Compra mecânica Compra inicial, excepcional do turno 2, por Revide ou reposição; 12.1. 
+Compra por efeito Compra determinada por texto de efeito, que pode ultrapassar quatro na mão; 
+12.1.2. 
+Custo alternativo Substituição integral do normal pela reativação de energias adversárias; 8.2.3. 
+Custo normal Custo pago com energias próprias ativas; 8.2.1. 
+Custo obrigatório Exigência adicional de pagamento; 8.2.4. 
+Dano de combate Resultado básico ataque menos bloqueio, mínimo zero; 10.1. 
+Dano de efeito Dano determinado por efeito; 10.2.5. 
+Deck Out Derrota ao tentar compra exigida sem cartas suficientes; 12.3. 
+Defensor do combate Quem recebe e pode bloquear o golpe atual; 1.1.4. 
+Defletir Dano ao atacante por Guarda que bloqueou com sucesso da Zona Extra; 
+14.1.3. 
+Descarte Zona pública de ações descartadas ou utilizadas; 4.1.5. 
+Desvio Habilidade de descarte que cancela Golpe da mesma Zona; 14.1.8. 
+
+Termo Definição e referência 
+Efeito contínuo Modificação durante uma duração; 16.1. 
+Efeito de substituição Alteração de evento antes de acontecer; 16.3. 
+Energia ativa Carta da Estamina virada para cima e disponível para custo próprio; 8.2. 
+Energia inativa Carta da Estamina virada para baixo, passível de reativação; 8.2. 
+Estado de jogo aberto Janela para ações e respostas sem interromper resolução; 7.1. 
+Estamina Zona que contém as energias; 4.1.7. 
+Finta Habilidade de descarte que cancela Guarda de mesmo custo; 14.1.5. 
+Fluir Condição de ação jogada anteriormente no mesmo turno; 14.2.1. 
+Foco Condição de Poder atual do lutador maior ou igual a X; 14.2.3. 
+Gatilho Habilidade desencadeada por evento ou condição; 15.1. 
+Golpe Ação que realiza combate; 2.3.3 e 9. 
+Guarda Ação defensiva com custo de energias inativas adversárias; 8.2.7. 
+Ímpeto Dano de efeito quando o golpe é bloqueado utilizando ações; 14.2.4. 
+Informação anterior Características verificáveis antes da saída da zona; 15.3.4. 
+Informação oculta Identidade ou ordem não publicamente acessível por regra; 4. 
+Jogador ativo Dono do turno; 1.1.3. 
+Jogador de ataque Dono do turno, mesmo durante um Revide adversário; 1.1.3. 
+Jogador de defesa Adversário do dono do turno; 1.1.3. 
+Loop Sequência repetível de eventos; 18. 
+Lutador Carta que representa o jogador e define atributos e Overdrive; 2.2. 
+Match Conjunto de partidas; as trocas aprovadas são para melhor de três; 3.2. 
+Mulligan Troca inicial única de até duas cartas da mão pela Estamina; 5.1.5. 
+Overdrive Recurso habilitado por sequência de Zonas resolvidas; 13. 
+Pilha de ativação Ordem de pendências, com a última anunciada resolvendo primeiro; 7.2. 
+Poder Atributo do lutador, distinto de ataque e bloqueio; 2.2.2. 
+Preparo Condição de uma ou mais cartas nas Zonas Extras; 14.2.2. 
+
+Termo Definição e referência 
+Prevenção Impedimento de dano antes de sua aplicação; 16.3. 
+Prioridade de ação Oportunidade de agir na janela atual; 7.1. 
+Prioridade de ataque Identificação do dono do turno; 1.1.5. 
+Quebra Reinício do Overdrive do jogador atingido por dano; 14.1.1. 
+Reposição Compra mecânica paga com energias próprias, uma vez por turno; 12.2. 
+Resolução Execução de instruções de uma pendência; 15.3. 
+Revide Oportunidade opcional de golpe antes da ação que a provocou resolver; 11. 
+Round Partida individual dentro da match, para efeito das trocas; 1.1.2. 
+Se Bater Condição de dano efetivamente causado; 10.2.1. 
+Se Bloquear Condição de bloqueio por ação, efeito ou habilidade; 10.2.3. 
+Se Bloquear com Sucesso Condição de evitar todo o dano do golpe; 10.2.4. 
+Tag Elemento estético; 2.1.2. 
+Truque Ação de efeito ou resposta, não um golpe por seu tipo; 2.3.3. 
+Turno Unidade individual de preparação, combates e fim; 6. 
+Zona de Combate Símbolo de região do corpo, usado em efeitos e Overdrive; 9.1.3. 
+Zona Extra Quatro espaços totais de preparação por jogador; 4.2.</div></details><details class="rule-chapter panel"><summary>21. Referência operacional e histórico de consolidação</summary><div class="rule-text">21.1 Referência rápida 
+Situação Procedimento 
+Preparar partida Lutador; embaralhar 40; cinco energias ativas; comprar quatro; mulligan único; 
+determinar primeiro jogador; vida 20 e Overdrive zero. 
+Iniciar turno 
+Reativar energias próprias; tratar começo de turno; compra excepcional 
+somente no turno 2; adicionar uma energia própria a partir do turno 3 até sete, 
+se houver carta. 
+Anunciar ação Origem permitida; escolhas e alvos; método de pagamento; legalidade; custos; 
+registrar pendência. 
+
+Situação Procedimento 
+Usar energias inativas de defesa 
+pelo dono do turno 
+Reativação; compra mecânica limitada; oportunidade opcional de Revide antes 
+da ação resolver. 
+Declarar bloqueio Mão ou Zona Extra disponível; habilitação; custos exigidos; declaração 
+conjunta; depois só alteração por efeito. 
+Resolver combate 
+Respostas concluídas; ataque e bloqueio atuais; substituição e prevenção; 
+dano; derrota se ocorrer; Quebra; efeitos de resultado; concluir pendências e 
+recolher cartas. 
+Atualizar Overdrive Golpe resolvido compatível avança; cancelado não; incompatível zera; 
+completo conserva com mesma Zona final. 
+Última energia própria gasta Concluir pendências, incluindo Revides; encerrar automaticamente sem iniciar 
+ação independente nova; tratar fim de turno. 
+Compra exigida sem cartas 
+suficientes Deck Out no evento de compra; retirada para Estamina não é compra. 
+Erro de procedimento Preservar informação;  consultar juiz; corrigir somente com restauração 
+verificável. 
+ 
+21.3 Substituições expressas do guia 
+Formulação anterior Regra consolidada 
+Três cartas de postura e palavra-
+chave Postura Sem cartas de postura; palavra-chave Preparo. 
+Reposição para ambos em todo 
+começo de turno Sem compra automática ordinária; exceção no começo do turno 2. 
+Adição de energia a partir do 
+segundo turno ou depois do 
+terceiro 
+A partir do turno individual 3, somente jogador ativo, até sete. 
+Overdrive associado 
+ambiguamente a acertar Avanço por resolução, inclusive golpe totalmente bloqueado. 
+Se Bater com Sucesso Expressão removida; Se Bater exige dano efetivo. 
+Preparar somente em combate 
+ou fim do turno Qualquer fase do turno próprio antes da declaração de encerramento. 
+Revide aparentemente 
+obrigatório Oportunidade opcional e não acumulável. 
+Imunidade genérica durante 
+Revide 
+Exceção depende de quem utiliza as energias; Revides sucessivos são 
+possíveis. 
+Deck Out apenas com baralho 
+vazio 
+Compra é um único evento; cartas insuficientes para quantidade exigida 
+causam derrota. 
+
+21.4 Limites de escopo editorial 
+Esta edição não cria nomes ou valores de cartas, símbolos novos, sequências de lutadores, formatos 
+alternativos ou penalidades de evento não aprovadas. Uma carta com redação incompleta precisa de 
+texto oficial esclarecido; o livro não supre o conteúdo ausente por uma mecânica presumida. 
+As regras devem ser citadas pelo número e versão, por exemplo: “Overdrive Fighters, Livro de 
+Regras v 0.2, regra 11.2.4”. Revisões futuras devem registrar mudanças de comportamento e 
+preservar referências quando possível.</div></details></div></section></main><script src="desktop-ui.js"></script></body></html>
