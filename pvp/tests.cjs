@@ -5,7 +5,7 @@ const {spawn}=require('node:child_process');
 const {Engine,chooseAI}=require('../work/strict-engine.js');require('../work/strict-features.js')(Engine);
 const catalog=require('../work/catalog.json'),{Rooms}=require('./rooms.cjs'),{project,command,mapAction}=require('./protocol.cjs'),{createServer}=require('./server.cjs');
 const deck=new Engine(catalog).starter();
-const socket=()=>({readyState:1,messages:[],send(text){this.messages.push(JSON.parse(text));}});
+const socket=()=>({readyState:1,messages:[],send(text){this.messages.push(JSON.parse(text));},close(code){this.closeCode=code;this.readyState=3;}});
 function lobby(options={},mode='advanced') {const rooms=new Rooms(options),a=socket(),b=socket();rooms.handle(a,{protocol:1,type:'create',name:'A',mode});rooms.handle(b,{protocol:1,type:'join',name:'B',code:a.roomCode});for(const s of [a,b])rooms.handle(s,{protocol:1,type:'ready',deck});return {rooms,a,b,room:rooms.rooms.get(a.roomCode)};}
 function act(rooms,s,action,sequence,revision){rooms.handle(s,{protocol:1,type:'action',sequence,revision,action});}
 test('Each mode starts both seats with the correct energy count and hidden hands/decks',()=>{
@@ -57,6 +57,14 @@ test('Rooms isolate games, reject a third player and validate decks',()=>{
  const {rooms,a,room}=lobby();const c=socket();assert.throws(()=>rooms.handle(c,{protocol:1,type:'join',code:room.code,name:'C'}),/começou/);
  rooms.handle(c,{protocol:1,type:'create',name:'C',mode:'standard'});assert.notEqual(a.roomCode,c.roomCode);
  assert.throws(()=>rooms.handle(c,{protocol:1,type:'ready',deck:{...deck,main:{}}}));assert.equal(rooms.rooms.get(c.roomCode).engine,null);
+});
+test('A reconnect can reclaim its seat before the old socket closes, without losing the new connection',()=>{
+ const {rooms,a,b,room}=lobby(),auth=b.messages.find(m=>m.type==='welcome'),next=socket();
+ rooms.handle(next,{protocol:1,type:'resume',code:room.code,token:auth.token});
+ assert.equal(b.closeCode,4001);assert.equal(b.roomCode,null);assert.equal(room.seats[1].socket,next);
+ rooms.disconnect(b);assert.equal(room.seats[1].socket,next);assert.equal(rooms.publicRoom(room).paused,false);
+ act(rooms,a,{type:'mulligan',hand:[],energy:[]},1,0);act(rooms,next,{type:'mulligan',hand:[],energy:[]},1,room.engine.s.revision);
+ assert.equal(room.seats[1].sequence,1);assert.equal(room.engine.s.players[1].mulligan,true);
 });
 test('Projected commands complete duels for every starter and both seat orientations',()=>{
  for(const fighter of [32,51,70,89]){

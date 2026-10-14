@@ -60,7 +60,7 @@
     if(pending&&!room.paused)send(pending);
    }else status('Sala conectada. Os dois jogadores devem confirmar seus decks.');
   };
-  socket.onclose=()=>{if(manual)return;$('pvpReconnect').hidden=false;if(remote){remote.networkPaused=true;api.pause();}status('Conexão perdida. Tentando reconectar…');if(credential)retry=setTimeout(()=>connect('resume'),Math.min(1000*2**attempt++,10000));else status('Não foi possível conectar. Verifique o endereço e se o servidor está aberto.');};
+  socket.onclose=event=>{if(manual)return;$('pvpReconnect').hidden=false;if(remote){remote.networkPaused=true;api.pause();}if(event.code===4001){manual=true;clearTimeout(retry);status('Sua sessão foi retomada em outra aba. Use Reconectar para voltar a jogar aqui.');return;}status('Conexão perdida. Tentando reconectar…');if(credential)retry=setTimeout(()=>connect('resume'),Math.min(1000*2**attempt++,10000));else status('Não foi possível conectar. Verifique o endereço e se o servidor está aberto.');};
   socket.onerror=()=>status('Servidor indisponível. Verifique o endereço e a conexão.');
  }
  $('pvpCreate').onclick=()=>connect('create');$('pvpJoin').onclick=()=>connect('join');

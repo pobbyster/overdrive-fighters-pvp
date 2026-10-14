@@ -25,8 +25,10 @@ class Rooms {
       if (msg.type==='resume') {
         room=this.rooms.get(msg.code);if(!room)fail('Sala expirada. Crie outra sala.');
         index=room.seats.findIndex(s=>s?.token===msg.token);if(index<0)fail('Credencial de reconexão inválida.');seat=room.seats[index];
-        if(seat.socket)fail('Este jogador já está conectado.');
-        if(this.now()-seat.offlineAt>this.graceMs&&room.engine?.s.winner===null)fail('Prazo de reconexão encerrado.');
+        if(seat.offlineAt!==null&&this.now()-seat.offlineAt>this.graceMs&&room.engine?.s.winner===null)fail('Prazo de reconexão encerrado.');
+        // A browser reload can reconnect before the previous TCP socket closes.
+        // Possession of the private token authorizes reclaiming this same seat.
+        if(seat.socket){const previous=seat.socket;previous.roomCode=null;previous.close(4001,'Sessão retomada em outra conexão');}
       } else {
         const name=String(msg.name||'Jogador').trim().slice(0,24).replace(/[\x00-\x1f]/g,'')||'Jogador';
         if(msg.type==='create') {
