@@ -6,7 +6,7 @@ const {Engine,chooseAI}=require('../work/strict-engine.js');require('../work/str
 const catalog=require('../work/catalog.json'),{Rooms}=require('./rooms.cjs'),{project,command,mapAction}=require('./protocol.cjs'),{createServer}=require('./server.cjs');
 const deck=new Engine(catalog).starter();
 const socket=()=>({readyState:1,messages:[],send(text){this.messages.push(JSON.parse(text));},close(code){this.closeCode=code;this.readyState=3;}});
-function lobby(options={},mode='advanced') {const rooms=new Rooms(options),a=socket(),b=socket();rooms.handle(a,{protocol:1,type:'create',name:'A',mode});rooms.handle(b,{protocol:1,type:'join',name:'B',code:a.roomCode});for(const s of [a,b])rooms.handle(s,{protocol:1,type:'ready',deck});return {rooms,a,b,room:rooms.rooms.get(a.roomCode)};}
+function lobby(options={},mode='advanced') {const rooms=new Rooms(options),a=socket(),b=socket();rooms.handle(a,{protocol:1,type:'create',name:'A',mode});rooms.handle(b,{protocol:1,type:'join',name:'B',code:a.roomCode});for(const s of [a,b])rooms.handle(s,{protocol:1,type:'ready',deck,ruleset:Engine.RULESET_ID});return {rooms,a,b,room:rooms.rooms.get(a.roomCode)};}
 function act(rooms,s,action,sequence,revision){rooms.handle(s,{protocol:1,type:'action',sequence,revision,action});}
 test('Each mode starts both seats with the correct energy count and hidden hands/decks',()=>{
  for(const [mode,count] of Object.entries({standard:2,advanced:3,deathmatch:7})){
@@ -56,7 +56,7 @@ test('Reconnect restores a seat, pauses actions while disconnected and expires t
 test('Rooms isolate games, reject a third player and validate decks',()=>{
  const {rooms,a,room}=lobby();const c=socket();assert.throws(()=>rooms.handle(c,{protocol:1,type:'join',code:room.code,name:'C'}),/começou/);
  rooms.handle(c,{protocol:1,type:'create',name:'C',mode:'standard'});assert.notEqual(a.roomCode,c.roomCode);
- assert.throws(()=>rooms.handle(c,{protocol:1,type:'ready',deck:{...deck,main:{}}}));assert.equal(rooms.rooms.get(c.roomCode).engine,null);
+ assert.throws(()=>rooms.handle(c,{protocol:1,type:'ready',ruleset:Engine.RULESET_ID,deck:{...deck,main:{}}}));assert.equal(rooms.rooms.get(c.roomCode).engine,null);
 });
 test('A reconnect can reclaim its seat before the old socket closes, without losing the new connection',()=>{
  const {rooms,a,b,room}=lobby(),auth=b.messages.find(m=>m.type==='welcome'),next=socket();
@@ -67,7 +67,7 @@ test('A reconnect can reclaim its seat before the old socket closes, without los
  assert.equal(room.seats[1].sequence,1);assert.equal(room.engine.s.players[1].mulligan,true);
 });
 test('Projected commands complete duels for every starter and both seat orientations',()=>{
- for(const fighter of [32,51,70,89]){
+ for(const fighter of [32,51,70,89,114,120,126,132,142]){
   const {rooms,a,b,room}=lobby();room.engine.start(new Engine(catalog).fighterStarter(fighter),deck,fighter%2,1700+fighter,'advanced');
   let steps=0;while(room.engine.s.winner===null&&steps++<5000){const e=room.engine,p=e.s.phase==='mulligan'?(e.s.players[0].mulligan?1:0):(e.s.choice?.player??e.s.priority),view=project(e,p,['A','B']).view;
    const action=chooseAI(view,catalog);assert(action,'A legal projected action exists');const s=p?b:a;act(rooms,s,action,room.seats[p].sequence+1,e.s.revision);
@@ -83,7 +83,7 @@ test('Real WebSocket transport supports two browsers and refuses unrelated origi
  const next=(s,predicate)=>new Promise(resolve=>{const fn=d=>{const m=JSON.parse(d);if(predicate(m)){s.off('message',fn);resolve(m);}};s.on('message',fn);});
  let receive=next(a,m=>m.type==='welcome');a.send(JSON.stringify({protocol:1,type:'create',name:'A',mode:'standard'}));const auth=await receive;
  receive=next(b,m=>m.type==='welcome');b.send(JSON.stringify({protocol:1,type:'join',name:'B',code:auth.code}));await receive;
- receive=next(a,m=>m.game);for(const s of [a,b])s.send(JSON.stringify({protocol:1,type:'ready',deck}));const state=await receive;assert.equal(state.game.view.players[0].stamina.length,2);
+ receive=next(a,m=>m.game);for(const s of [a,b])s.send(JSON.stringify({protocol:1,type:'ready',deck,ruleset:Engine.RULESET_ID}));const state=await receive;assert.equal(state.game.view.players[0].stamina.length,2);
  const bad=new WebSocket(`ws://127.0.0.1:${port}/pvp`,{origin:'https://unrelated.example'});await once(bad,'error');
  const health=await fetch(`http://127.0.0.1:${port}/pvp-health`);assert.equal((await health.json()).protocol,1);
  const malformed=await fetch(`http://127.0.0.1:${port}/%00`);assert.equal(malformed.status,400);
@@ -96,4 +96,11 @@ test('Standalone hosting honors PORT and the configured external HTTPS origin',{
  const health=await fetch(`http://127.0.0.1:${port}/pvp-health`);assert.equal(health.status,200);
  const ws=new WebSocket(`ws://127.0.0.1:${port}/pvp`,{origin:'https://ofs-host-test.example'});t.after(()=>ws.terminate());await once(ws,'open');
  const message=once(ws,'message');ws.send(JSON.stringify({protocol:1,type:'create',name:'Hosted',mode:'advanced'}));assert.equal(JSON.parse((await message)[0]).type,'welcome');
+});
+
+test('Ruleset mismatch refuses readiness before replacing a saved deck',()=>{
+ const rooms=new Rooms(),a=socket();rooms.handle(a,{protocol:1,type:'create',name:'A',mode:'advanced'});const room=rooms.rooms.get(a.roomCode),before=room.seats[0].deck;
+ for(const ruleset of [undefined,'old-rules'])assert.throws(()=>rooms.handle(a,{protocol:1,type:'ready',deck,ruleset}),/incompatíveis/);
+ assert.equal(room.seats[0].deck,before);assert.equal(room.engine,null);
+ rooms.handle(a,{protocol:1,type:'ready',deck,ruleset:Engine.RULESET_ID});assert.deepEqual(room.seats[0].deck,{...deck,name:"A"});
 });

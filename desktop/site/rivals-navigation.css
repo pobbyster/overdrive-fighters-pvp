@@ -1,0 +1,31 @@
+/* Navegação com a mesma identidade desde o primeiro quadro. */
+html{background:#a200e9}
+body.rivals-entering{animation:rivals-arrive .24s ease-out both}
+body.rivals-leaving{animation:rivals-depart .16s ease-in both;pointer-events:none}
+@keyframes rivals-arrive{from{opacity:0;filter:blur(3px)}to{opacity:1;filter:none}}
+@keyframes rivals-depart{to{opacity:0;filter:blur(3px)}}
+@media(prefers-reduced-motion:reduce){body.rivals-entering,body.rivals-leaving{animation:none}}
+/* Centraliza os quatro controles do editor no mesmo eixo do botão Som. */
+.rivals-editor .editor-tools{position:absolute;right:165px;top:15px;height:49px;align-items:center!important;margin:0!important}
+.rivals-editor .editor-tools button{height:49px}
+body.rivals-reading{background:#9900ec url('assets/rivals/background-menu.webp') center/cover fixed!important;color:#4b2856;min-height:100svh}
+.rivals-reading .screen-header{height:80px;box-sizing:border-box;position:sticky;top:0;z-index:30;background:#ffffffed!important;border:0;box-shadow:0 4px 20px #65004d25;padding:12px 165px 12px 125px;display:flex;align-items:center;justify-content:center}
+.rivals-reading .screen-header h1{color:#8300dc;margin:0;font-size:24px;text-align:center}
+.rivals-reading .screen-label{display:none}
+.rivals-reading .screen-header>.rivals-menu-hud{position:absolute;left:20px;top:20px;width:80px;height:40px;background:none;border:0;padding:0;box-shadow:none;clip-path:none}
+.rivals-reading>main{width:min(1180px,95%);margin:24px auto;padding:0 0 30px}
+.rivals-reading .reading-page{box-sizing:border-box;width:100%;max-width:none;background:#fffffff5!important;border:1px solid #fff;border-radius:24px;padding:30px;box-shadow:inset -3px -4px 8px #0002,0 12px 32px #65004d30;color:#4b2856}
+.rivals-reading :is(h2,h3,h4,summary){color:#7900cd!important}
+.rivals-reading .eyebrow{color:#eb471e}
+.rivals-reading .panel{background:#f7f1fa!important;border:1px solid #e5d3ed;border-radius:16px;box-shadow:inset -2px -3px 5px #0000000c;color:#4b2856}
+.rivals-reading :is(p,label,.rule-text,.settings-note){color:#63446c}
+.rivals-reading :is(input:not([type=range]):not([type=checkbox]),select){background:#fff!important;color:#52265f!important;border:1px solid #d9bfe5;border-radius:10px;box-shadow:inset 1px 2px 4px #00000012}
+.rivals-reading input[type=range],.rivals-reading input[type=checkbox]{accent-color:#9400e5}
+.rivals-reading :is(button:not(.rivals-sound),.reading-tools a,a.primary){background:#fff!important;color:#7c00ce!important;border:1px solid #e2ceeb;border-radius:12px;box-shadow:inset -2px -3px 5px #0002;font-weight:700;padding:10px 15px}
+.rivals-reading .lesson-footer a{color:#8a00c6}.rivals-reading :is([data-asset-name],#lessonCount){color:#795984}
+.rivals-reading :is(button:hover,.reading-tools a:hover,a.primary:hover){background:#f5e8ff}
+.rivals-reading .current-rules-note{box-sizing:border-box;max-width:none;width:100%;margin:0 0 18px;padding:14px 22px;background:#fff;border:0;border-radius:15px;color:#64326e;box-shadow:inset -2px -3px 5px #0002}
+.rivals-reading .visual-preview{border:1px solid #e4cdef;border-radius:12px}
+.rivals-reading :is(output,.guide-reference){color:#8a00ce}
+.rivals-reading progress{accent-color:#9700ec}
+@media(max-width:700px){.rivals-reading .reading-page{padding:18px}.rivals-reading .screen-header h1{font-size:17px}.rivals-reading .screen-header{padding-left:110px;padding-right:125px}.rivals-reading .preferences-grid{grid-template-columns:1fr}.rivals-reading .rivals-sound{width:100px!important}}

@@ -6,7 +6,7 @@ const variable = {
   chooseEnergy: ['uids'], chooseOwnEnergy: ['uids'], orderTriggers: ['ids'], orderDiscard: ['uids']
 };
 function playerTarget(action) {
-  return action.type === 'balanceTarget' || action.type === 'remainingChoose' && 'target' in action;
+  return action.type === 'balanceTarget' || action.type === 'rivalsChoose' && 'target' in action || action.type === 'remainingChoose' && 'target' in action;
 }
 function mapAction(action, seat) {
   const a = clone(action);
@@ -26,7 +26,7 @@ function command(engine, seat, input) {
   const result = Object.fromEntries(Object.entries(legal).filter(([k]) => !['options', 'required', ...extra].includes(k)));
   for (const k of extra) if (a[k] !== undefined) result[k] = clone(a[k]);
   // All additional choices are performed through the engine's own choice protocol.
-  if (['play', 'block', 'replenish', 'fighterSkill', 'startSkill', 'balanceDiscard'].includes(a.type)) result.selectEnergy = true;
+  if (['play', 'block', 'replenish', 'fighterSkill', 'startSkill', 'balanceDiscard', 'expansionMournerSkill', 'expansionPlacideSkill', 'expansionExcalium'].includes(a.type)) result.selectEnergy = true;
   return result;
 }
 function project(engine, seat, names) {
@@ -41,7 +41,7 @@ function project(engine, seat, names) {
     v.choice.index = s.choice.index;
     if (v.choice.cause?.payer !== undefined) v.choice.cause.payer = index(v.choice.cause.payer);
   }
-  const candidates = v.choice?.player === 0 ? (s.choice.uids || []).map(uid => engine.find(uid)).filter(Boolean).map(f => ({p:index(f.p), z:f.z, card:clone(f.card)})) : [];
+  const candidates = v.choice?.player === 0 ? (s.choice.uids || []).map(uid => engine.find(uid)).filter(Boolean).map(f => ({p:index(f.p), z:f.z, card:f.p!==seat&&f.z==='extra'&&!f.card.public&&f.card.publicUntil!==s.turn?{uid:f.card.uid,hidden:true,slot:f.card.slot,ready:f.card.ready}:clone(f.card)})) : [];
   v.players = [v.players[seat], v.players[1-seat]];
   v.players.forEach((side, local) => {
     const real = local === 0 ? seat : 1-seat;
@@ -49,15 +49,16 @@ function project(engine, seat, names) {
     // Synthetic backs have no correspondence to the opponent's real hand or either deck.
     side.deck = Array.from({length:side.deckCount}, (_,i) => ({uid:`back-deck-${local}-${i}`,hidden:true}));
     if (local === 1) side.hand = Array.from({length:side.handCount}, (_,i) => ({uid:`back-hand-${i}`,hidden:true}));
-    for (const zone of ['hand','stamina','extra','arena','discard','banished']) for (const card of side[zone]) if (card.owner !== undefined) card.owner = index(card.owner);
+    for (const zone of ['hand','stamina','extra','arena','discard','banished','revealedHand','deckContents']) for (const card of side[zone]||[]) if (card.owner !== undefined) card.owner = index(card.owner);
     side.fighter.owner = local;
   });
   for (const f of candidates) if (f.card.owner !== undefined) f.card.owner = index(f.card.owner);
   v.actions = v.actions.map(a => mapAction(a, seat));
   v.log = v.log.slice(-200).map(l => ({...l,text:l.text.replace(/Você|IA/g, name => names[name === 'Você' ? 0 : 1])}));
   const costs = {}, reasons = {};
-  for (const a of engine.legalActions(seat).filter(a => a.type === 'play')) costs[[a.uid,a.mode,a.x||0].join(':')] = engine.payment(seat,engine.find(a.uid).card,a.mode,a.x);
+  for (const a of engine.legalActions(seat).filter(a => a.type === 'play')) costs[[a.uid,a.mode,a.x||0,...(a.mode==='guardStrike'?[a.zone]:[])].join(':')] = engine.payment(seat,engine.find(a.uid).card,a.mode,a.x,a.zone);
   for (const c of [v.players[0].fighter,...v.players[0].hand,...v.players[0].extra,...v.players[0].stamina,...v.players[0].discard]) reasons[c.uid] = engine.explainCard(seat,c.uid);
-  return {view:v,candidates,costs,reasons,summary:engine.describeCombat(seat)};
+  const guardCosts=Object.fromEntries(engine.usable(seat).filter(c=>engine.def(c).type==='Guarda').map(c=>[c.uid,engine.guardCost(seat,c)]));
+  return {view:v,candidates,costs,reasons,guardCosts,summary:engine.describeCombat(seat)};
 }
 module.exports = {command,project,mapAction};

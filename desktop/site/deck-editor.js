@@ -30,6 +30,12 @@
   document.getElementById('editorCardText').textContent=c.searchText||'Consulte o texto na arte da carta.';
  };
  const originalRender=renderDeck;
+ const orderKey='overdrive-editor-type-order';let organized=false,orderMode='type';try{const saved=localStorage.getItem(orderKey);organized=['true','type','name'].includes(saved);orderMode=saved==='name'?'name':'type';}catch{}
+ const compareEntries=([a],[b])=>{const x=get(a),y=get(b),rank={Lutador:0,Golpe:1,Guarda:2,Truque:3};return (orderMode==='type'?(rank[x.type]??4)-(rank[y.type]??4):0)||x.name.localeCompare(y.name,'pt-BR',{sensitivity:'base',numeric:true});};
+ const orderTools=document.createElement('div');orderTools.className='deck-order-tools';
+ const order=document.createElement('select');order.id='deckOrder';order.setAttribute('aria-label','Organizar baralho por');order.innerHTML='<option value="type">Tipo: Golpe → Guarda → Truque</option><option value="name">Nome: A–Z</option>';order.value=orderMode;
+ const organize=document.createElement('button');organize.id='organizeDeck';organize.type='button';organize.className='rivals-hud-link';organize.textContent='Organizar';organize.title='Organizar principal e adicional pela opção selecionada';orderTools.append(order,organize);center.prepend(orderTools);
+ organize.onclick=()=>{organized=true;orderMode=order.value;try{localStorage.setItem(orderKey,orderMode);}catch{}for(const zone of ['main','extra'])deck[zone]=Object.fromEntries(Object.entries(deck[zone]).sort(compareEntries));changed();notify(orderMode==='type'?'Organizado: Golpe, Guarda e Truque, com nomes de A–Z.':'Baralho organizado por nome, de A–Z.');};
  const originalCards=renderCards;
  renderCards=function(){originalCards();document.querySelectorAll('#cardsGrid img').forEach(img=>img.loading='eager');};
  renderDeck=function(){
@@ -39,7 +45,7 @@
    section.querySelector('h3').innerHTML=`${zone==='fighter'?'Lutador':zone==='main'?'Baralho principal':'Baralho adicional'} <span class="board-count">${count(map)} / ${max}</span>`;
    section.querySelectorAll('.visual-deck-row').forEach(row=>row.remove());
    const grid=document.createElement('div');grid.className='board-cards';
-   for(const [id,q] of Object.entries(map))for(let i=0;i<q;i++){
+   for(const [id,q] of (organized?Object.entries(map).sort(compareEntries):Object.entries(map)))for(let i=0;i<q;i++){
     const c=get(id),tile=document.createElement('div');tile.className='board-card';
     tile.innerHTML=`<button class="board-art" data-detail="${id}" data-pointer-drag="${id}" data-drag-source="${zone}" aria-label="Ver ${esc(c.name)}">${cardHTML(c,true)}</button><div class="board-card-controls">${zone==='fighter'?'':`<button data-move="${id}" data-zone="${zone}" aria-label="Mover ${esc(c.name)} para ${zone==='main'?'adicional':'principal'}">⇄</button>`}<button data-remove="${id}" data-zone="${zone}" aria-label="Remover ${esc(c.name)}">−</button></div>`;
     grid.append(tile);

@@ -10,7 +10,7 @@ function createServer(options={}) {
     res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
     if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);res.end();return;}
     let file;
-    try{const url=new URL(req.url,'http://localhost');if(url.pathname==='/pvp-health'){res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');res.end(JSON.stringify({protocol:1,status:'ok'}));return;}const pathname=decodeURIComponent(url.pathname==='/'?'/home.html':url.pathname);if(pathname.includes('\0'))throw Error('Invalid path');file=path.resolve(root,'.'+pathname);}catch{res.writeHead(400);res.end();return;}
+    try{const url=new URL(req.url,'http://localhost');if(url.pathname==='/pvp-health'){res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');res.end(JSON.stringify({protocol:1,status:'ok',ruleset:require('../work/strict-engine.js').RULESET_ID}));return;}const pathname=decodeURIComponent(url.pathname==='/'?'/home.html':url.pathname);if(pathname.includes('\0'))throw Error('Invalid path');file=path.resolve(root,'.'+pathname);}catch{res.writeHead(400);res.end();return;}
     if(!file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
     fs.stat(file,(err,stat)=>{if(err||!stat.isFile()){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Cache-Control','no-cache');if(req.method==='HEAD'){res.end();return;}const stream=fs.createReadStream(file);stream.on('error',()=>res.destroy());stream.pipe(res);});
   });

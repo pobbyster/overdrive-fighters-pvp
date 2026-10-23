@@ -1,6 +1,6 @@
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.OverdriveCardScripts=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
-const SUPPORTED=Array.from({length:108},(_,i)=>i+1);
+const SUPPORTED=Array.from({length:176},(_,i)=>i+1).filter(n=>n!==137);
 // Registro revisado por carta; OCR não é executado como especificação.
 const scripts={
 2:{errata:'Durante o combate, pague apenas o custo normal. Ao final, com menos de 10 de vida, revele cartas conforme o dano recebido em todo o turno, coloque uma Guarda na Zona Extra e reembaralhe as restantes.',requiresAttack:true,onPlay:[{op:'watchFervor'}]},
@@ -10,7 +10,7 @@ const scripts={
 30:{hit:[{op:'balanceSearch',name:'Darsmagna',types:['Truque'],from:'deck'}],banishedFromDiscard:[{op:'heal',n:2}]},
 31:{onPlay:[{op:'balanceSearch',name:'Darsmagium',types:['Golpe'],from:'deck'}],balanceDiscard:'auraborea'},
 57:{errata:'Declare um tipo OU uma Zona de Golpe. Revele o topo; se acertar, coloque a carta na Zona Extra, disponível neste turno. Reembaralhe as cartas restantes.',finta:true,onPlay:[{op:'mapvta'}]},
-84:{comboZone:'Meio',focusThreshold:5,break:true,revideAttack:2,hit:[{op:'ownPower',n:-1,focus:5},{op:'inazami',focus:5}]},
+84:{focusThreshold:5,break:true,revideAttack:2,hit:[{op:'ownPower',n:-1,focus:5},{op:'inazami',focus:5}]},
 102:{onPlay:[{op:'ghostDance'}]},
 103:{finta:true,playDiscard:1,onPlay:[{op:'sinisterBloom'}]},
 24:{hit:[{op:'balanceToken',name:'Galacstrix Coruja',power:1,effect:'owl'}],tokenRevidePower:2},
@@ -28,12 +28,12 @@ const scripts={
   88:{desvio:true,onPlay:[{op:'nextFocusSocoBonus',n:2}]},
   3:{deflect:true,onBlock:[{op:'honored'}]},
   94:{revideAttack:1,hit:[{op:'searchFlow'}]},
-  82:{focusThreshold:4,comboZone:'Meio',break:true,revideAttack:1,hit:[{op:'ownPower',n:-1,focus:4},{op:'enemyNextAlternateCost',n:1,focus:4}]},
+  82:{focusThreshold:4,break:true,revideAttack:1,hit:[{op:'ownPower',n:-1,focus:4},{op:'rivalsNextTax',n:1,focus:4}]},
   76:{success:[{op:'zoneNextAttack',n:-1}]},
   45:{preparation:true,break:true,revideAttack:2,hit:[{op:'destroyExtraChoice',enemy:true,ownExtraCount:true,preparation:true}]},
   44:{preparation:true,break:true,revideAttack:3,onPlay:[{op:'sharvat',preparation:true}]},
   55:{revideImpetus:2,onPlay:[{op:'destroyExtraChoice',enemy:true,when:'otherImpetus'}]},
-  78:{onBlock:[{op:'spiritLuck'}]},
+  78:{onBlock:[{op:'rivalsSpiritHeal'}]},
   59:{onPlay:[{op:'discardForCutImpetus'}]},
   68:{break:true,impetus:3,revideImpetus:4,onBreak:[{op:'powerDamage'}]},
   69:{break:true,revideAttack:2,hit:[{op:'createDamageMark'}]},
@@ -49,7 +49,7 @@ const scripts={
   56:{requiresOwnBlocked:true,onPlay:[{op:'boostTarget',n:2}]},
 13:{requiresCopyBanish:true},
   5:{energyFree:true,requiresHighCostDiscard:true,errata:'Sem custo de energia. Exige duas ou mais cartas de custo impresso 3 ou maior no seu Descarte ou na Arena compartilhada. Próximo Golpe +2.',onPlay:[{op:'nextAttackBonus',n:2}]},
-  1:{attackBonus:(e,p)=>e.s.players[p].played.some(x=>['Soco','Chute'].includes(x.subtype))?2:0},
+  1:{attackBonus:(e,p)=>e.s.players[p].played.some(x=>x.subtype==='Avanço')?2:0},
   4:{hit:[{op:'discardOpponentIfNoExtra'}]},
   6:{blockBonus:(e,p)=>e.s.players[p].handBlock?2:0},
   9:{success:[{op:'createRedemption'}]},
@@ -86,12 +86,12 @@ const scripts={
   73:{focusThreshold:2,revideAttack:1,onPlay:[{op:'draw',n:1,focus:2}],hit:[{op:'draw',n:1,focus:2}]},
   74:{focusThreshold:3,revideAttack:1,hit:[{op:'ownPower',n:1,focus:3}]},
   80:{focusThreshold:3,revideAttack:1,hit:[{op:'ownPower',n:1,focus:3}]},
-  71:{focusThreshold:2,onPlay:[{op:'enemyNextAttackDown',n:1,focus:2}]},
+  71:{focusThreshold:2,onPlay:[{op:'heal',n:1,focus:2}]},
   81:{focusThreshold:3,revideAttack:1,hit:[{op:'enemyNextAttackDown',power:true,focus:3}]},
   85:{desvio:true,focusThreshold:4,onPlay:[{op:'drawFocus',focus:4}]},
-  83:{focusThreshold:4,comboZone:'Meio',break:true,revideAttack:1,hit:[{op:'ownPower',n:-1,focus:4},{op:'destroyEnemyExtra',focus:4}]},
+  83:{focusThreshold:4,break:true,revideAttack:1,hit:[{op:'ownPower',n:-1,focus:4},{op:'destroyEnemyExtra',focus:4}]},
   87:{requiresAttack:true,onPlay:[{op:'cancelIfGreaterPower'}]},
-  72:{},75:{},77:{extraOnly:true},79:{},
+  72:{},75:{},77:{success:[{op:'heal',n:2}]},79:{},
   89:{fighter:true,sequence:['Inferior','Superior','Superior'],startSkill:true},
   90:{},91:{},93:{},
   // Errata do autor: o fragmento "Ganhe." não tem efeito.
@@ -105,6 +105,42 @@ const scripts={
   108:{psychicCost:true,revideAttack:1,onPlay:[{op:'balancePsychic',reward:'lock'}]},
   105:{deflect:true,blockBonus:(e,p)=>e.s.players[p].played.length?1:0},106:{}
 };
+// Cartas 109–137: descritores declarativos; protocolos em first-drive-expansion.js.
+const expansionEffect=[{op:'expansionCard'}];
+Object.assign(scripts,{
+ 109:{onPlay:expansionEffect},
+ 110:{excaliumDiscard:true,revealBonus:1,revideAttack:1},
+ 111:{excaliumDiscard:true,revideAttack:2,onPlay:expansionEffect},
+ 112:{excaliumDiscard:true,revideAttack:2,onPlay:expansionEffect},
+ 113:{excaliumDiscard:true,revealedOnly:true,revideAttack:3},
+ 114:{fighter:true,sequence:['Superior','Meio','Meio'],fighterOverdrive:'arcturus'},
+ 115:{fluxo:1,onPlay:expansionEffect},116:{fluxo:1,onPlay:expansionEffect},
+ 117:{fluxo:2,onPlay:expansionEffect},118:{fluxo:2,onPlay:expansionEffect},
+ 119:{fluxo:3,onPlay:expansionEffect},
+ 120:{fighter:true,errata:'Vire Mourner: busque 1 Golpe com Fluxo do seu baralho para a mão, sem custo de energia. Enquanto virada, não pode repetir a habilidade nem realizar Overdrive. OVERDRIVE: até o final deste turno, suas Ações com Fluxo não podem ser bloqueadas.',sequence:['Inferior','Inferior','Inferior'],fighterOverdrive:'mourner'},
+ 121:{extraReturn:1,reload:1,onPlay:expansionEffect},122:{extraReturn:1,reload:1,onPlay:expansionEffect},
+ 123:{extraReturn:2,reload:2,reloadBonus:2},124:{extraReturn:3,reload:2,reloadBonus:2},
+ 125:{onPlay:expansionEffect},
+ 126:{fighter:true,sequence:['Superior','Meio','Superior'],fighterOverdrive:'placide'},
+ 127:{fury:1},128:{fury:2,onPlay:expansionEffect},129:{fury:2,onPlay:expansionEffect},
+ 130:{fury:2},131:{fury:3},
+ 132:{fighter:true,sequence:['Inferior','Meio','Meio'],fighterOverdrive:'rynhard'},
+ 133:{puppyCost:true},134:{puppyCost:true},135:{puppyCost:true},136:{puppyCost:true},
+ 138:{onPlay:expansionEffect},139:{onPlay:expansionEffect},140:{onPlay:expansionEffect},141:{onPlay:expansionEffect}
+});
+const frost=[{op:'rivalsCard'}];
+Object.assign(scripts,{
+ 142:{fighter:true,sequence:['Meio','Meio','Superior'],fighterOverdrive:'missbigotten'},
+ 143:{},144:{onPlay:frost},145:{onPlay:frost,hit:[{op:'rivalsReactivate',when:'revide'}]},
+ 146:{hit:frost},147:{break:true,onPlay:frost},148:{break:true,onPlay:[{op:'draw',n:2,when:'revide'}]},
+ 149:{},150:{deter:1,onBlock:[{op:'rivalsDeter'},...frost]},
+ 151:{deter:1,onBlock:[{op:'rivalsDeter'},...frost],success:[{op:'rivalsReactivate'}]},
+ 152:{deter:1,onBlock:[{op:'rivalsDeter'},{op:'draw',n:2}]},
+ 153:{deter:2,onBlock:[{op:'rivalsDeter'},...frost]},154:{deter:2,onBlock:[{op:'rivalsDeter'},...frost]},
+ 155:{onPlay:frost},156:{onPlay:frost},157:{onPlay:frost},158:{onPlay:frost},159:{onPlay:frost},160:{onPlay:frost},161:{onPlay:frost},
+ 162:{onPlay:[{op:'rivals05Card'}]},163:{onPlay:[{op:'rivals05Card'}]},164:{onPlay:[{op:'rivals05Card'}]},165:{onPlay:[{op:'rivals05Card'}]},166:{onPlay:[{op:'rivals05Card'}]},167:{onPlay:[{op:'rivals05Card'}]},168:{hit:[{op:'rivals05Card'}]},169:{}
+});
+Object.assign(scripts,{170:{fighter:true,sequence:['Superior','Superior','Superior'],fighterOverdrive:'duke'},171:{gemite:true},172:{gemite:true},173:{gemite:true},174:{gemite:true},175:{gemite:true},176:{onPlay:[{op:'rivals06Union'}]}});
 return {SUPPORTED,scripts};
 });
 

@@ -1,0 +1,103 @@
+/* Dimensionamento de uma tela. Este arquivo vem após todas as composições. */
+html:has(body.rivals-editor),html:has(body.rivals-arena:not(.rivals-playing)){height:100%;overflow:hidden}
+body.rivals-editor,body.rivals-arena:not(.rivals-playing){height:100svh;min-height:0!important;overflow:hidden!important}
+.rivals-fit-stage{width:var(--rivals-stage-width)!important;max-width:none!important;box-sizing:border-box}
+.rivals-arena:not(.rivals-playing)>main{height:var(--rivals-stage-height);padding:0 3vw!important;position:relative;margin:0!important;overflow:hidden}
+.rivals-arena:not(.rivals-playing) #setup{display:grid!important;grid-template-columns:minmax(245px,1fr) minmax(360px,1.5fr) minmax(270px,1.05fr)!important;align-items:center;gap:24px!important;width:100%;max-width:1900px;min-height:0!important;height:calc(var(--rivals-stage-height) - 90px)!important;padding:62px 12px 5px!important;margin:0 auto!important}
+.rivals-arena #setup>.rivals-left{order:initial!important;width:auto;max-width:none;gap:38px}
+.rivals-arena #setup>.rivals-center{order:initial!important;width:100%;height:100%;min-height:0;max-width:none;justify-content:center;padding-top:0}
+.rivals-arena #setup>.selection-settings{transform:none!important;order:initial!important;width:auto;max-width:none;padding:20px!important}
+.rivals-panel h2{font-size:clamp(23px,2vw,37px);margin-bottom:12px}.rivals-panel h2 small{font-size:18px;top:-24px}
+.rivals-panel label{margin:9px 0;gap:6px;font-size:12px}.rivals-panel :is(select,input:not([type=checkbox])){min-height:37px;padding:7px 10px;font-size:12px!important}
+.rivals-panel label.check{margin:14px 0 8px;background:none}.rivals-panel .rivals-hud-link{margin-top:9px}
+.rivals-arena .rivals-choose-title{position:relative!important;top:auto!important;width:83%;max-width:480px;max-height:90px;object-fit:contain;flex-shrink:0;z-index:4;margin-bottom:-15px}
+.rivals-arena .rivals-center .duel-poster{width:86%!important;height:calc(var(--rivals-stage-height) - 305px)!important;min-height:230px;max-height:650px;margin:0!important;padding:8px 8px 32px;gap:8px;transform:skew(-12deg);flex-shrink:1}
+.rivals-arena .rivals-center .poster-divider{width:115px!important;height:155px!important;top:52%}
+.rivals-arena .rivals-center #startGame{height:100px!important;max-height:14%;width:90%;margin-top:-12px;flex-shrink:0}
+.rivals-arena .rivals-center .selected-deck-caption{padding:0;font-size:11px;margin-top:0}
+.rivals-arena:not(.rivals-playing) .session-launch{position:absolute!important;bottom:12px;left:3%;width:94%;height:64px;max-width:none;display:flex!important;align-items:center;gap:12px;margin:0!important;padding:0!important}
+.rivals-launch #resumeMatch,.rivals-launch #resumeSeries{order:0;font-size:12px;max-width:210px;min-height:40px;box-shadow:inset -2px -4px 5px #0003}
+.rivals-launch #matchHistory{order:3;margin-left:auto}.rivals-launch #challengeLibrary{order:4}
+.rivals-launch .rivals-art-button{width:155px;height:58px}.rivals-launch #saveHint{display:none}
+.rivals-pvp:not(.rivals-playing) #setup{grid-template-columns:minmax(400px,1fr) minmax(390px,.95fr)!important;height:var(--rivals-stage-height)!important;max-width:1250px;padding-top:60px!important;padding-bottom:45px!important;gap:6vw!important}
+.rivals-pvp #setup #pvpLobby{transform:none!important;order:initial!important;width:100%;max-width:none;grid-column:2;grid-row:1;margin:0!important;padding:24px!important}
+.rivals-pvp #setup .rivals-left{order:initial!important;gap:20px;align-items:center}
+.rivals-pvp .rivals-pvp-logo{width:95%;max-height:34vh;object-fit:contain}
+.rivals-pvp .rivals-left .selected-deck-caption{display:flex;flex-direction:column;gap:5px;background:#fff;border:1px solid #fff;border-radius:14px;padding:12px 22px;color:#6d00c7;box-shadow:inset -2px -3px 5px #0002,0 6px 15px #50005b25;min-width:70%;margin:0;text-align:center}
+.rivals-pvp .rivals-left .selected-deck-caption span{display:block!important;color:#a14790;font-size:10px;letter-spacing:1px}.rivals-pvp .selected-deck-caption strong{font-size:15px;color:#7400d1}
+.rivals-pvp #pvpLobby h2{font-size:24px}.rivals-pvp #pvpLobby p{font-size:11px}.rivals-pvp #pvpLobby label{margin:8px 0}
+.rivals-pvp .session-launch{display:none!important}
+/* Editor: o filtro permanece fixo; só o catálogo de cartas rola. */
+.rivals-editor>header.rivals-fit-stage{height:80px!important;min-height:80px!important;padding:4px 24px!important;flex-wrap:nowrap!important;align-items:center!important}
+.rivals-editor header h1{width:220px;min-width:220px!important;margin:0 0 0 65px;text-align:left}
+.rivals-editor header h1 img{display:block;width:220px;height:75px;object-fit:contain;border-radius:7px}
+.rivals-editor header>.rivals-menu-hud{position:absolute;top:20px;left:14px;width:76px;height:32px;padding:0!important;display:block;background:none;box-shadow:none;border:0}
+.rivals-menu-hud img{width:100%;height:100%;object-fit:contain}
+.rivals-editor .editor-tools{margin:0 145px 0 auto!important;padding:0;width:auto!important;gap:7px;flex-wrap:nowrap!important}
+.rivals-editor .editor-tools button{width:95px;height:34px;flex:0 0 95px}.rivals-editor .editor-tools #saveNewDeck{flex-basis:135px}
+.rivals-editor>main{height:var(--rivals-stage-height)!important;padding:8px 24px 14px!important;overflow:hidden}
+.rivals-editor #catalogView{height:100%;min-height:0;overflow:hidden}
+.rivals-editor #workspace{display:grid!important;grid-template-columns:minmax(220px,21%) minmax(390px,1fr) minmax(285px,25%)!important;gap:22px!important;height:100%;min-height:0;align-items:stretch}
+.rivals-editor #workspace>#deckPanel{display:flex!important;flex-direction:column;position:static!important;height:100%;max-height:none!important;overflow:hidden;padding:10px;background:#ffffff61;gap:5px;min-height:0}
+.rivals-editor .editor-preview{flex:0 1 auto;min-height:0}.rivals-editor .editor-preview img{max-height:calc(var(--rivals-stage-height) * .44)!important;margin-bottom:6px}
+.rivals-editor .editor-preview h2{font-size:15px;padding:8px 10px}.rivals-editor .editor-preview #editorCardMeta{padding:4px 10px;font-size:10px}
+.rivals-editor .editor-preview #editorCardText{font-size:11px;padding:7px 10px;min-height:45px;max-height:65px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.rivals-editor #deckPanel>h2{font-size:13px;margin:4px 0 0}.rivals-editor #deckName{min-height:32px;height:32px;font-size:12px;padding:6px 9px}
+.rivals-editor #deckPanel>.actions{display:flex;gap:4px;flex-wrap:wrap;margin:3px 0}
+.rivals-editor #deckPanel>.actions :is(button,.file-action){font-size:10px;padding:6px 8px;min-height:28px}
+.rivals-editor #saveStatus{font-size:10px;line-height:1.2;margin:0;max-height:25px}.rivals-editor #deckPanel>.counts{display:none!important}
+.rivals-insights{display:flex;gap:6px;margin-top:auto;flex-shrink:0}
+.rivals-hud-link{padding:8px 10px;border:0;border-radius:10px;background:#fff;color:#7900cf;font-size:11px;font-weight:700;box-shadow:inset -2px -3px 5px #0002;cursor:pointer}
+.rivals-editor .deck-board{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden}
+.rivals-editor .mouse-shortcuts{font-size:9px;line-height:12px;margin:0;height:14px;flex-shrink:0}
+.rivals-editor #deckContents{display:grid;grid-template-rows:minmax(100px,.75fr) minmax(220px,2.5fr) minmax(125px,1fr);height:100%;min-height:0;gap:25px;padding-top:25px}
+.rivals-editor .deck-section{height:auto!important;min-height:0!important;margin:0!important;padding:10px;background:#fff;box-shadow:inset -2px -3px 8px #0002,0 6px 15px #70005f30;border-radius:15px;display:flex;flex-direction:column;min-width:0}
+.rivals-editor .deck-section h3{font-size:15px;top:-23px}.rivals-editor .deck-section .board-count{font-size:11px}
+.rivals-editor .deck-section .board-cards{min-height:0;gap:4px;grid-template-columns:repeat(10,minmax(0,1fr))!important;overflow:auto!important;max-height:100%!important;align-content:start;flex:1;padding:0!important}
+.rivals-editor .board-card{min-width:0;align-self:start}.rivals-editor .board-card img{width:100%;display:block}
+.rivals-editor .deck-section[data-drop-zone=fighter] .board-cards{display:block;overflow:hidden!important}
+.rivals-editor .deck-section[data-drop-zone=fighter] .board-card{width:auto;height:100%;aspect-ratio:751/1048;max-width:100%}
+.rivals-editor .deck-section[data-drop-zone=fighter] .board-art{height:100%;display:block}.rivals-editor .deck-section[data-drop-zone=fighter] .card{height:100%;width:auto}
+.rivals-editor .deck-section[data-drop-zone=fighter] img{height:100%;width:auto}
+.rivals-editor .deck-board-help{font-size:9px;line-height:12px;height:13px;flex-shrink:0;margin:5px 0 0}
+.rivals-editor #workspace>.desktop-catalog{position:static!important;display:flex;flex-direction:column;height:100%;max-height:none!important;min-height:0;overflow:hidden!important;padding:10px;background:#ffffff61;grid-column:auto}
+.rivals-editor .desktop-filters{flex:0 0 auto;margin-bottom:5px;padding:10px}
+.rivals-editor .toolbar{gap:5px}.rivals-editor .toolbar :is(input,select){min-height:29px;height:29px;font-size:10px;padding:5px 7px}
+.rivals-editor .energy-buttons{margin:5px 0}.rivals-editor .energy-buttons button{padding:4px 6px;font-size:9px}.rivals-editor .energy-label{font-size:10px}
+.rivals-editor .catalog-options{margin:3px 0;font-size:10px}.rivals-editor #results{font-size:10px;margin:3px 0;flex-shrink:0}
+.rivals-editor #cardsGrid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px;min-height:0;overflow:auto;flex:1;align-content:start;padding-right:5px}
+.rivals-editor .pagination{flex:0 0 auto;font-size:10px;margin:7px 0 0;align-items:center}.rivals-editor .pagination button{font-size:10px;padding:5px}
+.rivals-editor>footer{display:none!important}
+/* HUDs e diálogos comuns do editor, Match, histórico e demais escolhas. */
+.rivals-design dialog{background:#fff!important;color:#44204e!important;border:0!important;border-radius:20px!important;box-shadow:inset -3px -4px 8px #0002,0 16px 70px #45005265;max-width:92vw;max-height:90svh;padding:24px}
+.rivals-design dialog::backdrop{background:#26003480;backdrop-filter:blur(7px)}
+.rivals-design dialog :is(h2,h3,h4,summary){color:#7800c5!important}.rivals-design dialog :is(p,li,small,span,label){color:#5e3c64}
+.rivals-design dialog :is(button,.file-action){border:0;border-radius:10px;background:#eee5f4;color:#7200b8;padding:9px 13px;font-weight:700}
+.rivals-design dialog button.primary{background:linear-gradient(110deg,#ff541a,#9100f6);color:#fff}
+.rivals-design dialog .panel,.rivals-design dialog .side-grids>section,.rivals-design dialog .saved-deck{background:#f7f2fa!important;border:1px solid #eadbed!important;border-radius:13px;color:#432045}
+.rivals-dialog-heading{display:flex;justify-content:space-between;align-items:center;gap:25px;margin-bottom:16px}.rivals-dialog-heading h2{margin:0;font-size:25px}
+.rivals-info-dialog{width:min(780px,92vw)}.rivals-info-dialog>details{background:#fff!important;color:#56315c!important;border:0;padding:0;margin:0}.rivals-info-dialog .cost-curve{min-height:200px}
+.rivals-info-dialog .analysis-bar b{color:#7800c5}.rivals-info-dialog .curve-tabs button[aria-pressed=true]{background:#8a00db;color:white}
+.rivals-info-dialog>details>summary{display:none}
+.rivals-design #sideDeckDialog{width:min(1050px,94vw);height:min(790px,90svh);overflow:hidden;display:grid;grid-template-rows:auto auto auto auto minmax(0,1fr) auto auto;gap:8px}
+.rivals-design #sideDeckDialog:not([open]){display:none}
+.rivals-design #sideDeckDialog>h2,.rivals-design #sideDeckDialog>p{margin:0;line-height:1.4}
+.rivals-design #sideDeckDialog>.close{position:absolute;right:18px;top:16px}
+.rivals-design #sideDeckDialog .side-grids{height:100%;min-height:0;overflow:hidden}.rivals-design .side-grids>section{display:flex;flex-direction:column;min-height:0;padding:12px}
+.rivals-design #sideMain,.rivals-design #sideExtra{overflow:auto;min-height:0;flex:1;max-height:none}
+.rivals-design .side-card{background:#fff!important;border:1px solid #ddc4eb!important}.rivals-design .side-card.selected{outline:3px solid #a000ef}
+@media(max-height:760px){.rivals-panel h2{font-size:22px;margin-bottom:9px}.rivals-panel label{margin:6px 0;font-size:11px}.rivals-panel :is(select,input:not([type=checkbox])){min-height:31px;height:31px}.rivals-panel label.check{margin:8px 0}.rivals-panel p{font-size:10px!important}.rivals-arena #setup>.selection-settings{padding:15px!important}.rivals-arena .rivals-left{gap:31px}.rivals-editor .editor-preview #editorCardText{max-height:45px;min-height:30px;-webkit-line-clamp:2}.rivals-editor .editor-preview img{max-height:calc(var(--rivals-stage-height) * .40)!important}}
+.rivals-editor .deck-board{position:relative}
+.rivals-editor .deck-order-tools{position:absolute;right:0;top:0;z-index:2;display:flex;gap:5px;align-items:center}
+.rivals-editor #organizeDeck,.rivals-editor #deckOrder{height:22px;min-height:0;padding:3px 8px;font-size:10px;border:0;border-radius:8px;color:#7900cf;background:#fff;box-shadow:inset -1px -2px 4px #0002}
+.rivals-editor .mouse-shortcuts{padding-right:295px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* A impressão precisa fluir por todas as folhas, fora do quadro de uma tela. */
+@media print{
+ html:has(body.rivals-editor),body.rivals-editor{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;background:white!important;container-type:normal!important}
+ body.rivals-editor{animation:none!important;filter:none!important;transform:none!important;zoom:1!important}
+ body.rivals-editor>#printArea{display:block!important;position:static!important;width:189mm!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0 auto!important;padding:0!important;overflow:visible!important;zoom:1!important;transform:none!important}
+ body.rivals-editor .print-sheet{display:grid!important;width:189mm!important;height:264mm!important;grid-template-columns:repeat(3,63mm)!important;grid-template-rows:repeat(3,88mm)!important;gap:0!important;break-inside:avoid;break-after:page;page-break-after:always;overflow:visible!important}
+ body.rivals-editor .print-sheet:last-child{break-after:auto;page-break-after:auto}
+ body.rivals-editor .print-sheet .card.original{width:63mm!important;height:88mm!important;padding:0!important;margin:0!important;break-inside:avoid}
+ body.rivals-editor .print-sheet .card.original img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important}
+}

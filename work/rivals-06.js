@@ -1,0 +1,61 @@
+/* Rivais 0.6: Duke and Gemite. Shared deterministic rules; no browser dependencies. */
+(function(r,f){if(typeof module==='object'&&module.exports)module.exports=f();else r.OverdriveRivals06=f();})(typeof globalThis!=='undefined'?globalThis:this,function(){
+ 'use strict';const zones=['Inferior','Meio','Superior'],clone=x=>JSON.parse(JSON.stringify(x)),other=p=>1-p;
+ function definition(card,base,s){if(!base||!card||typeof card!=='object')return base;if(card.r06Attack)return {...base,type:'Golpe',power:card.r06Attack.power,zone:card.r06Attack.zone,subtype:''};if(s&&base.type==='Guarda'&&s.players[card.owner]?.r06DoubleGuardTurn===s.turn)return {...base,block:base.block*(s.players[card.owner].r06GuardMultiplier||2)};return base;}
+ function install(Engine,scripts){const proto=Engine.prototype,base={};for(const key of ['def','start','fighterStarter','newTurn','play','payment','activatePaid','legalActions','apply','cleanup','move','damage','runOps','view','block'])base[key]=proto[key];
+ const isDuke=(e,p)=>base.def.call(e,e.s.players[p].fighter).number===170,gemite=d=>d?.name.startsWith('Gemite '),action=d=>['Golpe','Guarda','Truque'].includes(d?.type);
+ const choose=(e,p,kind,uids,extra={})=>{e.s.choice={kind:'rivals:06'+kind,player:p,uids,...extra};e.s.priority=p;};
+ const effect=(e,p,op,source,label='Gemite')=>e.push({kind:'effect',p,ops:[op],context:{p,source},label});
+ const extras=e=>e.s.players.flatMap(side=>side.extra.map(c=>c.uid));
+ function returnExtra(e,uid){const f=e.find(uid);if(f?.z!=='extra')throw Error('Zona Extra indisponível.');if(f.card.token)e.destroyToken(uid,'return');else e.expansionReturn(uid);}
+ function nextOpening(e){const queue=e.s.r06Opening;while(queue?.length){const p=queue[0],uids=e.s.players[p].deck.filter(c=>e.def(c).type==='Guarda').map(c=>c.uid);if(uids.length){choose(e,p,'Start',uids);e.s.phase='setup';return;}e.log('Duke: não há Guarda no baralho para a preparação inicial.','Duke');dealOpening(e,p);queue.shift();}e.s.r06Opening=null;e.s.phase='mulligan';e.s.priority=0;}
+ function dealOpening(e,p){const side=e.s.players[p],n={standard:2,advanced:3,deathmatch:7}[e.s.mode];e.shuffle(side.deck);side.stamina=side.deck.splice(0,n);side.stamina.forEach(c=>{c.public=true;c.active=true;});side.hand=side.deck.splice(0,4);}
+ proto.def=function(c){return definition(c,base.def.call(this,c),this.s);};
+ proto.fighterStarter=function(n){if(n!==170)return base.fighterStarter.call(this,n);const main={};for(const num of [171,172,173,174,175,176,143,144,145,146])main['OF-RVAS-'+String(num-141).padStart(3,'0')]=3;for(const num of [1,3,6,9,10])main['OF-C1-'+String(num).padStart(3,'0')]=2;return {name:'Duke — Gemite',fighter:'OF-RVAS-029',main,extra:{}};};
+ proto.start=function(...args){base.start.apply(this,args);const pending=[];for(let p=0;p<2;p++)if(isDuke(this,p)){const side=this.s.players[p];side.deck=[...side.stamina,...side.hand,...side.deck];side.stamina=[];side.hand=[];for(const c of side.deck)c.public=false;pending.push(p);}if(pending.length){this.s.r06Opening=pending;nextOpening(this);}return this.view(0);};
+ proto.newTurn=function(){base.newTurn.call(this);for(const side of this.s.players){side.r06DoubleGuardTurn=0;side.r06GuardMultiplier=1;side.r06Prevent=0;side.r06PreventTurn=0;}};
+ proto.move=function(uid,to){const result=base.move.call(this,uid,to);if(to!=='arena')delete result.r06Attack;if(to!=='extra')delete result.r06Fixed;return result;};
+ proto.adjustDamage=function(p,n){const side=this.s.players[p],available=side.r06PreventTurn===this.s.turn?side.r06Prevent||0:0,prevented=Math.min(Math.max(0,n),available);if(prevented){side.r06Prevent-=prevented;this.log('Gemite Topázio preveniu '+prevented+' de dano.','Fixar');}return Math.max(0,n-prevented);};
+ proto.previewDamage=function(p,basic,impetus){let n=this.s.players[p].r06PreventTurn===this.s.turn?this.s.players[p].r06Prevent||0:0;const a=Math.max(0,basic-n);n=Math.max(0,n-basic);const b=Math.max(0,impetus-n);return {basic:a,impetus:b,total:a+b};};
+ proto.damage=function(p,n,source=other(p),prepared=false){return base.damage.call(this,p,prepared?n:this.adjustDamage(p,n),source);};
+ proto.payment=function(p,card,mode='normal',x=0,zone){if(mode!=='guardStrike')return base.payment.call(this,p,card,mode,x,zone);const d=base.def.call(this,card),side=this.s.players[p];if(!gemite(d)||d.type!=='Guarda'||!zones.includes(zone))throw Error('Escolha uma Guarda Gemite e uma Zona válida.');return {own:Math.max(0,d.cost-(side.costDown||0)+this.zoneModifier(zone,'cost')+(side.r05NextTax||0)+(side.rivalsNextAttackTax||0)),opp:0};};
+ proto.play=function(p,a,revide){if(a.mode!=='guardStrike')return base.play.call(this,p,a,revide);const f=this.find(a.uid),d=f&&base.def.call(this,f.card);if(f?.p!==p||f.z!=='extra'||f.card.ready>this.s.turn||!gemite(d)||d.type!=='Guarda'||!zones.includes(a.zone)||!revide&&!this.canIndependent(p))throw Error('Gemite exige uma Guarda disponível da sua Zona Extra e turno próprio ou Revide.');if(a.type!=='play'||a.copyUid||a.free||a.x)throw Error('Jogada Gemite inválida.');this.beginPayment(p,{...a,revide},this.payment(p,f.card,a.mode,0,a.zone));};
+ proto.activatePaid=function(p,a){if(a.type==='play'&&a.mode==='guardStrike'){const card=this.find(a.uid)?.card;if(!card)throw Error('Guarda Gemite ausente.');card.r06Attack={zone:a.zone,power:this.def(card).block};}return base.activatePaid.call(this,p,a);};
+ proto.block=function(p,a){if((a.uids||[]).some(uid=>{const f=this.find(uid);return f?.z==='extra'&&f.card.r06Fixed;}))throw Error('Gemite com Fixar permanece revelada na Zona Extra e não pode bloquear novamente.');return base.block.call(this,p,a);};
+ proto.cleanup=function(b,orders){const fixed=b.cancelled?[]:b.blocks.filter(g=>!g.cancelled).map(g=>({g,f:this.find(g.uid)})).filter(({f})=>f&&f.z==='arena'&&scripts[base.def.call(this,f.card).number]?.gemite);base.cleanup.call(this,b,orders);for(const {g,f}of fixed){if(this.find(g.uid)?.z!=='arena')continue;const side=this.s.players[f.p];if(side.extra.length<4){const slot=g.origin==='extra'&&!side.extra.some(c=>c.slot===g.slot)?g.slot:undefined;const card=this.putEffectExtra(f.p,g.uid,false,slot);card.ready=this.s.turn;card.public=true;card.r06Fixed=true;effect(this,f.p,{op:'rivals06Fixar',number:base.def.call(this,card).number},card.uid,this.def(card).name+' — Fixar');}else this.move(g.uid,'discard');}};
+ proto.runOps=function(ops,ctx){for(const op of ops){if(this.s.winner!==null)return;if(op.when==='revide'&&!ctx.revide||op.when==='flow'&&!ctx.flow)continue;const p=ctx.p,side=this.s.players[p],source=ctx.source;
+  if(op.op==='rivals06Fixar'){const n=op.number;
+   if(n===171)this.draw(p,1,false);
+   else if(n===172)this.damage(other(p),3,p);
+   else if(n===173){const uids=side.deck.filter(c=>gemite(this.def(c))&&this.def(c).type==='Guarda').map(c=>c.uid);if(uids.length)choose(this,p,'Search',uids,{source});}
+   else if(n===174){side.r06Prevent=(side.r06PreventTurn===this.s.turn?side.r06Prevent||0:0)+2;side.r06PreventTurn=this.s.turn;}
+   else if(n===175&&extras(this).length)choose(this,p,'Extras',extras(this),{source,selected:[],max:2,optional:true});
+  }else if(op.op==='rivals06Union'){
+   const cards=[...side.extra,...side.discard].filter(c=>gemite(this.def(c))),count=cards.length;for(const c of cards)this.expansionReturn(c.uid,true);this.log('Gemite União retornou '+count+' carta(s) para o fundo do baralho.','Gemite');
+   if(count>=5)effect(this,p,{op:'rivals06Target'},source,'Gemite União — inativar energias');if(count>=3)effect(this,p,{op:'draw',n:2},source,'Gemite União — comprar 2');if(count>=1)effect(this,p,{op:'rivals06Return'},source,'Gemite União — retornar Zonas Extras');
+  }else if(op.op==='rivals06Return'){const uids=extras(this);if(uids.length)choose(this,p,'Extras',uids,{source,selected:[],max:Math.min(2,uids.length),optional:false});}
+  else if(op.op==='rivals06Target')choose(this,p,'Target',[],{source});
+  else base.runOps.call(this,[op],ctx);
+ }};
+ proto.legalActions=function(p){const s=this.s;if(!s||s.winner!==null)return [];const side=s.players[p],c=s.choice;
+  if(c?.kind.startsWith('rivals:06')){if(c.player!==p)return [];const kind=c.kind.slice(9);if(kind==='Target')return [0,1].map(target=>({type:'rivalsChoose',target}));const actions=(c.uids||[]).map(uid=>({type:'rivalsChoose',uid}));if(kind==='Extras'&&c.optional)actions.push({type:'rivalsChoose',option:'done'});return actions;}
+  const actions=base.legalActions.call(this,p).filter(a=>!(isDuke(this,p)&&['overdrive','fighterOverdrive'].includes(a.type)));for(const a of actions)if(a.type==='block'&&a.options)a.options=a.options.filter(uid=>!this.find(uid)?.card.r06Fixed);if(s.phase==='setup')return [];
+  if(s.priority!==p)return actions;const revide=c?.kind==='revide';if((!c&&this.canIndependent(p))||revide)for(const card of side.extra.filter(c=>c.ready<=s.turn&&scripts[base.def.call(this,c).number]?.gemite)){for(const zone of zones){const pay=this.payment(p,card,'guardStrike',0,zone);if(this.energies(p,true).length>=pay.own)actions.push({type:'play',uid:card.uid,mode:'guardStrike',x:0,zone});}}
+  if(isDuke(this,p)&&!c&&['preparation','combat'].includes(s.phase)&&(p!==s.active||s.preparedTurn)&&side.od===3&&!side.overdriveLocked&&!side.fighterTapped)actions.push({type:'rivalsOverdrive',uid:side.fighter.uid});return actions;
+ };
+ proto.apply=function(p,a){const c=this.s.choice,side=this.s.players[p];
+  if(c?.kind.startsWith('rivals:06')){if(!this.legalActions(p).some(x=>Object.keys(x).every(k=>x[k]===a[k])&&Object.keys(a).every(k=>k in x)))throw Error('Escolha inválida para Gemite.');const kind=c.kind.slice(9);this.s.choice=null;
+   if(kind==='Start'){const card=this.putEffectExtra(p,a.uid,true);card.ready=1;this.log('Duke começa com uma Guarda preparada na Zona Extra.','Duke');dealOpening(this,p);this.s.r06Opening.shift();nextOpening(this);return;}
+   if(kind==='Search'){const f=this.find(a.uid);if(f?.p!==p||f.z!=='deck')throw Error('Guarda indisponível para busca.');this.move(a.uid,'hand');this.shuffle(side.deck);}
+   else if(kind==='Extras'){if(a.option!=='done'){if(this.find(a.uid)?.z!=='extra')throw Error('Zona Extra indisponível.');c.selected.push(a.uid);c.uids=c.uids.filter(uid=>uid!==a.uid);if(c.selected.length<c.max&&c.uids.length)this.s.choice=c;}if(!this.s.choice){const owners=new Set();for(const uid of c.selected){owners.add(this.find(uid).p);returnExtra(this,uid);}for(const owner of owners)this.shuffle(this.s.players[owner].deck);}}
+   else if(kind==='Target'){const uids=this.energies(a.target,true).map(c=>c.uid);if(uids.length)choose(this,p,'Energy',uids,{source:c.source,target:a.target,selected:[],max:Math.min(2,uids.length)});}
+   else if(kind==='Energy'){const f=this.find(a.uid);if(f?.p!==c.target||f.z!=='stamina'||!f.card.active)throw Error('Selecione uma energia ativa.');f.card.active=false;c.selected.push(a.uid);c.uids=c.uids.filter(uid=>uid!==a.uid);if(c.selected.length<c.max)this.s.choice=c;}
+   this.s.priority=this.s.choice?.player??this.s.active;this.s.passes=0;this.rivalsRefreshAttacks();return;
+  }
+  if(a.type==='rivalsOverdrive'&&isDuke(this,p)){if(!this.legalActions(p).some(x=>x.type===a.type&&x.uid===a.uid))throw Error('Overdrive de Duke indisponível.');side.od=0;const previous=side.r06DoubleGuardTurn===this.s.turn?side.r06GuardMultiplier||2:1;side.r06DoubleGuardTurn=this.s.turn;side.r06GuardMultiplier=previous*2;for(const b of this.s.combats)if(!b.finished)for(const g of b.blocks){const f=this.find(g.uid);if(f?.p===p&&base.def.call(this,f.card).type==='Guarda'&&!g.cancelled)g.value+=base.def.call(this,f.card).block*previous;}this.log('Duke dobrou o bloqueio de suas Guardas até o final deste turno.','Overdrive');this.s.priority=other(p);this.s.passes=0;return;}
+  return base.apply.call(this,p,a);
+ };
+ proto.view=function(p){const v=base.view.call(this,p);if(v)for(let i=0;i<2;i++){const side=this.s.players[i];v.players[i].r06DoubleGuardTurn=side.r06DoubleGuardTurn||0;v.players[i].r06GuardMultiplier=side.r06GuardMultiplier||1;v.players[i].r06Prevent=side.r06PreventTurn===this.s.turn?side.r06Prevent||0:0;}return v;};
+ }
+ return {install,definition};
+});

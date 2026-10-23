@@ -1,0 +1,43 @@
+/* Composição integral do autor; as coordenadas seguem o original 2561×1441. */
+body.rivals-arena-template:not(.rivals-playing){background:#8a00e5 url('assets/rivals/background-menu.webp') center/cover fixed!important}
+body.rivals-arena-template:not(.rivals-playing)>main.rivals-fit-stage{position:fixed!important;left:var(--template-left);top:var(--template-top);width:var(--template-width)!important;height:var(--template-height)!important;zoom:1!important;margin:0!important;padding:0!important;container-type:inline-size;background:url('assets/rivals/arena-ia-template.webp') center/100% 100% no-repeat}
+.rivals-arena-template:not(.rivals-playing) #setup{position:relative;display:block!important;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important}
+.rivals-arena-template:not(.rivals-playing) #setup>.rivals-left,.rivals-arena-template:not(.rivals-playing) #setup>.rivals-center{display:contents!important}
+.rivals-arena-template:not(.rivals-playing) .rivals-choose-title{display:none}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel{position:absolute!important;box-sizing:border-box;transform:none!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;min-height:0;overflow:visible}
+.rivals-arena-template:not(.rivals-playing) .rivals-left>.rivals-panel:first-child{left:8.5%;top:29.3%;width:21.5%;height:24%;transform:rotate(-4deg)!important}
+.rivals-arena-template:not(.rivals-playing) .rivals-left>.rivals-panel:nth-child(2){left:8.8%;top:61%;width:21.2%;height:12.5%;transform:rotate(-4deg)!important}
+.rivals-arena-template:not(.rivals-playing) #setup>.selection-settings{left:70.3%;top:26.5%;width:22.2%;height:49.5%;padding:0!important}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel h2{font-size:1.8cqw;margin:0 0 .5cqw;line-height:1.1}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel h2 small{position:static;display:block;font-size:.8cqw;color:#f05023;line-height:1.4}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel label{font-size:.75cqw!important;margin:.6cqw 0;gap:.3cqw;line-height:1.3}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel :is(select,input:not([type=checkbox])){height:2.2cqw!important;min-height:0!important;border-radius:.65cqw;padding:.35cqw .5cqw!important;font-size:.72cqw!important}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel p{font-size:.62cqw!important;line-height:1.4;margin:.4cqw 0}
+.rivals-arena-template:not(.rivals-playing) .rivals-deck-links{gap:.3cqw;margin-top:.4cqw}
+.rivals-arena-template:not(.rivals-playing) .rivals-deck-links :is(a,button){font-size:.73cqw!important}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel .rivals-hud-link{font-size:.65cqw!important;padding:.35cqw .6cqw;margin-top:.35cqw;border-radius:.5cqw}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel label.check{margin:.7cqw 0;gap:.5cqw;font-size:.7cqw!important}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel input[type=checkbox]{height:1.1cqw;width:1.1cqw;min-width:0;min-height:0}
+.rivals-arena-template:not(.rivals-playing) .selected-deck-caption{font-size:.62cqw!important;color:#7b3184!important;margin:.4cqw 0;padding:0;text-align:left;width:100%}
+.rivals-arena-template:not(.rivals-playing) .selected-deck-caption strong{font-size:.7cqw;color:#7b3184}
+.rivals-arena-template:not(.rivals-playing) .rivals-center .duel-poster{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;transform:none!important;background:none!important;box-shadow:none!important;padding:0!important;margin:0!important;pointer-events:none}
+.rivals-arena-template:not(.rivals-playing) .rivals-center .poster-half{position:absolute;display:block;flex:none;background:none;overflow:visible;transform:none;clip-path:none;inset:auto}
+.rivals-arena-template:not(.rivals-playing) .rivals-center .poster-own{left:31.1%;top:16.84%;width:22.56%;height:62.4%}
+.rivals-arena-template:not(.rivals-playing) .rivals-center .poster-enemy{left:47.17%;top:14.4%;width:22.7%;height:63.8%}
+.rivals-arena-template:not(.rivals-playing) .rivals-center .poster-half img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;transform:none!important;object-fit:contain!important;max-width:none;filter:none}
+.rivals-arena-template:not(.rivals-playing) .rivals-center .poster-divider{position:absolute;left:45.35%;top:36.4%;width:9.4%!important;height:21.6%!important;transform:none!important;z-index:4}
+.rivals-arena-template:not(.rivals-playing) .rivals-center #startGame{position:absolute;left:34.4%;top:80.3%;width:22.6%;height:16.2%!important;max-height:none!important;margin:0!important;padding:0!important;background:none!important;border:0!important;z-index:6;pointer-events:auto}
+.rivals-arena-template:not(.rivals-playing) #startGame img{visibility:hidden}
+.rivals-arena-template:not(.rivals-playing) #startGame:hover{filter:none;transform:none;box-shadow:0 0 25px #ffba2644!important;border-radius:1cqw!important}
+.rivals-arena-template:not(.rivals-playing) .session-launch{bottom:1%!important;left:2%!important;width:96%!important;height:5.5%!important;gap:.65cqw!important;flex-wrap:nowrap}
+.rivals-arena-template:not(.rivals-playing) .rivals-launch .rivals-art-button{width:10cqw;height:3.7cqw}
+.rivals-arena-template:not(.rivals-playing) .rivals-launch :is(#resumeMatch,#resumeSeries){font-size:.72cqw;min-height:0;max-width:14cqw;padding:.6cqw .8cqw}
+/* Mantém os textos inteiramente sobre o papel branco do modelo. */
+.rivals-arena-template:not(.rivals-playing) .rivals-panel h2{font-size:1.55cqw;margin-bottom:.3cqw}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel h2 small{font-size:.7cqw}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel label{margin:.45cqw 0}
+.rivals-arena-template:not(.rivals-playing) .rivals-deck-links{gap:.2cqw;margin-top:.2cqw}
+.rivals-arena-template:not(.rivals-playing) .selected-deck-caption{display:block!important;border:0!important;line-height:1.2;margin:.2cqw 0!important}
+.rivals-arena-template:not(.rivals-playing) .selected-deck-caption span{display:none!important}
+.rivals-arena-template:not(.rivals-playing) .selected-deck-caption strong{font-size:.6cqw}
+.rivals-arena-template:not(.rivals-playing) .rivals-panel p{margin:.2cqw 0}

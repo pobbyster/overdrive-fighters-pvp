@@ -3,8 +3,9 @@
  const copy=x=>JSON.parse(JSON.stringify(x));
  Engine.fromReplay=function(catalog,replay,limit){
   if(!replay||replay.format!=='overdrive-replay/1'||!replay.initial||!Array.isArray(replay.commands)||replay.commands.length>10000)throw Error('Formato de replay inválido.');
+  if(replay.ruleset!==Engine.RULESET_ID)throw Error('Este replay usa uma revisão de regras anterior ou incompatível. O arquivo original foi preservado; abra-o na versão em que foi gravado.');
   const e=new Engine(catalog);e.start(replay.initial.a,replay.initial.b,replay.initial.first,replay.initial.seed,replay.initial.mode||'advanced');
-  if(![e.s.version,'of-core-js-0.4.0','of-core-js-0.4.1'].includes(replay.version))throw Error('Replay de outra versão. Abra-o na versão '+replay.version+'.');
+  if(replay.version!==e.s.version)throw Error('Replay de outra versão. Abra-o na versão '+replay.version+'.');
   const count=limit===undefined?replay.commands.length:limit;if(!Number.isInteger(count)||count<0||count>replay.commands.length)throw Error('Posição de replay inválida.');
   for(const cmd of replay.commands.slice(0,count)){if(!cmd||![0,1].includes(cmd.p)||!cmd.action||typeof cmd.action!=='object')throw Error('Comando de replay inválido.');const result=e.execute(cmd.p,cmd.action);if(!result.accepted)throw Error('Replay interrompido: '+result.reason);}
   e.assertInvariants();return e;
@@ -14,14 +15,14 @@
   const actions=this.legalActions(p);if(actions.some(a=>a.uid===uid&&a.type!=='prepare'||a.type==='block'&&a.options.includes(uid)||['chooseOwnEnergy','chooseEnergy'].includes(a.type)&&a.options.includes(uid)))return [];
   if(s.phase==='mulligan')return ['Conclua a escolha da mão inicial.'];if(s.choice)return ['Resolva primeiro a escolha indicada na tela.'];if(s.priority!==p)return ['A prioridade está com o adversário.'];
   const own=s.players[p],d=this.def(f.card),sc=this.script(f.card),messages=[];
-  if(f.z==='fighter'){if(d.number===89&&actions.some(a=>a.type==='overdrive'))return [];if(own.fighterTapped)return ['Lutador virado: habilidade e Overdrive indisponíveis até desvirar no seu preparo.'];if(own.od<3)messages.push('Overdrive exige completar as 3 etapas da sequência.');if([32,70].includes(d.number)&&this.energies(p,true).length<1)messages.push('A habilidade exige 1 energia ativa.');return messages.length?messages:['A habilidade não está disponível nesta janela.'];}
-  if(f.z==='extra'&&f.card.ready>s.turn)return ['Carta preparada: disponível a partir do turno '+f.card.ready+'.'];
+  if(f.z==='fighter'){if(d.number===89&&actions.some(a=>a.type==='overdrive'))return [];if(own.fighterTapped)return ['Lutador virado: habilidade e Overdrive indisponíveis até desvirar no seu preparo.'];if(own.od<3)messages.push('Overdrive exige completar as 3 etapas da sequência.');if(d.number===114&&!this.energies(p,true).some(c=>this.def(c).color==='Verde'))messages.push('A habilidade de Arcturus exige 1 energia verde ativa e virar o lutador.');if([32,70].includes(d.number)&&this.energies(p,true).length<1)messages.push('A habilidade exige 1 energia ativa.');return messages.length?messages:['A habilidade não está disponível nesta janela.'];}
+  if(f.z==='extra'&&f.card.r06Fixed)return ['Gemite com Fixar: revelada na Zona Extra, disponível como Golpe na sua janela de ataque ou Revide; não pode bloquear novamente.'];if(f.z==='extra'&&f.card.ready>s.turn)return ['Carta preparada: disponível a partir do turno '+f.card.ready+'.'];
   if(f.card.token)return [f.card.usedTurn===s.turn?'Esta ficha já atacou ou bloqueou neste turno.':'A ficha não pode ser usada nesta janela.'];
   if(f.z==='stamina'&&f.card.lockedUntil>=s.turn)return ['Energia bloqueada: não pode reativar nem pagar custo até o fim do turno '+f.card.lockedUntil+'.'];if(f.z==='stamina')return ['Esta carta está na Estamina. Se for um Golpe ativo, pode ser usada pelo Overdrive de Blossom com a sequência completa.'];
   if(sc.comboZone&&s.lastComboZone!==sc.comboZone)messages.push('COMBO exige que o último Golpe válido do Jogador de Ataque tenha sido na Zona '+sc.comboZone+'.');
   if(d.type==='Golpe'&&!this.canIndependent(p))messages.push('Golpes exigem sua fase de Combates livre ou uma janela de Revide.');
   if(d.type==='Guarda'&&!this.current())return ['Guardas são declaradas para bloquear um Golpe adversário.'];
-  const modes=f.z==='discard'?(sc.fromDiscardLife?['life']:sc.discardCopy?['banishCopy']:[]):d.type==='Guarda'?['guard']:['normal',...(Number.isInteger(d.alternateCost)?['alternative']:[])];
+  const modes=f.z==='discard'?(sc.fromDiscardLife?['life']:sc.discardCopy?['banishCopy']:[]):d.type==='Guarda'?['guard']:['normal',...(sc.puppyCost?['puppy']:[]),...(Number.isInteger(d.alternateCost)?['alternative']:[])];
   if(!modes.length)return ['Esta carta não possui um efeito que permita realizá-la do Descarte.'];
   for(const mode of modes){let pay;try{pay=mode==='guard'?{own:0,opp:d.cost}:this.payment(p,f.card,mode,0);}catch(error){messages.push(error.message);continue;}
    if(pay.own>this.energies(p,true).length)messages.push('Custo normal: faltam '+(pay.own-this.energies(p,true).length)+' energia(s) ativa(s).');
@@ -40,7 +41,7 @@
   const raw=b.cancelled?0:Math.max(0,b.attack-block),rawImpetus=!b.cancelled&&rows.some(g=>!g.cancelled&&!g.token)?(b.revide&&sc.revideImpetus!==undefined?sc.revideImpetus:(b.impetusBase??sc.impetus??0))+(b.extraImpetus||0):0;
   const basic=b.finished?b.basicDamage:raw+(raw>0?marks:0),impetus=b.finished?b.impetusDamage:rawImpetus+(rawImpetus>0?marks:0);
   const modifiers=(b.attackModifiers||[]).map(m=>({...m})),accounted=modifiers.reduce((n,m)=>n+m.value,0);if(accounted!==b.attack)modifiers.push({name:'Ajustes posteriores de efeitos',value:b.attack-accounted});
-  return {attackName:def.name,zone:b.zone,attack:b.attack,modifiers,block,blockers:rows,aggregate,basic,impetus,total:(basic||0)+(impetus||0),cancelled:b.cancelled,finished:!!b.finished,provisional:!b.finished,marks,selfDamage:sc.selfDamageHalfAttack&&!b.cancelled?Math.ceil(Math.max(0,b.attack)/2):0};
+  return {attackName:def.name,zone:b.zone,attack:b.attack,modifiers,block,blockers:rows,aggregate,basic,impetus,total:(basic||0)+(impetus||0),cancelled:b.cancelled,finished:!!b.finished,provisional:!b.finished,marks,...(!b.finished&&this.previewDamage?this.previewDamage(1-b.p,basic,impetus):{}),selfDamage:sc.selfDamageHalfAttack&&!b.cancelled?Math.ceil(Math.max(0,b.attack)/2):0};
  };
  const originalOps=Engine.prototype.runOps,keys=['nextAttackBonus','nextFocusSocoBonus','nextRedassaltBonus','nextBlockBonus','nextBlockTurn'];
  Engine.prototype.runOps=function(ops,ctx){const before=new Map(this.s.combats.map(b=>[b.id,b.attack])),previous=this.s.players.map(side=>Object.fromEntries(keys.map(k=>[k,side[k]||0]))),zoneCount=this.s.zoneModifiers?.length||0,nextZoneCount=this.s.zoneNextAttacks?.length||0;this.explainDepth=(this.explainDepth||0)+1;

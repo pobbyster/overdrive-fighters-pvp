@@ -2,7 +2,7 @@
 'use strict';
 const CARDS=JSON.parse(document.getElementById('catalogData').textContent);
 const IMAGES=JSON.parse(document.getElementById('imageData').textContent);
-const COLORS={Laranja:'#ff632b',Roxo:'#8b35ff',Verde:'#9cda19',Rosa:'#ff2789',Genérica:'#aeb5c2'};
+const COLORS={Laranja:'#ff632b',Roxo:'#8b35ff',Verde:'#9cda19',Rosa:'#ff2789',Azul:'#00aff0',Genérica:'#aeb5c2'};
 const STORAGE_KEY='overdrive-collection-1-deck-v2',PAGE_SIZE=24;
 const LIBRARY_KEY='overdrive-saved-decks-v1',ACTIVE_KEY='overdrive-active-deck-v1';
 const $=id=>document.getElementById(id);
@@ -15,8 +15,15 @@ const count=map=>Object.values(map).reduce((a,b)=>a+b,0);
 const generic=(d,z='main')=>Object.entries(d[z]).reduce((n,[id,q])=>n+(get(id)?.color==='Genérica'?q:0),0);
 let deck={name:'Meu primeiro Overdrive',fighter:null,main:{},extra:{}},view='database',pile=[],hand=[],noticeTimer,page=1,printing=false;
 let trainingDeck=null;
-let selectedCost='',curveScope='main',library=[],activeSavedId=null,pointerDrag=null,suppressClickUntil=0;
+let selectedCost='',curveScope='main',library=[],libraryOrphans=[],libraryReadFailed=false,activeSavedId=null,pointerDrag=null,suppressClickUntil=0;
 function imageURL(id){return IMAGES[id];}
+function backupBeforeWrite(key){
+ const original=localStorage.getItem(key),backup=key+'-backup-before-0.4';
+ if(original!==null&&localStorage.getItem(backup)===null)localStorage.setItem(backup,original);
+}
+function libraryRecord(entry){return entry&&typeof entry==='object'&&typeof entry.id==='string'&&entry.deck&&typeof entry.deck==='object'&&typeof entry.deck.name==='string';}
+function libraryProblem(entry){try{validate(entry.deck);return '';}catch(error){return error.message;}}
+function savedDate(value){const date=new Date(value);return Number.isFinite(date.getTime())?date.toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'}):'Data anterior não informada';}
 function validate(d){
  if(!d||typeof d!=='object'||Array.isArray(d)||typeof d.name!=='string'||d.name.length>80)throw Error('Formato de baralho inválido.');
  for(const z of ['main','extra'])if(!d[z]||typeof d[z]!=='object'||Array.isArray(d[z]))throw Error('Formato de baralho inválido.');
@@ -30,39 +37,41 @@ function validate(d){
   if(c.color!=='Genérica'&&!fighter.colors.includes(c.color))throw Error('Esta cor não pertence ao seu lutador.');
   if((d.main[id]||0)+(d.extra[id]||0)>3)throw Error('Limite de 3 cópias por carta, somando principal e adicional.');
  }
+ const names={};for(const z of ['main','extra'])for(const [id,q]of Object.entries(d[z])){const name=get(id).name;names[name]=(names[name]||0)+q;if(names[name]>3)throw Error('Limite de 3 cópias por nome, somando principal e adicional.');}
  if(count(d.main)>40)throw Error('Limite de 40 cartas no principal.');
  if(count(d.extra)>15)throw Error('Limite de 15 cartas no adicional.');
- if(generic(d)>10)throw Error('Limite de 10 ações genéricas no baralho principal. O adicional permite até 15 ações, sem limite específico de genéricas.');
+ if(generic(d)>15)throw Error('Limite de 15 ações genéricas no baralho principal. O adicional permite até 15 ações, sem limite específico de genéricas.');
  return d;
 }
 function notify(message){$('notice').textContent=message;$('notice').hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>$('notice').hidden=true,5500);}
 try{const saved=localStorage.getItem(STORAGE_KEY);if(saved)deck=validate(JSON.parse(saved));}catch(e){notify('O baralho salvo não pôde ser carregado. Importe um arquivo válido desta coleção.');}
 try{
  const saved=JSON.parse(localStorage.getItem(LIBRARY_KEY)||'[]');
- if(Array.isArray(saved))library=saved.filter(entry=>{
-  try{return typeof entry.id==='string'&&typeof entry.updatedAt==='string'&&Number.isFinite(Date.parse(entry.updatedAt))&&!!validate(entry.deck);}catch(e){return false;}
- });
+ if(!Array.isArray(saved))throw Error('Formato da biblioteca inválido.');
+ library=saved.filter(libraryRecord);
+ libraryOrphans=saved.filter(entry=>!libraryRecord(entry));
  activeSavedId=localStorage.getItem(ACTIVE_KEY);
- if(!library.some(entry=>entry.id===activeSavedId))activeSavedId=null;
-}catch(e){notify('Não foi possível carregar a biblioteca. O rascunho atual continua disponível.');}
-function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(deck));}catch(e){notify('Não foi possível salvar neste navegador. Use Exportar para guardar seu baralho.');}}
+ if(!library.some(entry=>entry.id===activeSavedId&&!libraryProblem(entry)))activeSavedId=null;
+}catch(e){libraryReadFailed=true;notify('A biblioteca precisa de recuperação. O original foi preservado; baixe uma cópia em Meus baralhos.');}
+function save(){try{backupBeforeWrite(STORAGE_KEY);localStorage.setItem(STORAGE_KEY,JSON.stringify(deck));}catch(e){notify('Não foi possível salvar com uma cópia de segurança. Use Baixar arquivo para guardar seu baralho.');}}
+
 function changed(){save();pile=[];hand=[];renderDeck();renderCards();renderHand();}
 function cardHTML(c,print=false){return `<div class="card original" style="--card-color:${COLORS[c.color]}"><img src="${imageURL(c.id)}" alt="${esc(c.name)} — ${esc(c.type)}${c.subtype?' • '+esc(c.subtype):''} — ${esc(c.color)}" draggable="false" ${print?'':'loading="lazy"'} decoding="async" width="751" height="1048"></div>`;}
 function compatible(c){const f=get(deck.fighter);return c.type==='Lutador'||!!f&&(c.color==='Genérica'||f.colors.includes(c.color));}
 function canAdd(c,z){
  if(!compatible(c)||c.type==='Lutador')return false;
- if((deck.main[c.id]||0)+(deck.extra[c.id]||0)>=3)return false;
+ if(['main','extra'].reduce((n,z)=>n+Object.entries(deck[z]).reduce((sum,[id,q])=>sum+(get(id)?.name===c.name?q:0),0),0)>=3)return false;
  if(count(deck[z])>=(z==='main'?40:15))return false;
- return z==='extra'||c.color!=='Genérica'||generic(deck)<10;
+ return z==='extra'||c.color!=='Genérica'||generic(deck)<15;
 }
 function renderCards(){
  const collection=$('collectionFilter').value;
  const q=normalize($('search').value.trim()),color=$('colorFilter').value,type=$('typeFilter').value,group=$('groupFilter').value,zone=$('zoneFilter').value;
- const list=CARDS.filter(c=>(!collection||collection==='first-drive'&&c.id.startsWith('OF-C1-'))&&(!q||normalize(`${c.name} ${c.searchText} ${c.id} ${c.source} ${c.type} ${c.subtype} ${c.group} ${c.zone||''}`).includes(q))&&(!color||c.color===color)&&(!type||c.type===type)&&(selectedCost===''||String(c.cost)===selectedCost)&&(!group||c.color===group)&&(!zone||c.type==='Golpe'&&c.zone===zone)&&(!$('compatibleOnly').checked||view!=='builder'||compatible(c)));
+ const list=CARDS.filter(c=>(!collection||collection==='first-drive'&&c.id.startsWith('OF-C1-')||collection==='rivals-ascendentes'&&c.id.startsWith('OF-RVAS-'))&&(!q||normalize(`${c.name} ${c.searchText} ${c.id} ${c.source} ${c.type} ${c.subtype} ${c.group} ${c.zone||''}`).includes(q))&&(!color||c.color===color)&&(!type||c.type===type)&&(selectedCost===''||String(c.cost)===selectedCost)&&(!group||c.color===group)&&(!zone||c.type==='Golpe'&&c.zone===zone)&&(!$('compatibleOnly').checked||view!=='builder'||compatible(c)));
  const totalPages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));page=Math.min(page,totalPages);
  $('results').textContent=`${list.length} de ${CARDS.length} cartas · Clique na arte para ampliar`;
  $('cardsGrid').innerHTML=list.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE).map(c=>{
-  const actions=c.type==='Lutador'?`<button data-add="${c.id}" ${deck.fighter===c.id?'disabled':''}>${deck.fighter===c.id?'Selecionado':'Escolher lutador'}</button>`:['main','extra'].map(z=>`<button data-add="${c.id}" data-zone="${z}" ${canAdd(c,z)?'':'disabled'} title="${!deck.fighter?'Escolha um lutador primeiro':!compatible(c)?'Cor incompatível com o lutador':'Adicionar uma cópia'}">+ ${z==='main'?'Principal':'Adicional'}</button>`).join('');
+  const actions=c.type==='Lutador'?`<button data-add="${c.id}" data-fighter-choice="${c.type==='Lutador'}" ${deck.fighter===c.id?'disabled':''}>${deck.fighter===c.id?'Selecionado':'Escolher lutador'}</button>`:['main','extra'].map(z=>`<button data-add="${c.id}" data-fighter-choice="${c.type==='Lutador'}" data-zone="${z}" ${canAdd(c,z)?'':'disabled'} title="${!deck.fighter?'Escolha um lutador primeiro':!compatible(c)?'Cor incompatível com o lutador':'Adicionar uma cópia'}">+ ${z==='main'?'Principal':'Adicional'}</button>`).join('');
   return `<div class="tile"><button class="art-button" data-detail="${c.id}" draggable="false" ${view==='builder'?`data-pointer-drag="${c.id}" data-drag-source="catalog"`:''} aria-label="Ver ${esc(c.name)}">${cardHTML(c)}</button><div class="tile-label">${esc(c.name)}${view==='builder'?`<button class="drag-grip" data-pointer-drag="${c.id}" data-drag-source="catalog" aria-label="Arrastar ${esc(c.name)}" title="Arraste para sua decklist">⠿</button>`:''}</div><div class="muted">${esc(c.type)}${c.subtype?' • '+esc(c.subtype):''} · ${esc(c.color)}${c.zone?' · '+esc(c.zone):''}</div>${view==='builder'?`<div class="tile-actions">${actions}</div>`:''}</div>`;
  }).join('')||'<div class="empty">Nenhuma carta corresponde aos filtros.</div>';
  $('pageStatus').textContent=`Página ${page} de ${totalPages}`;$('previousPage').disabled=page===1;$('nextPage').disabled=page>=totalPages;
@@ -72,12 +81,13 @@ function add(id,zone){
  const next=JSON.parse(JSON.stringify(deck));
  if(c.type==='Lutador'){
   next.fighter=id;
+  dispatchEvent(new CustomEvent('of-fighter-selected',{detail:{id}}));
   try{validate(next);}catch(e){notify('Remova as cartas de cores incompatíveis antes de trocar o lutador.');return;}
  }else{
   if(!['main','extra'].includes(zone))return;
   next[zone][id]=(next[zone][id]||0)+1;
  }
- try{deck=validate(next);changed();}catch(e){notify(e.message);}
+ try{deck=validate(next);changed();if(c.type==='Lutador')dispatchEvent(new CustomEvent('of-fighter-selected',{detail:{id}}));}catch(e){notify(e.message);}
 }
 function remove(id,z){
  if(z==='fighter'){
@@ -115,11 +125,11 @@ function signature(d){return JSON.stringify({name:d.name,fighter:d.fighter,main:
 function isDirty(){const saved=library.find(entry=>entry.id===activeSavedId);return !saved||signature(saved.deck)!==signature(deck);}
 function renderSaveStatus(){
  const saved=library.find(entry=>entry.id===activeSavedId);
- $('saveStatus').textContent=saved?(isDirty()?'Alterações no rascunho · clique em Salvar baralho':'Salvo na biblioteca · '+new Date(saved.updatedAt).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',dateStyle:'short',timeStyle:'short'})):'Rascunho automático · salve por nome para guardar na biblioteca';
+ $('saveStatus').textContent=saved?(isDirty()?'Alterações no rascunho · clique em Salvar baralho':'Salvo na biblioteca · '+savedDate(saved.updatedAt)):'Rascunho automático · salve por nome para guardar na biblioteca';
  $('openLibrary').textContent=`Meus baralhos (${library.length})`;
 }
 function setActiveSaved(id){activeSavedId=id;try{if(id)localStorage.setItem(ACTIVE_KEY,id);else localStorage.removeItem(ACTIVE_KEY);}catch(e){/* O rascunho continua exportável. */}}
-function persistLibrary(next){try{localStorage.setItem(LIBRARY_KEY,JSON.stringify(next));library=next;return true;}catch(e){notify('A biblioteca não pôde ser salva. Baixe o arquivo do baralho para guardar uma cópia.');return false;}}
+function persistLibrary(next){try{if(libraryReadFailed)throw Error('Biblioteca em recuperação.');backupBeforeWrite(LIBRARY_KEY);localStorage.setItem(LIBRARY_KEY,JSON.stringify([...next,...libraryOrphans]));library=next;return true;}catch(e){notify('A biblioteca não pôde ser salva. Baixe o arquivo do baralho para guardar uma cópia.');return false;}}
 function saveNamedDeck(asNew=false){
  try{validate(deck);}catch(e){notify(e.message);return;}
  const name=deck.name.trim();if(!name){notify('Dê um nome ao seu baralho antes de salvar.');$('deckName').focus();return;}
@@ -131,12 +141,26 @@ function saveNamedDeck(asNew=false){
 }
 function renderLibrary(){
  $('savedDecks').innerHTML=library.map(entry=>{
-  const d=entry.deck,fighter=get(d.fighter);
-  return `<article class="saved-deck"><div class="saved-summary">${fighter?`<img src="${imageURL(fighter.id)}" alt="${esc(fighter.name)}" width="52" height="73">`:'<div class="saved-placeholder">◇</div>'}<div><h3>${esc(d.name)}</h3><p>${fighter?esc(fighter.name):'Sem lutador'} · ${count(d.main)} principal · ${count(d.extra)} adicional</p><span class="muted">${new Date(entry.updatedAt).toLocaleString('pt-BR',{timeZone:'America/Fortaleza',dateStyle:'short',timeStyle:'short'})}</span></div></div><div class="actions"><button class="primary" data-load-deck="${esc(entry.id)}">Abrir</button><button data-download-deck="${esc(entry.id)}">Baixar arquivo</button><button data-delete-deck="${esc(entry.id)}">Excluir</button></div></article>`;
- }).join('')||'<div class="empty">Sua biblioteca está vazia. Monte um baralho, dê um nome e clique em “Salvar baralho”.</div>';
+  const d=entry.deck,fighter=get(d.fighter),problem=libraryProblem(entry),main=d.main&&typeof d.main==='object'?count(d.main):0,extra=d.extra&&typeof d.extra==='object'?count(d.extra):0;
+  return '<article class="saved-deck"><div class="saved-summary">'+(fighter?'<img src="'+imageURL(fighter.id)+'" alt="'+esc(fighter.name)+'" width="52" height="73">':'<div class="saved-placeholder">◇</div>')+'<div><h3>'+esc(d.name)+'</h3><p>'+(fighter?esc(fighter.name):'Lutador anterior')+' · '+main+' principal · '+extra+' adicional</p><span class="muted">'+esc(savedDate(entry.updatedAt))+'</span>'+(problem?'<p class="library-repair-note">Precisa de revisão: '+esc(problem)+' O original permanece preservado.</p>':'')+'</div></div><div class="actions">'+(problem?'<button data-repair-deck="'+esc(entry.id)+'">Criar cópia para reparo</button>':'<button class="primary" data-load-deck="'+esc(entry.id)+'">Abrir</button>')+'<button data-download-deck="'+esc(entry.id)+'">Baixar original</button><button data-delete-deck="'+esc(entry.id)+'">Excluir</button></div></article>';
+ }).join('')||'<div class="empty">Sua biblioteca está vazia. Registros anteriores não reconhecidos continuam disponíveis no backup.</div>';
+}
+function repairNamedDeck(id){
+ const entry=library.find(item=>item.id===id);if(!entry)return;
+ const original=entry.deck,fighter=get(original.fighter),names={};
+ const repaired={name:original.name.slice(0,58)+' — revisão',fighter:fighter?.type==='Lutador'?fighter.id:null,main:{},extra:{}};let removed=0;
+ for(const z of ['main','extra'])for(const [id,quantity]of Object.entries(original[z]&&typeof original[z]==='object'?original[z]:{})){
+  const card=get(id),amount=Number.isInteger(quantity)&&quantity>0?quantity:0;
+  if(!repaired.fighter||!card||card.type==='Lutador'||card.color!=='Genérica'&&!fighter.colors.includes(card.color)){removed+=amount;continue;}
+  const q=Math.max(0,Math.min(amount,3-(names[card.name]||0),(z==='main'?40:15)-count(repaired[z]),z==='main'&&card.color==='Genérica'?15-generic(repaired):Infinity));
+  if(q){repaired[z][id]=q;names[card.name]=(names[card.name]||0)+q;}removed+=amount-q;
+ }
+ deck=validate(repaired);setActiveSaved(null);changed();$('libraryDialog').close();
+ notify('Cópia aberta para revisão'+(removed?' · '+removed+' carta(s) incompatível(is) ficaram fora da cópia':'')+'. O baralho original foi mantido; salve a cópia com outro nome.');
 }
 function loadNamedDeck(id){
  const entry=library.find(item=>item.id===id);if(!entry)return;
+ if(libraryProblem(entry)){notify('Use Criar cópia para reparo. O original foi preservado.');return;}
  if(isDirty()&&(deck.fighter||count(deck.main)||count(deck.extra))&&!confirm('Abrir este baralho e substituir o rascunho atual? Salve o rascunho primeiro se quiser mantê-lo.'))return;
  deck=snapshot(validate(entry.deck));setActiveSaved(id);changed();$('libraryDialog').close();notify('Baralho aberto.');
 }
@@ -147,7 +171,7 @@ function deleteNamedDeck(id){
  renderLibrary();renderSaveStatus();notify('Baralho excluído da biblioteca.');
 }
 function downloadDeck(d){
- const url=URL.createObjectURL(new Blob([JSON.stringify({collection:'overdrive-first-collection',version:2,...snapshot(d)},null,2)],{type:'application/json'})),a=document.createElement('a');
+ const url=URL.createObjectURL(new Blob([JSON.stringify({collection:'overdrive-first-collection',version:2,...d},null,2)],{type:'application/json'})),a=document.createElement('a');
  a.href=url;a.download=(normalize(d.name).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'overdrive-deck')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 function validDrag(data){return data&&get(data.id)&&['catalog','main','extra','fighter'].includes(data.source)&&
@@ -242,7 +266,7 @@ function details(id){
  const c=get(id);if(!c)return;
  const field=(label,value)=>value===null||value===undefined||value===''?'':`<dt>${label}</dt><dd>${esc(value)}</dd>`;
  $('cardDialog').classList.remove('zoomed');
- $('cardDetail').innerHTML=`<div class="detail"><div>${cardHTML(c)}<button id="zoomArt" class="zoom-control" aria-expanded="false">Ampliar arte</button></div><div class="detail-info"><div class="eyebrow">FIRST DRIVE</div><h2>${esc(c.name)}</h2><dl>${field('Tipo',c.type+(c.subtype?' • '+c.subtype:''))}${field('Zona do golpe',c.zone)}${field('Cor',c.color)}${field('Origem',({Verde:'Espírito',Laranja:'Vontade',Roxo:'Determinação',Rosa:'Ritmo'})[c.color]||'Genérica')}${field('Custo impresso',c.cost)}${field('Custo secundário impresso',c.alternateCost)}${field(c.type==='Lutador'?'Poder do lutador':'Ataque',c.power)}${field('Bloqueio',c.block)}${field('Cores permitidas',c.colors?.join(', '))}${field('Referência no catálogo',c.id)}${field('Arquivo da coleção',c.source)}</dl><p class="help">O texto completo, as habilidades e os símbolos estão na arte original. Use “Ampliar arte” para ler em tamanho maior.</p>${view==='builder'?`<div class="actions">${c.type==='Lutador'?`<button data-add="${c.id}">Escolher lutador</button>`:`<button data-add="${c.id}" data-zone="main" ${canAdd(c,'main')?'':'disabled'}>+ Principal</button><button data-add="${c.id}" data-zone="extra" ${canAdd(c,'extra')?'':'disabled'}>+ Adicional</button>`}</div>`:''}</div></div>`;
+ $('cardDetail').innerHTML=`<div class="detail"><div>${cardHTML(c)}<button id="zoomArt" class="zoom-control" aria-expanded="false">Ampliar arte</button></div><div class="detail-info"><div class="eyebrow">FIRST DRIVE</div><h2>${esc(c.name)}</h2><dl>${field('Tipo',c.type+(c.subtype?' • '+c.subtype:''))}${field('Zona do golpe',c.zone)}${field('Cor',c.color)}${field('Origem',({Verde:'Espírito',Laranja:'Vontade',Roxo:'Determinação',Rosa:'Ritmo'})[c.color]||'Genérica')}${field('Custo impresso',c.cost)}${field('Custo secundário impresso',c.alternateCost)}${field(c.type==='Lutador'?'Poder do lutador':'Ataque',c.power)}${field('Bloqueio',c.block)}${field('Cores permitidas',c.colors?.join(', '))}${field('Referência no catálogo',c.id)}${field('Arquivo da coleção',c.source)}</dl><p class="help">O texto completo, as habilidades e os símbolos estão na arte original. Use “Ampliar arte” para ler em tamanho maior.</p>${view==='builder'?`<div class="actions">${c.type==='Lutador'?`<button data-add="${c.id}" data-fighter-choice="${c.type==='Lutador'}">Escolher lutador</button>`:`<button data-add="${c.id}" data-fighter-choice="${c.type==='Lutador'}" data-zone="main" ${canAdd(c,'main')?'':'disabled'}>+ Principal</button><button data-add="${c.id}" data-fighter-choice="${c.type==='Lutador'}" data-zone="extra" ${canAdd(c,'extra')?'':'disabled'}>+ Adicional</button>`}</div>`:''}</div></div>`;
  if(!$('cardDialog').open)$('cardDialog').showModal();
  $('zoomArt').onclick=()=>{const zoom=$('cardDialog').classList.toggle('zoomed');$('zoomArt').textContent=zoom?'Voltar aos detalhes':'Ampliar arte';$('zoomArt').setAttribute('aria-expanded',String(zoom));};
 }
@@ -253,7 +277,7 @@ function setView(v,localManual=false){
  $('catalogView').hidden=!['database','builder'].includes(v);$('simulatorView').hidden=v!=='simulator';$('deckPanel').hidden=v!=='builder';$('workspace').style.gridTemplateColumns=v==='builder'?'':'1fr';
  if($('matchView'))$('matchView').hidden=v!=='match';if($('rulesView'))$('rulesView').hidden=v!=='rules';
  if(v==='match'&&typeof MatchGame!=='undefined')MatchGame.refresh();
- const labels={tournaments:['CIRCUITO OVERDRIVE','Prepare-se para competir.','Eventos, inscrições e decklists da comunidade.'],database:['FIRST DRIVE','Lutar, sangrar e vencer.','As 107 cartas da coleção First Drive, prontas para explorar.'],builder:['SELEÇÃO DE LUTADOR','Monte seu baralho.','Escolha seu lutador e adicione cartas ao principal ou ao adicional.'],simulator:['MODO TREINO','Teste sua abertura.','Embaralhe seu baralho e descubra como sua estratégia chega à mão.'],match:['TRIBUNO MUNDIAL','Entre na arena.','Controle os dois lados no campo oficial: cartas, energias e efeitos manuais.'],rules:['LIVRO DE REGRAS V0.2','Domine o combate.','Consulte o guia oficial fornecido pelo criador do jogo.']};
+ const labels={tournaments:['CIRCUITO OVERDRIVE','Prepare-se para competir.','Eventos, inscrições e decklists da comunidade.'],database:['FIRST DRIVE','Lutar, sangrar e vencer.',`As ${CARDS.length} cartas da coleção First Drive, prontas para explorar.`],builder:['SELEÇÃO DE LUTADOR','Monte seu baralho.','Escolha seu lutador e adicione cartas ao principal ou ao adicional.'],simulator:['MODO TREINO','Teste sua abertura.','Embaralhe seu baralho e descubra como sua estratégia chega à mão.'],match:['TRIBUNO MUNDIAL','Entre na arena.','Controle os dois lados no campo oficial: cartas, energias e efeitos manuais.'],rules:['LIVRO DE REGRAS V0.2','Domine o combate.','Consulte o guia oficial fornecido pelo criador do jogo.']};
  [$('sectionLabel').textContent,$('pageTitle').textContent,$('pageDescription').textContent]=labels[v];renderCards();renderDeck();
 }
 function renderHand(){
@@ -275,7 +299,7 @@ async function printDeck(play){
    await Promise.all([...$('printArea').querySelectorAll('img')].map(img=>img.decode()));
   }else{
    const table=(title,map)=>`<h2>${title}</h2><table><thead><tr><th>Qtd.</th><th>Carta</th><th>Referência</th><th>Cor</th></tr></thead><tbody>${Object.entries(map).sort(([a],[b])=>get(a).name.localeCompare(get(b).name,'pt-BR')).map(([id,q])=>`<tr><td>${q}</td><td>${esc(get(id).name)}</td><td>${id}</td><td>${get(id).color}</td></tr>`).join('')||'<tr><td colspan="4">Nenhuma carta</td></tr>'}</tbody></table>`;
-   $('printArea').innerHTML=`<div class="deck-print"><h1>Overdrive Fighters</h1><h2>${esc(deck.name||'Baralho sem nome')}</h2><p>First Drive · Principal: ${count(deck.main)}/40 · Adicional: ${count(deck.extra)}/15 · Genéricas no principal: ${generic(deck)}/10 · Genéricas no adicional: ${generic(deck,'extra')} (dentro das 15 vagas)</p>${table('Lutador',{[deck.fighter]:1})}${table('Baralho principal',deck.main)}${table('Baralho adicional',deck.extra)}<p>As referências OF-C1 são identificadores internos do catálogo, baseados nos nomes dos arquivos.</p></div>`;
+   $('printArea').innerHTML=`<div class="deck-print"><h1>Overdrive Fighters</h1><h2>${esc(deck.name||'Baralho sem nome')}</h2><p>First Drive · Principal: ${count(deck.main)}/40 · Adicional: ${count(deck.extra)}/15 · Genéricas no principal: ${generic(deck)}/15 · Genéricas no adicional: ${generic(deck,'extra')} (dentro das 15 vagas)</p>${table('Lutador',{[deck.fighter]:1})}${table('Baralho principal',deck.main)}${table('Baralho adicional',deck.extra)}<p>As referências OF-C1 são identificadores internos do catálogo, baseados nos nomes dos arquivos.</p></div>`;
   }
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   window.print();
@@ -297,6 +321,7 @@ document.addEventListener('click',e=>{
  if(m)move(m.dataset.move,m.dataset.zone);
  if(cost){selectedCost=selectedCost===cost.dataset.cost?'':cost.dataset.cost;page=1;document.querySelectorAll('[data-cost]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.cost===selectedCost)));renderCards();}
  if(scope){curveScope=scope.dataset.curveScope;renderCurve();}
+ const repair=e.target.closest('[data-repair-deck]');if(repair)repairNamedDeck(repair.dataset.repairDeck);
  if(load)loadNamedDeck(load.dataset.loadDeck);
  if(download){const entry=library.find(item=>item.id===download.dataset.downloadDeck);if(entry)downloadDeck(entry.deck);}
  if(del)deleteNamedDeck(del.dataset.deleteDeck);
@@ -306,6 +331,8 @@ $('cardDialog').addEventListener('click',e=>{if(e.target===$('cardDialog')){cons
 $('deckName').addEventListener('input',()=>{deck.name=$('deckName').value;save();renderSaveStatus();});
 $('clearDeck').onclick=()=>{if(!(deck.fighter||count(deck.main)||count(deck.extra))||confirm('Começar um novo baralho? O rascunho atual será substituído. Os baralhos da biblioteca serão mantidos.')){deck={name:'Novo baralho',fighter:null,main:{},extra:{}};setActiveSaved(null);changed();}};
 $('saveDeck').onclick=()=>saveNamedDeck(false);$('saveNewDeck').onclick=()=>saveNamedDeck(true);
+const backupButton=document.createElement('button');backupButton.id='downloadLibraryBackup';backupButton.textContent='Baixar backup da biblioteca';$('savedDecks').before(backupButton);
+backupButton.onclick=()=>{const original=localStorage.getItem(LIBRARY_KEY+'-backup-before-0.4')||localStorage.getItem(LIBRARY_KEY)||'[]',url=URL.createObjectURL(new Blob([original],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='Overdrive-biblioteca-original.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 $('openLibrary').onclick=()=>{renderLibrary();$('libraryDialog').showModal();};
 $('closeLibrary').onclick=()=>$('libraryDialog').close();
 $('newHand').onclick=()=>{

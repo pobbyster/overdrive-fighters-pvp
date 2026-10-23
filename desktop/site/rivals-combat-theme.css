@@ -1,0 +1,22 @@
+/* Apenas identidade visual: preserva a geometria original do combate. */
+body.rivals-playing{min-height:100svh;background:#a400e9 url('assets/rivals/background-menu.webp') center/cover fixed!important;--hud-text:#54275d;--hud-muted:#72517a;--hud-border:#e6d4ed}
+.rivals-playing>.arena-header{background:#fffffff2;border-color:#ead9ef;box-shadow:0 3px 15px #65004820}
+.rivals-playing .arena-header :is(a,button),.rivals-playing #duelBadge{background:#fff;color:#8500d1;border-color:#ead9ef;border-radius:20px;box-shadow:inset -2px -3px 5px #0002}
+.rivals-playing #game>.game-banner{background:#fffffff2;color:#7d00ce;border-radius:15px;box-shadow:inset -2px -3px 6px #0002}
+.rivals-playing .game-banner h1{color:#7d00ce}.rivals-playing .game-banner .eyebrow{color:#f24d23}.rivals-playing .game-banner p{color:#68456f}
+.rivals-playing :is(#decisionHud,#responseHud,#phaseHud,#combatSummary,#cardMenu,#fieldNotice,.tutorial-card,.fighter-rail,#handArea){background:#fff!important;color:#54275d!important;border-color:#e6d4ed!important;box-shadow:inset -2px -3px 7px #0002,0 10px 30px #59004d30;border-radius:16px}
+.rivals-playing :is(#decisionHud,#responseHud,#phaseHud,#combatSummary,#cardMenu,.tutorial-card,.fighter-rail,#handArea) :is(h2,h3,strong){color:#8200d2!important}
+.rivals-playing :is(#decisionHud,#responseHud,#phaseHud,#combatSummary,#cardMenu,.tutorial-card,.fighter-rail) p{color:#715079}
+.rivals-playing :is(#decisionHud,#responseHud,#phaseHud,#combatSummary,.tutorial-card) .eyebrow{color:#ec4c24}
+.rivals-playing :is(#decisionHud,#responseHud,#cardMenu,#turnTools,#fieldNotice,#arenaSideDock,.tutorial-card) button{background:#f6effa;color:#7c00c8;border-color:#e4d0ee;box-shadow:inset -1px -2px 4px #0001;border-radius:10px}
+.rivals-playing :is(#decisionHud,#responseHud,#turnTools,.tutorial-card) button.primary{background:linear-gradient(110deg,#ff561e,#8c00ed);color:#fff}
+.rivals-playing #arenaSideDock .session-tools{background:#fff;border-color:#e6d4ed;box-shadow:inset -2px -3px 7px #0002}
+.rivals-playing #arenaSideDock .session-status{color:#fff;text-shadow:0 1px 3px #600074}
+.rivals-playing .phase-steps button.current{background:#f0ddff;color:#8100c8;box-shadow:inset 3px 0 #9b00e8}
+.rivals-playing .hud-drag-handle{background:#f7f1fa!important;color:#92649f!important;border-color:#e1cceb!important}
+.rivals-playing :is(.fighter-name-tag,.side-hud .life-caption,.side-hud .od-model>span,#handCount){color:#76517f}
+.rivals-playing .fighter-icons{color:#773b82}.rivals-playing .fight-life>strong{color:#fff!important}
+.rivals-playing #responseContext{background:#f7effb;border-left-color:#a000ea}
+.rivals-playing #decisionHud .search-card{background:#f6effa;color:#70267a}
+.rivals-playing .card-hover-hud{background:#fff!important;border-color:#e0c9eb!important}.rivals-playing .card-hover-hud span{color:#722487}
+.rivals-playing #combatFeedback p{background:#fff;color:#7a00c2;border-color:#e9d5f1}

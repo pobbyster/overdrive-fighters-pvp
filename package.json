@@ -1,11 +1,15 @@
 {
   "name": "overdrive-fighters-pvp",
-  "version": "0.1.0",
+  "version": "0.10.1",
   "private": true,
   "scripts": {
     "start": "node pvp/server.cjs",
     "test": "node --test pvp/tests.cjs"
   },
-  "engines": { "node": ">=22" },
-  "dependencies": { "ws": "8.22.0" }
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "ws": "8.22.0"
+  }
 }

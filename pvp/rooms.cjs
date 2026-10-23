@@ -48,6 +48,7 @@ class Rooms {
     const {room,index,seat}=this.seat(socket);
     if(msg.type==='ready') {
       if(room.engine)fail('A partida já começou.');
+      if(msg.ruleset!==Engine.RULESET_ID)fail('Regras ou catálogo incompatíveis. Atualize os dois jogos e o servidor antes de confirmar os decks.');
       new Engine(catalog).validateDeck(msg.deck);
       // Freeze a normalized deck, not arbitrary client properties or executable code.
       seat.deck={name:seat.name,fighter:msg.deck.fighter,main:structuredClone(msg.deck.main),extra:structuredClone(msg.deck.extra||{})};

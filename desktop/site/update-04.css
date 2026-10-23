@@ -1,0 +1,19 @@
+/* Rivais 0.4: readable availability feedback and combat bursts. */
+.rivals-playing #game .card.rivals-activatable{border-color:#00c7ff!important;outline:2px solid #8ceaff!important;outline-offset:2px;box-shadow:0 0 9px #00c7ff,0 0 22px #00aeff88!important;animation:rivals-ready 1.8s ease-in-out infinite}
+.rivals-playing #game .card.rivals-choice-target{outline:3px solid #ffdc65!important;outline-offset:3px;box-shadow:0 0 16px #ffcd24!important}
+.rivals-playing #game .pile.rivals-ready-pile{outline:3px solid #00c7ff!important;outline-offset:4px;filter:drop-shadow(0 0 12px #00b9ff);animation:rivals-ready 1.8s ease-in-out infinite;cursor:pointer}
+.rivals-playing #game .pile.rivals-ready-pile::after{content:'EFEITO DISPONÍVEL';position:absolute;z-index:4;bottom:-15px;left:50%;transform:translateX(-50%);background:#0078b8;color:white;border:1px solid #a5ecff;border-radius:6px;padding:3px 5px;font:700 7px/1 Arial,sans-serif;white-space:nowrap}
+.rivals-playing .fighter-panel.rivals-skill-ready{outline:2px solid #00c7ff;outline-offset:3px;box-shadow:0 0 20px #00bfff66}
+@keyframes rivals-ready{0%,100%{filter:drop-shadow(0 0 2px #00c7ff)}50%{filter:drop-shadow(0 0 7px #4bd9ff)}}
+#rivalsCombatParticles{position:fixed;inset:0;pointer-events:none;z-index:277;overflow:hidden}
+.rivals-particle{position:absolute;width:7px;height:7px;border-radius:2px;background:var(--particle-color);box-shadow:0 0 8px var(--particle-color);pointer-events:none}
+.rivals-particle.heal{border-radius:50%;width:6px;height:10px}
+.rivals-impact-ring{position:absolute;width:70px;height:70px;border:4px solid var(--particle-color);border-radius:50%;box-shadow:0 0 20px var(--particle-color),inset 0 0 18px var(--particle-color);transform:translate(-50%,-50%)}
+.library-repair-note{color:#b8225c!important;font-size:12px;max-width:540px}
+#downloadLibraryBackup{margin:10px 0;border:1px solid #d7b8e9;border-radius:20px;padding:9px 14px;background:white;color:#8600cb}
+@media(prefers-reduced-motion:reduce){.rivals-playing #game .rivals-activatable,.rivals-playing #game .rivals-ready-pile{animation:none!important}}
+body[data-motion="0"] #game .rivals-activatable,body[data-motion="0"] #game .rivals-ready-pile{animation:none!important}
+.rivals-combat-cue{position:absolute;font:italic 900 clamp(15px,2vw,27px)/1 Arial,sans-serif;color:white;text-shadow:-2px -2px 0 #45134f,2px 2px 0 #45134f,0 0 18px var(--particle-color);white-space:nowrap;pointer-events:none;letter-spacing:1px}
+.rivals-combat-cue.success,.rivals-combat-cue.block{color:#bdf5ff}
+.rivals-hit-trail{position:absolute;height:6px;background:linear-gradient(90deg,transparent,var(--particle-color),white);box-shadow:0 0 20px var(--particle-color);border-radius:100%;transform-origin:left center;pointer-events:none}
+.rivals-hit-trail.effect{height:12px;filter:blur(2px)}
