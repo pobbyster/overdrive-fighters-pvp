@@ -1,11 +1,11 @@
 /* Overdrive Fighters: motor original, independente de DOM, baseado no livro v0.2.
  * Não contém código do EDOPro. API de comandos/eventos inspirada na separação do core.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./strict-card-scripts.js'),require('./first-drive-expansion.js'),require('./rivals-04.js'),require('./rivals-05.js'),require('./rivals-06.js'),require('./rules-version.js'));else root.OverdriveCore=factory(root.OverdriveCardScripts,root.OverdriveExpansion,root.OverdriveRivals04,root.OverdriveRivals05,root.OverdriveRivals06,root.OverdriveRulesVersion);})(typeof globalThis!=='undefined'?globalThis:this,function(CardScripts,Expansion,Rivals04,Rivals05,Rivals06,RulesVersion){
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./strict-card-scripts.js'),require('./first-drive-expansion.js'),require('./rivals-04.js'),require('./rivals-05.js'),require('./rivals-06.js'),require('./rules-version.js'),require('./game-modes.js'));else root.OverdriveCore=factory(root.OverdriveCardScripts,root.OverdriveExpansion,root.OverdriveRivals04,root.OverdriveRivals05,root.OverdriveRivals06,root.OverdriveRulesVersion,root.OverdriveModes);})(typeof globalThis!=='undefined'?globalThis:this,function(CardScripts,Expansion,Rivals04,Rivals05,Rivals06,RulesVersion,GameModes){
 'use strict';
 const copy=x=>JSON.parse(JSON.stringify(x)),other=p=>1-p,id=n=>'OF-C1-'+String(n).padStart(3,'0');
 const {SUPPORTED,scripts}=CardScripts;
-const VERSION='of-core-js-0.10.0-preview',RULESET_ID=RulesVersion.RULESET_ID;
+const VERSION='of-core-js-0.11.0-preview',RULESET_ID=RulesVersion.RULESET_ID;
 class Engine {
  constructor(catalog){this.catalog=new Map(catalog.map(x=>[x.id,copy(x)]));this.s=null;this.commands=[];this.initial=null;}
  def(card){return card?.tokenDefinition||this.catalog.get(typeof card==='string'?card:card.id);}
@@ -81,7 +81,7 @@ class Engine {
  shuffle(a){for(let i=a.length-1;i>0;i--){let j=this.rng(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
  log(text,rule){this.s.log.push({text,rule});}
  card(cardId,p){return {uid:String(++this.s.uid),id:cardId,owner:p,epoch:0,active:true,ready:0,public:false};}
- start(a,b,first=0,seed=12345,mode='advanced'){const initialEnergy={deathmatch:7,advanced:3,standard:2}[mode];if(!initialEnergy)throw Error('Modo de jogo inválido.');this.validateDeck(a);this.validateDeck(b);if(![0,1].includes(first)||!Number.isInteger(seed)||seed<1||seed>4294967295)throw Error('Preparação inválida.');
+ start(a,b,first=0,seed=12345,mode='advanced'){const initialEnergy=GameModes.get(mode).energy;if(!initialEnergy)throw Error('Modo de jogo inválido.');this.validateDeck(a);this.validateDeck(b);if(![0,1].includes(first)||!Number.isInteger(seed)||seed<1||seed>4294967295)throw Error('Preparação inválida.');
   this.initial={a:copy(a),b:copy(b),first,seed,mode,ruleset:RULESET_ID};this.commands=[];
   this.s={version:VERSION,ruleset:RULESET_ID,revision:0,rng:seed,uid:0,next:0,turn:1,active:first,priority:0,mode,phase:'mulligan',passes:0,ending:false,autoEnd:false,players:[],stack:[],combats:[],completed:[],history:[],choice:null,winner:null,log:[]};
   for(const [p,d] of [a,b].entries()){
@@ -97,6 +97,7 @@ class Engine {
  move(uid,z){const f=this.find(uid);if(!f)throw Error('Carta ausente.');f.p===undefined&&(()=>{throw Error('Carta inválida');})();if(z==='hand'&&f.card.public)f.card.knownTurn=this.s.turn;f.card.epoch++;delete f.card.bonus;if(z!=='extra')delete f.card.slot;f.card.public=!['deck','hand','extra'].includes(z);this.s.players[f.p][f.z].splice(f.i,1);this.s.players[f.p][z].push(f.card);return f.card;}
  usable(p){return [...this.s.players[p].hand,...this.s.players[p].extra.filter(c=>c.ready<=this.s.turn&&(!c.token||this.tokenAvailable(p,c.uid)&&c.power>0))];}
  energies(p,active){return this.s.players[p].stamina.filter(c=>c.active===active);}
+ canPrepare(p){const s=this.s,side=s?.players[p];return !!side&&s.winner===null&&s.phase==='preparation'&&s.preparedTurn&&p===s.active&&s.priority===p&&!s.choice&&!s.stack.length&&!this.current()&&!s.ending&&!s.autoEnd&&!side.prepared&&side.extra.length<4;}
  canFighterSkill(p){const s=this.s;return p===s.active&&s.priority===p&&!s.choice&&!s.stack.length&&!this.current()&&!s.ending&&!s.autoEnd&&s.preparedTurn&&['preparation','combat'].includes(s.phase)&&this.energies(p,true).length>=1&&this.script(s.players[p].fighter).startSkill&&s.players[p].startSkill&&!s.players[p].fighterTapped;}
  canIndependent(p){return p===this.s.active&&this.s.phase==='combat'&&!this.s.ending&&!this.s.autoEnd&&!this.current()&&!this.s.stack.length;}
  paymentEnergies(p,active){return this.energies(p,active).filter(c=>!c.r05Lock);}
@@ -196,7 +197,7 @@ if(a.type!=='chooseGuardDiscard'||!choice.uids.includes(a.uid))throw Error('Esco
   if(p!==this.s.priority)throw Error('A prioridade de ação é do adversário (7.1).');
   if(a.type==='pass'){this.pass(p);return;}
   if(a.type==='prepare'){
-   if(p!==this.s.active||this.s.ending||this.s.autoEnd||this.s.players[p].prepared||this.s.players[p].extra.length>=4)throw Error('Não é possível preparar agora (4.2).');
+   if(!this.canPrepare(p))throw Error('Prepare uma carta apenas no Início de Turno, após o preparo automático e sem efeitos pendentes. O limite é uma por turno e quatro Zonas Extras.');
    const f=this.find(a.uid);if(f?.p!==p||f.z!=='hand')throw Error('Prepare uma carta da mão.');
    const occupied=this.s.players[p].extra.map(c=>c.slot),slot=a.slot??[0,1,2,3].find(n=>!occupied.includes(n));
    if(!Number.isInteger(slot)||slot<0||slot>3||occupied.includes(slot))throw Error('Escolha uma Zona Extra vazia entre 1 e 4.');
@@ -355,7 +356,7 @@ const uids=side.deck.filter(c=>this.def(c).type==='Guarda').map(c=>c.uid);if(uid
   if(s.choice){if(s.choice.player!==p)return [];if(s.choice.kind==='galacstrixCost'){const cost=this.script(this.find(s.choice.uids[s.choice.index]).card).tokenCost;return [{type:'chooseGalacstrix',use:false},...(this.energies(p,true).length>=s.choice.pay.own+cost?[{type:'chooseGalacstrix',use:true}]:[])];}if(s.choice.kind==='ownEnergy')return [{type:'chooseOwnEnergy',required:s.choice.required,options:this.energies(p,true).map(c=>c.uid)}];if(s.choice.kind==='energy')return [{type:'chooseEnergy',required:s.choice.required,options:this.paymentEnergies(p,false).map(c=>c.uid)}];if(s.choice.kind==='psychicCost')return [...s.choice.uids.map(uid=>({type:'choosePsychicCost',uid})),{type:'declinePsychic'}];if(s.choice.kind==='psychicGuess')return ['Golpe','Truque','Guarda'].map(cardType=>({type:'declarePsychicType',cardType}));if(s.choice.kind==='psychicReveal')return [{type:'acknowledgePsychic'}];if(s.choice.kind==='namedSearch')return s.choice.uids.map(uid=>({type:'chooseNamedCard',uid}));if(s.choice.kind==='spiritLuck')return s.choice.uids.map(uid=>({type:'chooseSpiritCard',uid}));if(s.choice.kind==='sharvat')return ['Inferior','Meio','Superior'].map(zone=>({type:'chooseSharvatZone',zone}));if(s.choice.kind==='honored')return [{type:'chooseHonored'},...s.choice.uids.map(uid=>({type:'chooseHonored',uid}))];if(s.choice.kind==='ascension')return [{type:'chooseAscension'},...s.choice.uids.map(uid=>({type:'chooseAscension',uid}))];if(s.choice.kind==='extraEffect')return s.choice.uids.map(uid=>({type:'selectExtraEffect',uid}));if(s.choice.kind==='searchExtraGuard')return s.choice.uids.map(uid=>({type:'selectExtraGuard',uid}));if(s.choice.kind==='guardCost')return s.choice.uids.map(uid=>({type:'chooseGuardDiscard',uid}));if(s.choice.kind==='suruya')return [{type:'chooseSuruya'},...s.choice.uids.map(uid=>({type:'chooseSuruya',uid}))];if(s.choice.kind==='searchFlow')return s.choice.uids.map(uid=>({type:'selectFlowCard',uid}));if(s.choice.kind==='searchGuard')return s.choice.uids.map(uid=>({type:'selectSearchCard',uid}));if(s.choice.kind==='discard')return s.choice.uids.map(uid=>({type:'discardChoice',uid}));if(s.choice.kind==='triggers')return [{type:'orderTriggers',options:s.choice.links.map(l=>({id:l.orderId,label:l.label}))}];if(s.choice.kind==='cleanup')return [{type:'orderDiscard',options:s.choice.options}];if(s.choice.kind!=='revide')return [];}
   else if(s.priority!==p)return [];
   const acts=s.choice?.kind==='revide'?[{type:'declineRevide'}]:[{type:'pass'}],revide=s.choice?.kind==='revide';
-  const own=s.players[p],b=this.current();if(!revide&&p===s.active&&!s.ending&&!s.autoEnd&&!own.prepared&&own.extra.length<4)own.hand.forEach(c=>acts.push({type:'prepare',uid:c.uid}));
+  const own=s.players[p],b=this.current();if(!revide&&this.canPrepare(p))own.hand.forEach(c=>acts.push({type:'prepare',uid:c.uid}));
   if(!revide&&this.canIndependent(p))acts.push({type:'end'});
   if(!revide&&p===s.active&&!own.replenished&&!s.ending&&(!s.autoEnd||b))for(let n=1;n<=Math.min(4,4-own.hand.length,this.energies(p,true).length);n++)acts.push({type:'replenish',n});
   if(!revide&&this.canFighterSkill(p))acts.push({type:'startSkill',uid:own.fighter.uid});

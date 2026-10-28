@@ -26,7 +26,7 @@
  proto.runOps=function(ops,ctx){for(const op of ops){if(this.s.winner!==null)return;if(op.when==='revide'&&!ctx.revide||op.when==='flow'&&!ctx.flow)continue;const p=ctx.p,side=this.s.players[p],source=ctx.source;
   if(op.op==='rivals06Fixar'){const n=op.number;
    if(n===171)this.draw(p,1,false);
-   else if(n===172)this.damage(other(p),3,p);
+   else if(n===172){const uids=extras(this);if(uids.length)this.s.choice={kind:'extraEffect',player:p,uids,required:1,selected:[],source};}
    else if(n===173){const uids=side.deck.filter(c=>gemite(this.def(c))&&this.def(c).type==='Guarda').map(c=>c.uid);if(uids.length)choose(this,p,'Search',uids,{source});}
    else if(n===174){side.r06Prevent=(side.r06PreventTurn===this.s.turn?side.r06Prevent||0:0)+2;side.r06PreventTurn=this.s.turn;}
    else if(n===175&&extras(this).length)choose(this,p,'Extras',extras(this),{source,selected:[],max:2,optional:true});

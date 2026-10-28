@@ -6,10 +6,10 @@ const {Engine,chooseAI}=require('../work/strict-engine.js');require('../work/str
 const catalog=require('../work/catalog.json'),{Rooms}=require('./rooms.cjs'),{project,command,mapAction}=require('./protocol.cjs'),{createServer}=require('./server.cjs');
 const deck=new Engine(catalog).starter();
 const socket=()=>({readyState:1,messages:[],send(text){this.messages.push(JSON.parse(text));},close(code){this.closeCode=code;this.readyState=3;}});
-function lobby(options={},mode='advanced') {const rooms=new Rooms(options),a=socket(),b=socket();rooms.handle(a,{protocol:1,type:'create',name:'A',mode});rooms.handle(b,{protocol:1,type:'join',name:'B',code:a.roomCode});for(const s of [a,b])rooms.handle(s,{protocol:1,type:'ready',deck,ruleset:Engine.RULESET_ID});return {rooms,a,b,room:rooms.rooms.get(a.roomCode)};}
+function lobby(options={},mode='advanced') {const rooms=new Rooms(options),a=socket(),b=socket();rooms.handle(a,{protocol:1,type:'create',name:'A',mode});rooms.handle(b,{protocol:1,type:'join',name:'B',code:a.roomCode});for(const s of [a,b])rooms.handle(s,{protocol:1,type:'ready',deck,ruleset:Engine.RULESET_ID});const room=rooms.rooms.get(a.roomCode);rooms.handle(a,{protocol:1,type:'coinCall',call:'heads'});const winner=room.opening.winner;rooms.handle(winner?b:a,{protocol:1,type:'coinChoose',first:winner?1:0});return {rooms,a,b,room};}
 function act(rooms,s,action,sequence,revision){rooms.handle(s,{protocol:1,type:'action',sequence,revision,action});}
 test('Each mode starts both seats with the correct energy count and hidden hands/decks',()=>{
- for(const [mode,count] of Object.entries({standard:2,advanced:3,deathmatch:7})){
+ for(const [mode,count] of Object.entries({standard:3,advanced:5,deathmatch:7})){
   const {room}=lobby({},mode);
   for(const seat of [0,1]){
    const {view:v}=project(room.engine,seat,['A','B']);assert.equal(v.players[0].stamina.length,count);assert.equal(v.players[1].stamina.length,count);
@@ -67,7 +67,7 @@ test('A reconnect can reclaim its seat before the old socket closes, without los
  assert.equal(room.seats[1].sequence,1);assert.equal(room.engine.s.players[1].mulligan,true);
 });
 test('Projected commands complete duels for every starter and both seat orientations',()=>{
- for(const fighter of [32,51,70,89,114,120,126,132,142]){
+ for(const fighter of catalog.filter(c=>c.type==='Lutador').map(c=>c.number)){
   const {rooms,a,b,room}=lobby();room.engine.start(new Engine(catalog).fighterStarter(fighter),deck,fighter%2,1700+fighter,'advanced');
   let steps=0;while(room.engine.s.winner===null&&steps++<5000){const e=room.engine,p=e.s.phase==='mulligan'?(e.s.players[0].mulligan?1:0):(e.s.choice?.player??e.s.priority),view=project(e,p,['A','B']).view;
    const action=chooseAI(view,catalog);assert(action,'A legal projected action exists');const s=p?b:a;act(rooms,s,action,room.seats[p].sequence+1,e.s.revision);
@@ -83,14 +83,14 @@ test('Real WebSocket transport supports two browsers and refuses unrelated origi
  const next=(s,predicate)=>new Promise(resolve=>{const fn=d=>{const m=JSON.parse(d);if(predicate(m)){s.off('message',fn);resolve(m);}};s.on('message',fn);});
  let receive=next(a,m=>m.type==='welcome');a.send(JSON.stringify({protocol:1,type:'create',name:'A',mode:'standard'}));const auth=await receive;
  receive=next(b,m=>m.type==='welcome');b.send(JSON.stringify({protocol:1,type:'join',name:'B',code:auth.code}));await receive;
- receive=next(a,m=>m.game);for(const s of [a,b])s.send(JSON.stringify({protocol:1,type:'ready',deck,ruleset:Engine.RULESET_ID}));const state=await receive;assert.equal(state.game.view.players[0].stamina.length,2);
+ receive=next(a,m=>m.room?.opening?.phase==='call');for(const s of [a,b])s.send(JSON.stringify({protocol:1,type:'ready',deck,ruleset:Engine.RULESET_ID}));await receive;receive=next(a,m=>m.room?.opening?.phase==='choose');a.send(JSON.stringify({protocol:1,type:'coinCall',call:'heads'}));const toss=await receive;receive=next(a,m=>m.game);(toss.room.opening.winner?b:a).send(JSON.stringify({protocol:1,type:'coinChoose',first:0}));const state=await receive;assert.equal(state.game.view.players[0].stamina.length,3);
  const bad=new WebSocket(`ws://127.0.0.1:${port}/pvp`,{origin:'https://unrelated.example'});await once(bad,'error');
  const health=await fetch(`http://127.0.0.1:${port}/pvp-health`);assert.equal((await health.json()).protocol,1);
  const malformed=await fetch(`http://127.0.0.1:${port}/%00`);assert.equal(malformed.status,400);
  const afterMalformed=await fetch(`http://127.0.0.1:${port}/pvp-health`);assert.equal(afterMalformed.status,200);
 });
 test('Standalone hosting honors PORT and the configured external HTTPS origin',{timeout:15000},async t=>{
- const child=spawn(process.execPath,[require.resolve('./server.cjs')],{env:{...process.env,PORT:'0',OFS_PVP_PORT:'',OFS_PVP_HOST:'',RENDER_EXTERNAL_URL:'https://ofs-host-test.example'},stdio:['ignore','pipe','pipe'],windowsHide:true});
+ const child=spawn(process.execPath,[require.resolve('./server.cjs')],{env:{...process.env,PORT:'0',OFS_PVP_PORT:'',OFS_PVP_HOST:'',RENDER_EXTERNAL_URL:'https://ofs-host-test.example',OFS_PVP_STATE_FILE:require('node:path').join(require('node:os').tmpdir(),'ofs-host-'+require('node:crypto').randomUUID()+'.json')},stdio:['ignore','pipe','pipe'],windowsHide:true});
  t.after(()=>child.kill());
  const port=await new Promise((resolve,reject)=>{let output='';child.stdout.on('data',data=>{output+=data;const match=output.match(/http:\/\/0\.0\.0\.0:(\d+)/);if(match)resolve(Number(match[1]));});child.on('error',reject);child.on('exit',code=>reject(Error('Host ended: '+code)));});
  const health=await fetch(`http://127.0.0.1:${port}/pvp-health`);assert.equal(health.status,200);

@@ -59,6 +59,6 @@ function project(engine, seat, names) {
   for (const a of engine.legalActions(seat).filter(a => a.type === 'play')) costs[[a.uid,a.mode,a.x||0,...(a.mode==='guardStrike'?[a.zone]:[])].join(':')] = engine.payment(seat,engine.find(a.uid).card,a.mode,a.x,a.zone);
   for (const c of [v.players[0].fighter,...v.players[0].hand,...v.players[0].extra,...v.players[0].stamina,...v.players[0].discard]) reasons[c.uid] = engine.explainCard(seat,c.uid);
   const guardCosts=Object.fromEntries(engine.usable(seat).filter(c=>engine.def(c).type==='Guarda').map(c=>[c.uid,engine.guardCost(seat,c)]));
-  return {view:v,candidates,costs,reasons,guardCosts,summary:engine.describeCombat(seat)};
+  return {sounds:engine.soundEvents||[],view:v,candidates,costs,reasons,guardCosts,summary:engine.describeCombat(seat)};
 }
 module.exports = {command,project,mapAction};

@@ -30,6 +30,7 @@
   const enemy=panel('ADVERSÁRIA IA','CONFIGURAÇÕES');moveLabel('opponent',enemy);left.append(enemy);
   const game=panel('DE JOGO','CONFIGURAÇÕES');game.classList.add('selection-settings');
   for(const id of ['duelFormat','gameMode','aiDifficulty','startingPlayer','showTutorial'])moveLabel(id,game);
+  if($('modeDescription'))game.append($('modeDescription'));if($('gameModeHelp'))game.append($('gameModeHelp'));
   if($('difficultyHint'))game.append($('difficultyHint'));
   const more=document.createElement('details');more.className='rivals-more';more.innerHTML='<summary>Cartas e compatibilidade</summary>';const supported=$('supportedCards');if(supported)more.append(supported);game.append(more);
   // Keep any unanticipated extension controls reachable instead of discarding them.
@@ -46,7 +47,7 @@
   if(pvp){
    const lobby=$('pvpLobby'),brand=document.createElement('img');brand.className='rivals-pvp-logo';brand.src=asset('logo');brand.alt='Overdrive Fighters — Rivais Ascendentes';
    enemy.hidden=true;left.prepend(brand);left.append(caption);own.querySelector('h2 span').textContent='SEU BARALHO';center.hidden=true;game.hidden=true;
-   const config=document.createElement('section');config.className='rivals-pvp-config';moveLabel('gameMode',config);lobby.querySelector('.pvp-fields').before(config);
+   const config=document.createElement('section');config.className='rivals-pvp-config';moveLabel('gameMode',config);if($('modeDescription'))config.append($('modeDescription'));if($('gameModeHelp'))config.append($('gameModeHelp'));lobby.querySelector('.pvp-fields').before(config);
    setup.append(lobby);lobby.classList.add('rivals-panel');artButton($('pvpReady'),'battle','Confirmar meu deck e entrar na batalha');
   }
   function updateState(){document.body.classList.toggle('rivals-playing',!$('game').hidden);}

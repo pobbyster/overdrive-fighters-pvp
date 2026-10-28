@@ -1,0 +1,22 @@
+.rivals-editor .editor-preview #editorCardText{display:block!important;-webkit-line-clamp:unset!important;line-clamp:unset!important;max-height:150px!important;min-height:80px!important;overflow-y:auto!important;white-space:pre-wrap;overflow-wrap:anywhere;scrollbar-width:thin;scrollbar-color:#b32be0 #eee1f6;overscroll-behavior:contain;resize:vertical}
+.rivals-editor .editor-preview #editorCardText:focus-visible{outline:2px solid #8d00ed;outline-offset:2px}
+.rivals-editor #workspace>#deckPanel{overflow-y:auto!important;overscroll-behavior:contain}
+.selected-deck-caption[role=button]{cursor:pointer;border-radius:14px!important;transition:box-shadow .15s}
+.selected-deck-caption[role=button]:hover,.selected-deck-caption[role=button]:focus-visible{box-shadow:0 0 0 3px #cf72ff!important;outline:none}
+.rivals-pvp .rivals-left .selected-deck-caption[role=button]{background:white!important;color:#8a00d4!important;padding:18px!important;margin:12px 0!important;min-height:70px}
+.rivals-pvp .rivals-left .selected-deck-caption[role=button] span{display:block!important;font-size:11px;margin-bottom:8px}
+.rivals-pvp .rivals-left .selected-deck-caption[role=button] strong{color:#8a00d4!important;font-size:16px}
+.arena-deck-picker{box-sizing:border-box;background:#fff;color:#502259;border:2px solid #d486f8;border-radius:22px;width:min(760px,94vw);max-height:86dvh;padding:24px;overflow:auto;box-shadow:0 0 40px #9b00ec66}
+.arena-deck-picker::backdrop{background:#170725b8;backdrop-filter:blur(5px)}
+.arena-deck-picker h2{margin-top:0;color:#9400d6}.arena-deck-picker p{font-size:13px}
+#arenaDeckChoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}
+.arena-deck-picker button{cursor:pointer;background:#f6effb;border:1px solid #dec6e9;border-radius:12px;color:#76109a;padding:10px}
+.arena-deck-choice{display:flex;align-items:center;gap:12px;text-align:left;min-width:0}.arena-deck-choice img{width:48px;height:62px;object-fit:cover;object-position:50% 20%;border-radius:6px}.arena-deck-choice span{min-width:0;overflow-wrap:anywhere}.arena-deck-choice strong,.arena-deck-choice small{display:block}.arena-deck-choice small{margin-top:6px}.arena-deck-choice[aria-pressed=true]{border:2px solid #a100df;background:#f0dcfc}.arena-deck-choice:hover{background:#ead7f5}
+.deck-picker-tools{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}.deck-picker-tools details{width:100%}
+.rivals-design .arena-deck-picker .arena-deck-choice[aria-pressed=true]{border:2px solid #a100df!important;background:#ead3fa!important}
+.poster-enemy.random-opponent img{visibility:hidden}.poster-enemy.random-opponent:after{content:'?';position:absolute;inset:0;display:grid;place-items:center;font:bold 180px Arial;color:white;background:linear-gradient(135deg,#b800e1,#f85922);z-index:1}.poster-enemy.random-opponent strong{z-index:2!important}
+#availableRoomsPanel{min-height:230px;max-height:43dvh;overflow:auto}#availableRoomsPanel h2{margin-bottom:12px}#availableRoomsStatus{font-size:12px!important;line-height:1.5}#availableRooms{display:grid;gap:8px}.available-room{display:flex;align-items:center;gap:10px;padding:12px;background:#f3eaf8;border-radius:12px}.available-room>div{flex:1;min-width:0;overflow-wrap:anywhere}.available-room strong,.available-room small{display:block}.available-room small{font-size:11px;margin-top:5px;color:#785a83}.available-room button,#refreshAvailableRooms{cursor:pointer;border:1px solid #d4b2e4;border-radius:10px;background:white;color:#9700d7;padding:9px 12px}.available-room button:disabled{opacity:.5;cursor:default}
+.rivals-pvp #pvpLobby #pvpReady{margin-bottom:0;height:90px}
+@media(max-width:560px){#arenaDeckChoices{grid-template-columns:1fr}.arena-deck-picker{padding:16px}#availableRoomsPanel{max-height:40dvh}}
+
+#modeDescription,#gameModeHelp p{font-size:11px!important;line-height:1.45!important}#gameModeHelp summary{font-size:12px;cursor:pointer}#setup>.selection-settings{overflow-y:auto}#pvpLobby{max-height:82svh;overflow-y:auto}

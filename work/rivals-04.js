@@ -81,6 +81,7 @@
    const blocks=b.blocks.filter(g=>!g.cancelled),defender=other(b.p),side=this.s.players[defender];
    const result=base.finishCombat.call(this,b);
    if(!b.cancelled&&blocks.length){
+    side.rivalsBlockedTurn=this.s.turn;
     if(side.rivalsBlockTurn!==this.s.turn){side.rivalsBlocks=0;side.rivalsBlockTurn=this.s.turn;}
     side.rivalsBlocks=(side.rivalsBlocks||0)+blocks.length;
     if(b.basicDamage+b.impetusDamage===0)side.rivalsSuccessfulTurn=this.s.turn;
@@ -112,13 +113,12 @@
      if(number===144&&previousSuccess&&side.extra.length<4)search(this,p,d=>d.type==='Guarda'&&d.name.startsWith('Glacius'),source,'extra');
      else if(number===145&&previousSuccess&&combat){combat.attack+=3;(combat.attackModifiers||(combat.attackModifiers=[])).push({name:'Bloqueio com sucesso no turno anterior',value:3});}
      else if(number===146){
-      if(previousSuccess)inactiveEnergy(this,p);
-      if(ctx.revide&&this.s.winner===null)effect(this,p,{op:'rivalsReactivate'},'Glacius Permafrost — Revide',source);
+      if(side.rivalsBlockedTurn===this.s.turn-1)inactiveEnergy(this,p);
      }else if(number===147&&ctx.revide&&side.extra.length)choose(this,p,'extra',side.extra.map(c=>c.uid),{source,to:'hand',max:2,optional:true,selected:[]});
      else if(number===150)search(this,p,d=>action(d)&&d.name.startsWith('Glacius'),source);
      else if(number===151)side.rivalsNextGuardBonus=(side.rivalsNextGuardBonus||0)+1;
      else if(number===153){const uids=this.energies(other(p),true).map(c=>c.uid);if(uids.length)choose(this,p,'freeze',uids,{source});else this.draw(other(p),1,false);}
-     else if(number===154&&extras(this).length)choose(this,p,'extra',extras(this),{source,to:'deck',max:Math.min(2,extras(this).length),optional:false,selected:[]});
+     else if(number===154&&extras(this).length)choose(this,p,'extra',extras(this),{source,to:'deck',max:Math.min(2,extras(this).length),optional:true,selected:[]});
      else if(number===155)choose(this,p,'trocaMode',[],{source});
      else if(number===156){const uids=side.deck.slice(0,3).map(c=>c.uid);if(uids.length)choose(this,p,'top',uids,{source});else this.draw(p,1,false);}
      else if(number===157&&extras(this).length)choose(this,p,'extra',extras(this),{source,to:'hand',max:2,optional:true,selected:[]});

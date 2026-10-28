@@ -1,0 +1,122 @@
+{
+  "zones": {
+    "Inferior": {
+      "image": "inferior.png",
+      "source": "INFERIOR.png",
+      "sha256": "b9399768937562d0b63b0bb84efbd95b5f7f767bbd992c139f150fdeeffc2aca"
+    },
+    "Meio": {
+      "image": "meio.png",
+      "source": "MEIO.png",
+      "sha256": "935a7736aead53a21d14fe8746ea67c4cbe78cf7d0459937fe284bb2457a5996"
+    },
+    "Superior": {
+      "image": "superior.png",
+      "source": "SUPERIOR.png",
+      "sha256": "a332f0360046ec970b71171c12379753e2b25a3da3797aee57eb3ef9ca4a52a1"
+    }
+  },
+  "order": "1º acerto → 2º acerto → 3º acerto",
+  "fighters": [
+    {
+      "number": 32,
+      "id": "OF-C1-032",
+      "name": "Boydd",
+      "sequence": [
+        "Inferior",
+        "Meio",
+        "Superior"
+      ]
+    },
+    {
+      "number": 51,
+      "id": "OF-C1-051",
+      "name": "Hanma",
+      "sequence": [
+        "Meio",
+        "Superior",
+        "Superior"
+      ]
+    },
+    {
+      "number": 70,
+      "id": "OF-C1-070",
+      "name": "Len Yin",
+      "sequence": [
+        "Meio",
+        "Meio",
+        "Meio"
+      ]
+    },
+    {
+      "number": 89,
+      "id": "OF-C1-089",
+      "name": "Blossom",
+      "sequence": [
+        "Inferior",
+        "Superior",
+        "Superior"
+      ]
+    },
+    {
+      "number": 114,
+      "id": "OF-C1-114",
+      "name": "Arcturus",
+      "sequence": [
+        "Meio",
+        "Meio",
+        "Inferior"
+      ]
+    },
+    {
+      "number": 120,
+      "id": "OF-C1-120",
+      "name": "Mourner",
+      "sequence": [
+        "Superior",
+        "Superior",
+        "Superior"
+      ]
+    },
+    {
+      "number": 126,
+      "id": "OF-C1-126",
+      "name": "Placide",
+      "sequence": [
+        "Inferior",
+        "Meio",
+        "Inferior"
+      ]
+    },
+    {
+      "number": 132,
+      "id": "OF-C1-132",
+      "name": "Rynhard",
+      "sequence": [
+        "Meio",
+        "Meio",
+        "Superior"
+      ]
+    },
+    {
+      "number": 142,
+      "id": "OF-RVAS-001",
+      "name": "Lady Missbigotten",
+      "sequence": [
+        "Meio",
+        "Meio",
+        "Superior"
+      ]
+    },
+    {
+      "number": 170,
+      "id": "OF-RVAS-029",
+      "name": "Duke",
+      "sequence": [
+        "Inferior",
+        "Inferior",
+        "Inferior"
+      ]
+    }
+  ]
+}

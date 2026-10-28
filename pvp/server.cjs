@@ -3,16 +3,16 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const {WebSocketServer}=require('ws');
 const {Rooms}=require('./rooms.cjs');
 const root=path.resolve(__dirname,'../desktop/site');
-const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.ttf':'font/ttf','.woff2':'font/woff2','.ico':'image/x-icon','.mp3':'audio/mpeg','.ogg':'audio/ogg'};
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.ttf':'font/ttf','.woff2':'font/woff2','.ico':'image/x-icon','.mp3':'audio/mpeg','.ogg':'audio/ogg','.wav':'audio/wav'};
 function createServer(options={}) {
   const rooms=new Rooms(options),origins=new Set(options.origins||[]);
   const server=http.createServer((req,res)=>{
     res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
     if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);res.end();return;}
     let file;
-    try{const url=new URL(req.url,'http://localhost');if(url.pathname==='/pvp-health'){res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');res.end(JSON.stringify({protocol:1,status:'ok',ruleset:require('../work/strict-engine.js').RULESET_ID}));return;}const pathname=decodeURIComponent(url.pathname==='/'?'/home.html':url.pathname);if(pathname.includes('\0'))throw Error('Invalid path');file=path.resolve(root,'.'+pathname);}catch{res.writeHead(400);res.end();return;}
+    try{const url=new URL(req.url,'http://localhost');if(url.pathname==='/pvp-health'){res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');if(rooms.storageFailed)res.statusCode=503;res.end(JSON.stringify({protocol:1,status:rooms.storageFailed?'storage-error':'ok',durable:!!rooms.store,ruleset:require('../work/strict-engine.js').RULESET_ID}));return;}const pathname=decodeURIComponent(url.pathname==='/'?'/home.html':url.pathname);if(pathname.includes('\0'))throw Error('Invalid path');file=path.resolve(root,'.'+pathname);}catch{res.writeHead(400);res.end();return;}
     if(!file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
-    fs.stat(file,(err,stat)=>{if(err||!stat.isFile()){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Cache-Control','no-cache');if(req.method==='HEAD'){res.end();return;}const stream=fs.createReadStream(file);stream.on('error',()=>res.destroy());stream.pipe(res);});
+    fs.stat(file,(err,stat)=>{if(err||!stat.isFile()){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Cache-Control','no-cache');let start=0,end=stat.size-1;if(['.mp3','.wav'].includes(path.extname(file))){res.setHeader('Accept-Ranges','bytes');if(req.headers.range){const match=/^bytes=(\d*)-(\d*)$/.exec(req.headers.range);if(!match||!match[1]&&!match[2]){res.writeHead(416,{'Content-Range':'bytes */'+stat.size});res.end();return;}if(match[1]){start=Number(match[1]);if(match[2])end=Math.min(end,Number(match[2]));}else start=Math.max(0,stat.size-Number(match[2]));if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start>=stat.size||end<start){res.writeHead(416,{'Content-Range':'bytes */'+stat.size});res.end();return;}res.statusCode=206;res.setHeader('Content-Range','bytes '+start+'-'+end+'/'+stat.size);}}res.setHeader('Content-Length',Math.max(0,end-start+1));if(req.method==='HEAD'){res.end();return;}const stream=stat.size?fs.createReadStream(file,{start,end}):fs.createReadStream(file);stream.on('error',()=>res.destroy());stream.pipe(res);});
   });
   const wss=new WebSocketServer({noServer:true,maxPayload:32768,perMessageDeflate:false});
   // Browsers must originate from this server, an explicitly configured origin, or the local desktop.
@@ -30,9 +30,9 @@ function createServer(options={}) {
       if(++socket.count>300){socket.close(1008,'Muitas mensagens');return;}
       try{rooms.handle(socket,JSON.parse(data.toString()));}catch(error){rooms.send(socket,{type:'error',message:error.message});}
     });
-    socket.on('close',()=>rooms.disconnect(socket));socket.on('error',()=>{});
+    socket.on('close',()=>{try{rooms.disconnect(socket);}catch(e){console.error(e.message);}});socket.on('error',()=>{});
   });
-  const interval=setInterval(()=>{rooms.sweep();for(const socket of wss.clients){if(!socket.alive){socket.terminate();continue;}socket.alive=false;socket.ping();}},10000);interval.unref();
+  const interval=setInterval(()=>{try{rooms.sweep();}catch(e){console.error(e.message);}for(const socket of wss.clients){if(!socket.alive){socket.terminate();continue;}socket.alive=false;socket.ping();}},10000);interval.unref();
   server.on('close',()=>{clearInterval(interval);for(const socket of wss.clients)socket.terminate();wss.close();});
   return {server,rooms,wss};
 }
@@ -41,7 +41,11 @@ if(require.main===module){
   const port=Number(process.env.OFS_PVP_PORT||process.env.PORT||4310),host=process.env.OFS_PVP_HOST||(process.env.PORT?'0.0.0.0':'127.0.0.1');
   const origins=(process.env.OFS_PVP_ORIGINS||'').split(',').map(x=>x.trim()).filter(Boolean);
   if(process.env.RENDER_EXTERNAL_URL)origins.push(new URL(process.env.RENDER_EXTERNAL_URL).origin);
-  const {server,wss}=createServer({origins});
+  const {RoomStore}=require('./room-store.cjs');
+  const store=new RoomStore(process.env.OFS_PVP_STATE_FILE||path.resolve(__dirname,'../.data/pvp-rooms.json'));
+  const stateRelative=path.relative(root,store.file);
+  if(!stateRelative||stateRelative!=='..'&&!stateRelative.startsWith('..'+path.sep)&&!path.isAbsolute(stateRelative))throw Error('O arquivo privado de salas deve ficar fora da pasta publicada.');
+  const {server,wss}=createServer({origins,store,decisionMs:Math.max(0,Number(process.env.OFS_PVP_DECISION_SECONDS)||0)*1000,lobbyIdleMs:Math.max(60,Number(process.env.OFS_PVP_LOBBY_SECONDS)||1800)*1000});
   server.listen(port,host,()=>console.log('PvP: http://'+host+':'+server.address().port));
   let stopping=false;
   const stop=()=>{if(stopping)return;stopping=true;for(const socket of wss.clients)socket.close(1012,'Servidor reiniciando');server.close();setTimeout(()=>{for(const socket of wss.clients)socket.terminate();server.closeAllConnections();},5000).unref();};

@@ -9,6 +9,8 @@
    }catch(e){post({type:'ofs-arcade:error',message:e.message});}}
   if(m.type==='ofs-arcade:pause'&&booted){OverdriveSession.paused=!!m.paused;api.pause();api.render();if(!m.paused)api.schedule();update();}
  });
+ addEventListener('of-duel-start',()=>post({type:'ofs-arcade:duel-start'}));
+ addEventListener('of-game-sounds',e=>post({type:'ofs-arcade:sounds',sounds:e.detail}));
  addEventListener('of-game-render',()=>{if(booted)update();});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!document.querySelector('dialog[open]'))post({type:'ofs-arcade:pause-request'});});
  function ready(){if(api.catalog())post({type:'ofs-arcade:ready'});}addEventListener('of-arena-ready',ready);if(api.catalog())queueMicrotask(ready);

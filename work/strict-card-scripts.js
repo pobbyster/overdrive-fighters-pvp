@@ -113,18 +113,18 @@ Object.assign(scripts,{
  111:{excaliumDiscard:true,revideAttack:2,onPlay:expansionEffect},
  112:{excaliumDiscard:true,revideAttack:2,onPlay:expansionEffect},
  113:{excaliumDiscard:true,revealedOnly:true,revideAttack:3},
- 114:{fighter:true,sequence:['Superior','Meio','Meio'],fighterOverdrive:'arcturus'},
+ 114:{fighter:true,sequence:["Meio","Meio","Inferior"],fighterOverdrive:'arcturus'},
  115:{fluxo:1,onPlay:expansionEffect},116:{fluxo:1,onPlay:expansionEffect},
  117:{fluxo:2,onPlay:expansionEffect},118:{fluxo:2,onPlay:expansionEffect},
  119:{fluxo:3,onPlay:expansionEffect},
- 120:{fighter:true,errata:'Vire Mourner: busque 1 Golpe com Fluxo do seu baralho para a mão, sem custo de energia. Enquanto virada, não pode repetir a habilidade nem realizar Overdrive. OVERDRIVE: até o final deste turno, suas Ações com Fluxo não podem ser bloqueadas.',sequence:['Inferior','Inferior','Inferior'],fighterOverdrive:'mourner'},
+ 120:{fighter:true,errata:'Vire Mourner: busque 1 Golpe com Fluxo do seu baralho para a mão, sem custo de energia. Enquanto virada, não pode repetir a habilidade nem realizar Overdrive. OVERDRIVE: até o final deste turno, suas Ações com Fluxo não podem ser bloqueadas.',sequence:["Superior","Superior","Superior"],fighterOverdrive:'mourner'},
  121:{extraReturn:1,reload:1,onPlay:expansionEffect},122:{extraReturn:1,reload:1,onPlay:expansionEffect},
  123:{extraReturn:2,reload:2,reloadBonus:2},124:{extraReturn:3,reload:2,reloadBonus:2},
  125:{onPlay:expansionEffect},
- 126:{fighter:true,sequence:['Superior','Meio','Superior'],fighterOverdrive:'placide'},
+ 126:{fighter:true,sequence:["Inferior","Meio","Inferior"],fighterOverdrive:'placide'},
  127:{fury:1},128:{fury:2,onPlay:expansionEffect},129:{fury:2,onPlay:expansionEffect},
  130:{fury:2},131:{fury:3},
- 132:{fighter:true,sequence:['Inferior','Meio','Meio'],fighterOverdrive:'rynhard'},
+ 132:{fighter:true,sequence:["Meio","Meio","Superior"],fighterOverdrive:'rynhard'},
  133:{puppyCost:true},134:{puppyCost:true},135:{puppyCost:true},136:{puppyCost:true},
  138:{onPlay:expansionEffect},139:{onPlay:expansionEffect},140:{onPlay:expansionEffect},141:{onPlay:expansionEffect}
 });
@@ -132,15 +132,15 @@ const frost=[{op:'rivalsCard'}];
 Object.assign(scripts,{
  142:{fighter:true,sequence:['Meio','Meio','Superior'],fighterOverdrive:'missbigotten'},
  143:{},144:{onPlay:frost},145:{onPlay:frost,hit:[{op:'rivalsReactivate',when:'revide'}]},
- 146:{hit:frost},147:{break:true,onPlay:frost},148:{break:true,onPlay:[{op:'draw',n:2,when:'revide'}]},
+ 146:{onPlay:frost,hit:[{op:'rivalsReactivate',when:'revide'}]},147:{break:true,onPlay:frost},148:{break:true,onPlay:[{op:'draw',n:2,when:'revide'}]},
  149:{},150:{deter:1,onBlock:[{op:'rivalsDeter'},...frost]},
  151:{deter:1,onBlock:[{op:'rivalsDeter'},...frost],success:[{op:'rivalsReactivate'}]},
- 152:{deter:1,onBlock:[{op:'rivalsDeter'},{op:'draw',n:2}]},
+ 152:{deter:1,onBlock:[{op:'rivalsDeter'},{op:'draw',n:1}]},
  153:{deter:2,onBlock:[{op:'rivalsDeter'},...frost]},154:{deter:2,onBlock:[{op:'rivalsDeter'},...frost]},
  155:{onPlay:frost},156:{onPlay:frost},157:{onPlay:frost},158:{onPlay:frost},159:{onPlay:frost},160:{onPlay:frost},161:{onPlay:frost},
  162:{onPlay:[{op:'rivals05Card'}]},163:{onPlay:[{op:'rivals05Card'}]},164:{onPlay:[{op:'rivals05Card'}]},165:{onPlay:[{op:'rivals05Card'}]},166:{onPlay:[{op:'rivals05Card'}]},167:{onPlay:[{op:'rivals05Card'}]},168:{hit:[{op:'rivals05Card'}]},169:{}
 });
-Object.assign(scripts,{170:{fighter:true,sequence:['Superior','Superior','Superior'],fighterOverdrive:'duke'},171:{gemite:true},172:{gemite:true},173:{gemite:true},174:{gemite:true},175:{gemite:true},176:{onPlay:[{op:'rivals06Union'}]}});
+Object.assign(scripts,{170:{fighter:true,sequence:["Inferior","Inferior","Inferior"],fighterOverdrive:'duke'},171:{gemite:true},172:{gemite:true},173:{gemite:true},174:{gemite:true},175:{gemite:true},176:{onPlay:[{op:'rivals06Union'}]}});
 return {SUPPORTED,scripts};
 });
 
