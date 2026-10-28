@@ -500,7 +500,7 @@ Engine.prototype.newTurn=function(){if(this.s.phase==='end')this.resolveTokenTur
 Expansion.install(Engine,scripts);
 Rivals04.install(Engine,scripts);
 Rivals05.install(Engine,scripts);
-Rivals06.install(Engine,scripts);
+Rivals06.install(Engine,scripts,GameModes);
 Engine.RULESET_ID=RULESET_ID;
 return {Engine,chooseAI,SUPPORTED,VERSION,RULESET_ID};
 });
