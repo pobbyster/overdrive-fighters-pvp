@@ -36,6 +36,7 @@ addEventListener('of-game-render',event=>{
  if(choice?.player===0){
   if(['ownEnergy','energy'].includes(choice.kind)){const selected=document.querySelectorAll('#ownEnergy .card.selected').length;hint.textContent='Pagamento · '+selected+' de '+choice.required+' energia(s) selecionada(s). '+(choice.kind==='ownEnergy'?'Escolha energias ativas para virar.':'Escolha energias inativas para reativar.');}
   else if(choice.kind==='extraEffect')hint.textContent='Alvos · faltam '+(choice.remaining||1)+' carta(s). Escolha uma das Zonas Extras destacadas.';
+  else if(choice.kind==='balanceScry')hint.textContent='Olhe as três cartas observadas. Escolha a próxima carta do topo; depois ordene as restantes. Já escolhidas: '+(choice.selectedCount||0)+'.';
   else if(!choice.kind.startsWith('expansion:')&&!choice.kind.startsWith('rivals:')&&$('actionButtons').classList.contains('search-card-grid'))hint.textContent='Busca · escolha 1 carta entre as opções ilustradas. Apenas cartas válidas para este efeito estão disponíveis.';
   else if(choice.kind==='revide')context.textContent='REVIDE: o adversário usou suas energias inativas. Você pode anunciar um Golpe ou continuar sem revidar.';
  }else if(blocking){const n=api.selectedBlocks().length;hint.textContent='Bloqueio · '+n+' carta(s) selecionada(s). Clique nos bloqueadores destacados; confira o cálculo antes de confirmar.';}

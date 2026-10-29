@@ -242,7 +242,7 @@
   {
     "id": "OF-C1-016",
     "number": 16,
-    "name": "Psychicpowder",
+    "name": "Psychicpoder",
     "type": "Golpe",
     "subtype": "Investida",
     "color": "Verde",
@@ -252,13 +252,13 @@
     "alternateCost": 2,
     "group": "Coloridas",
     "source": "16.png",
-    "searchText": "Descarte uma carta Psychic e declare um tipo de Ação (Golpe, Truque ou Guarda). Revele o topo do seu baralho. Se acertar, compre-a e ganhe vida igual ao custo da carta comprada. Se errar, reembaralhe-a. REVIDE: +2 ATQ.",
+    "searchText": "Declare um tipo de Ação (Golpe, Truque ou Guarda). Revele a carta do topo do seu baralho; se for do mesmo tipo, este Golpe ganha +2 ATQ. REVIDE: ganhe 2 de vida.",
     "zone": "Meio"
   },
   {
     "id": "OF-C1-017",
     "number": 17,
-    "name": "Psychicdefense",
+    "name": "Psychicdefesa",
     "type": "Guarda",
     "subtype": "",
     "color": "Verde",
@@ -268,7 +268,7 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "17.png",
-    "searchText": "Descarte uma carta Psychic e declare um tipo de Ação (Golpe, Truque ou Guarda). Revele o topo do seu baralho. Se acertar, compre-a e cause 3 de dano. Se errar, reembaralhe-a.",
+    "searchText": "Declare um tipo de Ação (Golpe, Truque ou Guarda). Revele a carta do topo do seu baralho; se for do mesmo tipo, esta Guarda ganha +2 BLQ.",
     "zone": null
   },
   {
@@ -284,13 +284,13 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "18.png",
-    "searchText": "Recicle 1 Golpe ou Guarda Psychic do seu Descarte para sua mão. Pague 1 energia própria ativa: bana esta Ação do seu Descarte e compre 1 carta.",
+    "searchText": "Olhe as 3 cartas do topo do seu baralho. Organize em qualquer ordem. Pague 1 energia verde: bana esta Ação do seu Descarte e recicle 1 Golpe ou Guarda Psychic do seu Descarte para sua mão.",
     "zone": null
   },
   {
     "id": "OF-C1-019",
     "number": 19,
-    "name": "Psychicadvance",
+    "name": "Psychicavanço",
     "type": "Truque",
     "subtype": "",
     "color": "Verde",
@@ -300,7 +300,7 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "19.png",
-    "searchText": "Busque 1 Golpe ou Guarda Psychic do seu baralho para sua mão. Pague 1 energia própria ativa: bana esta Ação do seu Descarte e compre 1 carta.",
+    "searchText": "Olhe as 3 cartas do topo do seu baralho. Organize em qualquer ordem. Pague 1 energia verde: bana esta Ação do seu Descarte e busque 1 Golpe ou Guarda Psychic do seu baralho para sua mão.",
     "zone": null
   },
   {
@@ -380,7 +380,7 @@
     "alternateCost": 2,
     "group": "Coloridas",
     "source": "24.png",
-    "searchText": "Se este Golpe bater, crie Galacstrix Coruja com 1 de Poder em uma Zona Extra sua. Se a ficha causar dano, busque 1 Ação Galacstrix do seu baralho para sua mão. Fugaz: destrua ao final deste turno. REVIDE: Galacstrix Coruja ganha +2 de Poder.",
+    "searchText": "Crie uma ficha Galacstrix Coruja com 1 de Poder em uma Zona Extra sua, com Fugaz e o efeito: se eu golpear, busque 1 Ação Galacstrix do meu baralho para a mão. Fugaz: me destrua ao final deste turno. REVIDE: Galacstrix Coruja ganha +2 de Poder.",
     "zone": "Meio"
   },
   {
@@ -396,7 +396,7 @@
     "alternateCost": 3,
     "group": "Coloridas",
     "source": "25.png",
-    "searchText": "Se este Golpe bater, crie Galacstrix Dragão com 3 de Poder em uma Zona Extra sua. Se a ficha bater, compre 1 carta. Fugaz: destrua ao final deste turno. REVIDE: Compre 1 carta.",
+    "searchText": "Crie uma ficha Galacstrix Dragão com 3 de Poder em uma Zona Extra sua, com Fugaz e o efeito: se eu golpear, compre 1 carta. Fugaz: me destrua ao final deste turno. REVIDE: este Golpe ganha +3 ATQ.",
     "zone": "Meio"
   },
   {
@@ -412,7 +412,7 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "26.png",
-    "searchText": "Se esta Guarda bloquear com sucesso, crie Galacstrix Corvo com 2 de Poder em uma Zona Extra sua. Se a ficha bloquear com sucesso, recicle 1 Ação Galacstrix do seu Descarte para sua mão. Fugaz: destrua ao final deste turno.",
+    "searchText": "Crie uma ficha Galacstrix Corvo com 2 de Poder em uma Zona Extra sua, com Fugaz e o efeito: se eu bloquear, recicle 1 Ação Galacstrix do seu Descarte para sua mão. Fugaz: me destrua ao final deste turno.",
     "zone": null
   },
   {
@@ -428,13 +428,13 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "27.png",
-    "searchText": "Se o Golpe alvo bater, crie Galacstrix Tigre com 2 de Poder em uma Zona Extra sua. Se a ficha causar dano, seu próximo Golpe ganha +2 ATQ. Fugaz: destrua ao final deste turno.",
+    "searchText": "Crie uma ficha Galacstrix Tigre com 2 de Poder em uma Zona Extra sua, com Fugaz e o efeito: se eu golpear, o seu próximo Golpe ganha +2 ATQ. Fugaz: me destrua ao final deste turno.",
     "zone": null
   },
   {
     "id": "OF-C1-028",
     "number": 28,
-    "name": "Darsmagium Punch",
+    "name": "Punho Darsmagium",
     "type": "Golpe",
     "subtype": "Soco",
     "color": "Rosa",
@@ -444,13 +444,13 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "28.png",
-    "searchText": "Se este Golpe bater, busque 1 Truque Darsmagna do seu baralho para sua mão. Se esta Ação for banida do seu Descarte, compre 1 carta.",
+    "searchText": "Se este Golpe bater, busque 1 Truque Darsmagna do seu baralho. Se esta Ação for banida do seu Descarte, compre 1 carta.",
     "zone": "Superior"
   },
   {
     "id": "OF-C1-029",
     "number": 29,
-    "name": "Darsmagium Bolt",
+    "name": "Raio Darsmagium",
     "type": "Golpe",
     "subtype": "Avanço",
     "color": "Rosa",
@@ -460,13 +460,13 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "29.png",
-    "searchText": "Se este Golpe bater, busque 1 Truque Darsmagna do seu baralho para sua mão. Se esta Ação for banida do seu Descarte, cause 2 de dano.",
+    "searchText": "Se este Golpe bater, busque 1 Truque Darsmagna do seu baralho. Se esta Ação for banida do seu Descarte, cause 2 de dano.",
     "zone": "Superior"
   },
   {
     "id": "OF-C1-030",
     "number": 30,
-    "name": "Darsmagium Kick",
+    "name": "Chute Darsmagium",
     "type": "Golpe",
     "subtype": "Chute",
     "color": "Rosa",
@@ -476,7 +476,7 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "30.png",
-    "searchText": "Se este Golpe bater, busque 1 Truque Darsmagna do seu baralho para sua mão. Se esta Ação for banida do seu Descarte, ganhe 2 de vida.",
+    "searchText": "Se este Golpe bater, busque 1 Truque Darsmagna do seu baralho. Se esta Ação for banida do seu Descarte, ganhe 2 de vida.",
     "zone": "Inferior"
   },
   {
@@ -492,7 +492,7 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "31.png",
-    "searchText": "Busque 1 Golpe Darsmagium do seu baralho para sua mão. Do Descarte, pague 1 energia própria ativa: retorne esta carta ao baralho e bana 1 Ação Darsmagium do seu Descarte.",
+    "searchText": "Busque 1 Golpe Darsmagium do seu baralho. Se Darsmagna Auraborea estiver no seu Descarte, pague 1 energia rosa: retorne-a para o seu baralho e bana 1 Ação Darsmagium do seu Descarte.",
     "zone": null
   },
   {
@@ -511,7 +511,7 @@
     "colors": [
       "Roxo"
     ],
-    "searchText": "TORA 0 seu próximo Soco não pode ser Bloqueado por Guardas. Escolha um tipo de lona de Combate. Golpeie como meu",
+    "searchText": "Seus Golpes ganham +1 ATQ para cada carta nas Zonas Extras em campo. OVERDRIVE: golpeie com meu Poder em uma Zona de Combate escolhida. Ignore bloqueios com valor menor que meu Poder.",
     "zone": null
   },
   {
@@ -655,7 +655,7 @@
     "alternateCost": 2,
     "group": "Boydd",
     "source": "41.png",
-    "searchText": "REVIDE Este golpe ganha +2e. \"Todo momento é o momento de estar",
+    "searchText": "REVIDE: este Golpe ganha +3 ATQ.",
     "zone": "Meio"
   },
   {
@@ -671,7 +671,7 @@
     "alternateCost": 2,
     "group": "Boydd",
     "source": "42.png",
-    "searchText": "Se este golpe bater, compre 2 cartas. REVIDE",
+    "searchText": "Se este Golpe bater, compre 2 cartas. REVIDE: este Golpe ganha +3 ATQ.",
     "zone": "Meio"
   },
   {
@@ -687,7 +687,7 @@
     "alternateCost": 3,
     "group": "Boydd",
     "source": "43.png",
-    "searchText": "(Se este Golpe bater, interrompa a sequência do lutador QUEBRA adversário.) Se bater, busque I Guarda do seu baralho para a sua mão. REVIDE Este golpe ganha +2'.",
+    "searchText": "COMBO Inferior. QUEBRA. Se bater, busque 1 Guarda do seu baralho para sua mão. REVIDE: este Golpe ganha +3 ATQ.",
     "zone": "Meio"
   },
   {
@@ -703,7 +703,7 @@
     "alternateCost": 4,
     "group": "Boydd",
     "source": "44.png",
-    "searchText": "PREPARO (Se este Golpe bater, interrompa a sequência do lutador adversário.) Escolha uma tipo de Zona de Combate, bloqueios a Golpes desta Zona ganham +2' até o final do próximo turno. (Preparo - Se você tiver I ou mais cartas nas Zonas Extras do seu lutador).",
+    "searchText": "QUEBRA. PREPARO: escolha uma Zona de Combate; bloqueios a Golpes desta Zona ganham +2 BLQ até o final do próximo turno. Preparo: se você tiver 1 ou mais cartas nas Zonas Extras do seu lutador. REVIDE: este Golpe ganha +3 ATQ.",
     "zone": "Superior"
   },
   {
@@ -719,7 +719,7 @@
     "alternateCost": 5,
     "group": "Boydd",
     "source": "45.png",
-    "searchText": "QUEBRA PREPARO (Se este Golpe bater, interrompa a sequência do lutador adversário.) Se bater, destrua cartas na Zona Extra do lutador adversário igual a quantidade de cartas nas suas Zonas Extras. (Preparo -Se você tiver I ou mais cartas nas lonas Extras.)",
+    "searchText": "QUEBRA. PREPARO: se bater, destrua cartas na Zona Extra do lutador adversário em quantidade igual às cartas nas suas Zonas Extras. Preparo: se você tiver 1 ou mais cartas nas Zonas Extras. REVIDE: este Golpe ganha +3 ATQ.",
     "zone": "Superior"
   },
   {
@@ -818,7 +818,7 @@
     "colors": [
       "Laranja"
     ],
-    "searchText": "Se o seu primeiro Golpe com Impeto bater, compre I carta. o pelecomo o ro meu Oder em uma lona declarada. Se bater, até o final do próximo turno, todos os golpes na DRIVE",
+    "searchText": "Se um Golpe com Ímpeto bater, compre 1 carta. OVERDRIVE: golpeie com o dobro do meu Poder em uma Zona declarada. Se bater, até o final do próximo turno, todos os Golpes na respectiva Zona ganham +2 ATQ.",
     "zone": null
   },
   {
@@ -904,7 +904,7 @@
   {
     "id": "OF-C1-057",
     "number": 57,
-    "name": "Olhar de Mapvta",
+    "name": "Entre Olhares",
     "type": "Truque",
     "subtype": "",
     "color": "Laranja",
@@ -914,7 +914,7 @@
     "alternateCost": null,
     "group": "Hanma",
     "source": "57.png",
-    "searchText": "(Descarte esta carta e uma Guarda do mesmo valor, FINTA cancele a Guarda alvo.) Declare um Tipo e lona de Golpe. Revele a carta do topo do seu baralho, se for uma carta do mesmo tipo declarado, coloque-a na sua Zona Extra. Ela pode ser ativada neste turno.",
+    "searchText": "FINTA: descarte esta carta e uma Guarda do mesmo valor para cancelar a Guarda alvo. Declare um tipo e uma Zona de Golpe. Revele a carta do topo do seu baralho; se for um Golpe do tipo e Zona declarados, coloque-a na sua Zona Extra. Ela pode ser ativada neste turno.",
     "zone": null
   },
   {
@@ -1729,7 +1729,7 @@
   {
     "id": "OF-C1-108",
     "number": 108,
-    "name": "Psychicbarrier",
+    "name": "Psychicbarreira",
     "type": "Golpe",
     "subtype": "Explosão",
     "color": "Verde",
@@ -1737,10 +1737,10 @@
     "alternateCost": 3,
     "power": 5,
     "block": 1,
-    "zone": "Superior",
+    "zone": "Meio",
     "group": "Psychic",
     "source": "ATUALIZAÇÃO 0.1/OF-C1-107.png",
-    "searchText": "Descarte uma carta Psychic e declare um tipo de Ação (Golpe, Truque ou Guarda). Revele a carta do topo do seu baralho; se for do mesmo tipo, compre-a e inative uma energia do lutador alvo. REVIDE: este Golpe ganha +1 ATQ."
+    "searchText": "Declare um tipo de Ação (Golpe, Truque ou Guarda). Revele a carta do topo do seu baralho; se for do mesmo tipo, este Golpe ganha +2 ATQ para cada Ação Psychic banida. REVIDE: este Golpe ganha +2 ATQ."
   },
   {
     "id": "OF-C1-109",

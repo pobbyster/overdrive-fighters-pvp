@@ -5,7 +5,7 @@
 'use strict';
 const copy=x=>JSON.parse(JSON.stringify(x)),other=p=>1-p,id=n=>'OF-C1-'+String(n).padStart(3,'0');
 const {SUPPORTED,scripts}=CardScripts;
-const VERSION='of-core-js-0.11.0-preview',RULESET_ID=RulesVersion.RULESET_ID;
+const VERSION='of-core-js-0.11.3',RULESET_ID=RulesVersion.RULESET_ID;
 class Engine {
  constructor(catalog){this.catalog=new Map(catalog.map(x=>[x.id,copy(x)]));this.s=null;this.commands=[];this.initial=null;}
  def(card){return card?.tokenDefinition||this.catalog.get(typeof card==='string'?card:card.id);}
@@ -14,7 +14,7 @@ class Engine {
  psychicAllowed(p,card){const sc=this.script(card),side=this.s.players[p],hand=side.hand.filter(c=>c.uid!==card.uid);return hand.length>0&&(side[sc.psychicFrom].some(c=>this.def(c).type==='Golpe'&&this.def(c).name.toLowerCase().includes('psychic'))||sc.psychicFrom==='discard'&&hand.some(c=>this.def(c).type==='Golpe'&&this.def(c).name.toLowerCase().includes('psychic')));}
  comboAllowed(card,previousZone){const required=this.script(card).comboZone;return !required||previousZone===required;}
  canActivatedFighterSkill(p){const side=this.s.players[p],n=this.def(side.fighter).number;
-  return [32,70].includes(n)&&(p!==this.s.active||this.s.preparedTurn)&&this.s.priority===p&&!this.s.choice&&this.s.winner===null&&!this.s.ending&&['preparation','combat'].includes(this.s.phase)&&this.energies(p,true).length>=1&&!side.fighterTapped&&(!this.s.autoEnd||!!this.current());
+  return [70].includes(n)&&(p!==this.s.active||this.s.preparedTurn)&&this.s.priority===p&&!this.s.choice&&this.s.winner===null&&!this.s.ending&&['preparation','combat'].includes(this.s.phase)&&this.energies(p,true).length>=1&&!side.fighterTapped&&(!this.s.autoEnd||!!this.current());
  }
  consumeZoneNextAttack(zone){const list=this.s.zoneNextAttacks||[],matching=list.filter(m=>m.zone===zone&&m.untilTurn>=this.s.turn);this.s.zoneNextAttacks=list.filter(m=>m.zone!==zone&&m.untilTurn>=this.s.turn);return matching.reduce((n,m)=>n+m.n,0);}
  zoneModifier(zone,property){return (this.s.zoneModifiers||[]).filter(m=>m.zone===zone&&m.untilTurn>=this.s.turn).reduce((n,m)=>n+(m[property]||0),0);}
@@ -333,7 +333,7 @@ const uids=side.deck.filter(c=>this.def(c).type==='Guarda').map(c=>c.uid);if(uid
   }
   const ctx={p:b.p,flow:b.flow,revide:b.revide,combat:b.id,focusPower:this.s.players[b.p].power};const triggers=[];for(const effect of b.endEffects||[])triggers.push({p:effect.p,ops:effect.ops,context:{p:effect.p},label:effect.label});if(damage&&!b.cancelled)for(const effect of b.hitTokenEffects||[])triggers.push({p:effect.p,ops:[{op:'createGalacstrix',name:effect.name,power:effect.power}],context:{p:effect.p},label:effect.name+' — Golpe alvo bateu'});if(!b.cancelled&&b.brokeSequence&&sc.onBreak)triggers.push({p:b.p,ops:sc.onBreak,context:ctx,label:this.def(c).name+' — sequência quebrada'});
   if(damage&&['hanma','len-yin'].includes(b.fighterOverdrive))triggers.push({p:b.p,ops:[{op:'zoneModifier',zone:b.zone,property:b.fighterOverdrive==='hanma'?'attack':'cost',n:b.fighterOverdrive==='hanma'?2:1,untilTurn:this.s.turn+1}],context:{p:b.p},label:'Overdrive — efeito da Zona'});
-  if(!b.cancelled&&b.firstImpetus&&basicDamage>0&&this.script(this.s.players[b.p].fighter).firstImpetusDraw)triggers.push({p:b.p,ops:[{op:'draw',n:1}],context:{p:b.p},label:'Hanma — primeiro Golpe com Ímpeto bateu'});
+  if(!b.cancelled&&basicDamage>0&&(b.impetusBase||b.extraImpetus||(b.revide&&sc.revideImpetus))&&this.script(this.s.players[b.p].fighter).impetusHitDraw)triggers.push({p:b.p,ops:[{op:'draw',n:1}],context:{p:b.p},label:'Hanma — Golpe com Ímpeto bateu'});
   if(damage&&sc.hit)triggers.push({p:b.p,ops:sc.hit,context:ctx,label:this.def(c).name+' — Se Bater'});
   if(!damage&&!b.cancelled)for(const guard of b.blocks.filter(x=>!x.cancelled)){const card=this.find(guard.uid)?.card;if(!card)continue;const gs=this.script(card),p=other(b.p);if(gs.deflect&&guard.origin==='extra')triggers.push({p,ops:[{op:'fixedDamage',n:guard.value}],context:{p},label:'Defletir'});if(gs.success)triggers.push({p,ops:gs.success,context:{p,combat:b.id},label:this.def(card).name+' — bloqueio com sucesso'});}
   // Cartas permanecem até gatilhos de resultado terminarem; recolhimento é decisão de ordem.
@@ -439,7 +439,7 @@ Engine.prototype.remainingActions=function(p){const c=this.s.choice;if(!c||c.pla
  case 'bloomCost':case 'fervorPick':case 'bloomPick':case 'bloomReturn':case 'mapvtaPick':case 'darsPick':return c.uids.map(uid=>({type:'remainingChoose',uid}));
  case 'darsPay':return [{type:'remainingChoose',use:false},{type:'remainingChoose',use:true}];
  case 'darsTarget':return [0,1].map(target=>({type:'remainingChoose',target}));
- case 'mapvtaDeclare':return [...new Set([...this.catalog.values()].filter(c=>c.type==='Golpe').map(c=>c.subtype))].map(value=>({type:'remainingChoose',declare:'subtype',value})).concat(['Inferior','Meio','Superior'].map(value=>({type:'remainingChoose',declare:'zone',value})));
+ case 'mapvtaDeclare':return [...new Set([...this.catalog.values()].filter(c=>c.type==='Golpe').map(c=>c.subtype))].flatMap(value=>['Inferior','Meio','Superior'].map(zone=>({type:'remainingChoose',declare:'subtype',value,zone})));
  case 'ghostPick':return c.uids.flatMap(uid=>[{type:'remainingChoose',uid,mode:'buy'},...this.energies(p,true).map(e=>({type:'remainingChoose',uid,mode:'swap',energyUid:e.uid}))]);
  default:return null;
 }};
@@ -447,7 +447,7 @@ Engine.prototype.legalActions=function(p){const actions=this.remainingActions(p)
 Engine.prototype.apply=function(p,a){const c=this.s.choice;if(!c||!this.remainingActions(p))return finalApply.call(this,p,a);if(p!==c.player||!this.remainingActions(p).some(x=>Object.keys(x).every(k=>x[k]===a[k])&&Object.keys(a).every(k=>k in x||k==='slot'&&c.kind==='fervorPick')))throw Error('Escolha inválida para este efeito.');const side=this.s.players[p];this.s.choice=null;
  if(c.kind==='bloomCost'){this.play(p,{...c.intent,playDiscardUid:a.uid},c.revide);return;}
  if(c.kind==='fervorPick'){this.putEffectExtra(p,a.uid,true,a.slot);this.shuffle(side.deck);}
- else if(c.kind==='mapvtaDeclare'){const card=side.deck[0];if(card){this.log('Olhar de Mapvta revela '+this.def(card).name+'.','efeito de carta');if(this.def(card)[a.declare]===a.value&&side.extra.length<4)this.putEffectExtra(p,card.uid);this.shuffle(side.deck);}}
+ else if(c.kind==='mapvtaDeclare'){const card=side.deck[0];if(card){this.log('Entre Olhares revela '+this.def(card).name+'.','efeito de carta');if(this.def(card).type==='Golpe'&&this.def(card).subtype===a.value&&this.def(card).zone===a.zone&&side.extra.length<4)this.putEffectExtra(p,card.uid,true);}}
  else if(c.kind==='ghostPick'){if(a.mode==='swap'){this.move(a.energyUid,'hand');const card=this.move(a.uid,'stamina');card.active=false;}else this.move(a.uid,'hand');this.shuffle(side.deck);}
  else if(c.kind==='bloomPick'){this.s.choice={kind:'bloomReturn',player:p,uids:c.old,chosen:a.uid};}
  else if(c.kind==='bloomReturn'){this.move(a.uid,'hand');const card=this.move(c.chosen,'stamina');card.active=false;this.shuffle(side.deck);}
@@ -501,6 +501,59 @@ Expansion.install(Engine,scripts);
 Rivals04.install(Engine,scripts);
 Rivals05.install(Engine,scripts);
 Rivals06.install(Engine,scripts,GameModes);
+// Atualização de cartas 0.9: regras compartilhadas por IA, Arcade e servidor PvP.
+const u09={};for(const k of ['script','runOps','apply','legalActions','activatePaid','beginPayment','completePayment','view','finishCombat','move','createToken','destroyToken'])u09[k]=Engine.prototype[k];
+const psychicAction=(e,c)=>['Golpe','Guarda','Truque'].includes(e.def(c).type)&&e.def(c).name.toLowerCase().includes('psychic');
+Engine.prototype.refreshBoydd=function(){if(!this.s)return;const count=this.s.players.reduce((n,s)=>n+s.extra.length,0);for(const b of this.s.combats){if(b.boyddExtraBonus===undefined)continue;b.attack+=count-b.boyddExtraBonus;b.boyddExtraBonus=count;const m=b.attackModifiers?.find(m=>m.name==='Boydd · Zonas Extras');if(m)m.value=count;}};
+for(const k of ['move','createToken','destroyToken'])Engine.prototype[k]=function(...args){const result=u09[k].apply(this,args);this.refreshBoydd();return result;};
+Engine.prototype.script=function(card){if(card?.token&&card.balanceToken){const sc=u09.script.call(this,card),ops=sc.hit||sc.success;return card.balanceToken==='raven'?{onBlock:ops}:{onAttack:ops};}return u09.script.call(this,card);};
+Engine.prototype.activatePaid=function(p,a){
+ if(a.type==='balanceDiscard'&&this.script(this.find(a.uid).card).balanceDiscard==='psychic'){
+  const from=this.script(this.find(a.uid).card).discardSearchFrom;
+  this.move(a.uid,'banished');return this.push({kind:'effect',p,ops:[{op:'balanceSearch',name:'Psychic',types:['Golpe','Guarda'],from}],context:{p},label:'Psychic — banir e '+(from==='deck'?'buscar':'reciclar')});
+ }
+ const result=u09.activatePaid.call(this,p,a),b=this.current();
+ if(a.type==='play'&&b?.uid===a.uid&&!b.token&&this.script(this.s.players[p].fighter).extraAttackAura){b.boyddExtraBonus=0;(b.attackModifiers||(b.attackModifiers=[])).push({name:'Boydd · Zonas Extras',value:0});this.refreshBoydd();}
+ if(a.type==='block')for(const uid of a.uids){const c=this.find(uid)?.card,ops=c?.token&&this.script(c).onBlock;if(ops)this.push({kind:'effect',p,ops,context:{p,source:uid,combat:b.id},label:c.name+' — ao bloquear'});}
+ return result;
+};
+Engine.prototype.runOps=function(ops,ctx){for(const op of ops){
+ if(this.s.winner!==null)return;if(op.when==='revide'&&!ctx.revide)continue;
+ if(op.op==='update09Scry'){const uids=this.s.players[ctx.p].deck.slice(0,3).map(c=>c.uid);if(uids.length)this.s.choice={kind:'balanceScry',player:ctx.p,uids,selected:[],source:ctx.source};}
+ else if(op.op==='update09Psychic')this.s.choice={kind:'balancePsychic09',player:ctx.p,reward:op.reward,source:ctx.source,combat:ctx.combat};
+ else u09.runOps.call(this,[op],ctx);
+}};
+Engine.prototype.beginPayment=function(p,intent,pay){if(intent.type==='balanceDiscard'){
+ const color=this.script(this.find(intent.uid).card).discardColor,options=this.energies(p,true).filter(c=>this.def(c).color===color);
+ if(!options.length)throw Error('Este efeito exige 1 energia '+color.toLowerCase()+' ativa.');pay={...pay,ownColor:color};
+ if(!intent.selectEnergy&&!intent.energyUids)intent={...intent,energyUids:[options[0].uid]};
+}return u09.beginPayment.call(this,p,intent,pay);};
+Engine.prototype.completePayment=function(p,intent,pay,uids){if(pay.ownColor&&(intent.energyUids||[]).some(uid=>this.def(this.find(uid)?.card)?.color!==pay.ownColor))throw Error('Cor de energia inválida.');return u09.completePayment.call(this,p,intent,pay,uids);};
+Engine.prototype.legalActions=function(p){const c=this.s?.choice;
+ if(c?.player===p&&c.kind==='balanceScry')return c.uids.map(uid=>({type:'balanceChoose',uid}));
+ if(c?.player===p&&c.kind==='balancePsychic09')return ['Golpe','Truque','Guarda'].map(cardType=>({type:'balanceDeclare',cardType}));
+ return u09.legalActions.call(this,p).map(a=>a.type==='chooseOwnEnergy'&&c?.pay?.ownColor?{...a,options:a.options.filter(uid=>this.def(this.find(uid).card).color===c.pay.ownColor)}:a).filter(a=>a.type!=='balanceDiscard'||this.energies(p,true).some(e=>this.def(e).color===this.script(this.find(a.uid).card).discardColor));
+};
+Engine.prototype.apply=function(p,a){const c=this.s.choice,side=this.s.players[p];
+ if(c?.player===p&&c.kind==='balanceScry'){
+  if(a.type!=='balanceChoose'||!c.uids.includes(a.uid))throw Error('Escolha uma das cartas observadas.');
+  c.selected.push(a.uid);c.uids=c.uids.filter(uid=>uid!==a.uid);
+  if(!c.uids.length){const chosen=c.selected.map(uid=>this.find(uid).card);side.deck=[...chosen,...side.deck.filter(card=>!c.selected.includes(card.uid))];this.s.choice=null;this.s.priority=this.s.active;}return;
+ }
+ if(c?.player===p&&c.kind==='balancePsychic09'){
+  if(a.type!=='balanceDeclare'||!['Golpe','Truque','Guarda'].includes(a.cardType))throw Error('Declare um tipo de Ação.');
+  const top=side.deck[0];this.s.choice=null;if(!top)return;
+  const correct=this.def(top).type===a.cardType,b=this.s.combats.find(b=>b.id===c.combat);
+  this.log('Psychic revela '+this.def(top).name+'; declaração '+(correct?'correta.':'incorreta.'),'atualização 0.9');
+  if(correct&&b){if(c.reward==='block'){const guard=b.blocks.find(g=>g.uid===c.source);if(guard)guard.value+=2;}else{const n=c.reward==='banishedAttack'?2*side.banished.filter(card=>psychicAction(this,card)).length:2;b.attack+=n;(b.attackModifiers||(b.attackModifiers=[])).push({name:'Psychic · declaração correta',value:n});}}
+  this.s.choice={kind:'psychicReveal',player:p,uids:[top.uid],update09Reveal:true};return;
+ }
+ const result=u09.apply.call(this,p,a);
+ if(a.type==='tokenAttack'){const token=this.find(a.uid)?.card,ops=token&&this.script(token).onAttack;if(ops)this.push({kind:'effect',p,ops,context:{p,source:a.uid,combat:this.current().id},label:token.name+' — ao golpear'});}
+ return result;
+};
+Engine.prototype.finishCombat=function(b){this.refreshBoydd();return u09.finishCombat.call(this,b);};
+Engine.prototype.view=function(p){const v=u09.view.call(this,p);if(v&&this.s.choice?.update09Reveal)v.revealedCards=this.s.choice.uids.map(uid=>copy(this.find(uid).card));return v;};
 Engine.RULESET_ID=RULESET_ID;
 return {Engine,chooseAI,SUPPORTED,VERSION,RULESET_ID};
 });
