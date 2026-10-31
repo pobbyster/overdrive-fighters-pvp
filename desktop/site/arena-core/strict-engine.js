@@ -5,7 +5,7 @@
 'use strict';
 const copy=x=>JSON.parse(JSON.stringify(x)),other=p=>1-p,id=n=>'OF-C1-'+String(n).padStart(3,'0');
 const {SUPPORTED,scripts}=CardScripts;
-const VERSION='of-core-js-0.13.0',RULESET_ID=RulesVersion.RULESET_ID;
+const VERSION='of-core-js-0.13.1',RULESET_ID=RulesVersion.RULESET_ID;
 class Engine {
  constructor(catalog){this.catalog=new Map(catalog.map(x=>[x.id,copy(x)]));this.s=null;this.commands=[];this.initial=null;}
  def(card){return card?.tokenDefinition||this.catalog.get(typeof card==='string'?card:card.id);}
@@ -396,7 +396,7 @@ const originalPaid=Engine.prototype.activatePaid;
 Engine.prototype.activatePaid=function(p,a){const result=originalPaid.call(this,p,a);if(result?.kind==='trick'&&result.context?.combat){const b=this.s.combats.find(x=>x.id===result.context.combat);(b.tricks||(b.tricks=[])).push(result.uid);}return result;};
 const originalOps=Engine.prototype.runOps;
 Engine.prototype.runOps=function(ops,ctx){for(const op of ops){if(this.s.winner!==null)return;if(op.op==='fixedDamage')this.damage(other(ctx.p),op.n);else originalOps.call(this,[op],ctx);}};
-function chooseAI(view,catalog){const acts=view.actions;if(!acts.length)return null;const byId=new Map(catalog.map(c=>[c.id,c]));const player=view.viewer??1,own=view.players[player],find=uid=>[...own.hand,...own.extra,...own.stamina,...own.discard].find(c=>c.uid===uid),def=uid=>Rivals06.definition(find(uid),find(uid)?.tokenDefinition||byId.get(find(uid)?.id),view);
+function chooseAI(view,catalog){const acts=view.actions.filter(a=>a.type!=='resign');if(!acts.length)return null;const byId=new Map(catalog.map(c=>[c.id,c]));const player=view.viewer??1,own=view.players[player],find=uid=>[...own.hand,...own.extra,...own.stamina,...own.discard].find(c=>c.uid===uid),def=uid=>Rivals06.definition(find(uid),find(uid)?.tokenDefinition||byId.get(find(uid)?.id),view);
  if(view.choice?.kind==='maha:curseTarget')return acts.find(a=>a.uid===view.players[1-player].fighter.uid)||acts[0];
  if(view.choice?.kind==='rivals:06Extras'){const enemy=new Set(view.players[1-player].extra.map(c=>c.uid));return acts.find(a=>enemy.has(a.uid))||acts.find(a=>a.option==='done')||acts[0];}if(view.choice?.kind?.startsWith('rivals:'))return acts.find(a=>a.target===1-player)||acts.find(a=>a.uid)||acts[0];
  if(view.choice?.kind?.startsWith('expansion:'))return acts.find(a=>a.option==='done')&&acts.filter(a=>a.uid).length===0?acts.find(a=>a.option==='done'):acts.find(a=>a.uid)||acts[0];
@@ -560,8 +560,13 @@ Engine.prototype.finishCombat=function(b){this.refreshBoydd();return u09.finishC
 Engine.prototype.view=function(p){const v=u09.view.call(this,p);if(v&&this.s.choice?.update09Reveal)v.revealedCards=this.s.choice.uids.map(uid=>copy(this.find(uid).card));return v;};
 MahaZeno.install(Engine,scripts,SUPPORTED);
 Engine.RULESET_ID=RULESET_ID;
+// Voluntary duel forfeit. Hand reordering is presentation-only.
+const interfaceLegal=Engine.prototype.legalActions,interfaceApply=Engine.prototype.apply;
+Engine.prototype.legalActions=function(p){const acts=interfaceLegal.call(this,p);if(this.s&&this.s.winner===null&&[0,1].includes(p))acts.push({type:'resign'});return acts;};
+Engine.prototype.apply=function(p,a){if(a.type==='resign'){this.s.winner=1-p;this.s.phase='finished';this.s.choice=null;this.log('Jogador '+(p+1)+' desistiu do duelo.','Desistência');return;}return interfaceApply.call(this,p,a);};
 return {Engine,chooseAI,SUPPORTED,VERSION,RULESET_ID};
 });
+
 
 
 

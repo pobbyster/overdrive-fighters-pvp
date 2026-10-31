@@ -84,7 +84,7 @@
  function saveRoomDeck(){try{sessionStorage.setItem('of-pvp-deck',JSON.stringify({code:room.code,deck:confirmedDeck}));}catch{}}
  sideButton.onclick=openSide;
  $('pvpReady').onclick=()=>{try{const deck=api.selectedDeck();api.engine().validateDeck(deck);const ready=chosen=>{confirmedDeck=chosen;saveRoomDeck();send({type:'ready',originalDeck:deck,deck:chosen,ruleset:OverdriveCore.RULESET_ID});};if(OverdriveModes.get(room.mode).initialSide)OverdriveSideDeck.choose(deck,{onConfirm:ready});else ready(deck);}catch(e){status(e.message);}};
- function leave(){if(remote?.s.winner===null){if(!confirm('Desistir deste duelo? O adversário será declarado vencedor.'))return;}if(!send({type:'leave'})){manual=true;clearTimeout(retry);credential=null;persist();location.href='arena.html?pvp';}}
+ async function leave(){if(remote?.s.winner===null){const question='Deseja desistir deste duelo?';if(!(window.OverdriveChoice014?await OverdriveChoice014.confirm(question):confirm('Desistir deste duelo? O adversário será declarado vencedor.')))return;}if(!send({type:'leave'})){manual=true;clearTimeout(retry);credential=null;persist();location.href='arena.html?pvp';}}
  $('pvpLeave').onclick=$('pvpResign').onclick=leave;
  addEventListener('of-game-render',()=>{if(!api.engine()?.remote){lobby.hidden=!$('game').hidden;return;}
   $('sessionStatus')&&($('sessionStatus').textContent='PvP · partida mantida no servidor');

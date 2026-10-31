@@ -19,3 +19,4 @@ body:not([data-background="default"]) .arena-background{opacity:.3}
 .table-surface[data-field="roudge"] :is(.seat,.energy-row,.shared-zone,.arena-chain){background:transparent!important}
 .table-surface[data-field="roudge"] :is(.extra-slot,.fighter-slot,.pile){background:#100b1780!important}
 .table-surface[data-field="roudge"] :is(.slot-label,.pile-label,.shared-zone>h2,.energy-row>span){color:#fff4dd!important;text-shadow:0 1px 3px #000,0 0 4px #000}
+#fieldLibrary{display:grid;gap:10px;margin:14px 0}.saved-field{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;border:1px solid #dcc2e6;border-radius:14px;background:#fff8}.saved-field>img{width:100%;height:90px;object-fit:cover;grid-column:1/-1;border-radius:9px}.saved-field>strong{grid-column:1/-1;overflow-wrap:anywhere;color:#7400bc;font-size:13px}.saved-field>button{margin:0!important;font-size:12px;padding:8px!important}
