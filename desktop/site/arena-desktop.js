@@ -1,6 +1,6 @@
-window.OverdriveFighterPortrait=id=>'assets/fighters/'+({'OF-C1-032':'Boydd','OF-C1-051':'Hanma','OF-C1-070':'Len-Yin','OF-C1-089':'Blossom','OF-C1-114':'Arcturus','OF-C1-120':'Mourner','OF-C1-126':'Placide','OF-C1-132':'Rynhard','OF-RVAS-001':'Missbigotten','OF-RVAS-029':'Duke'}[id]||'Blossom')+'.jpg';
+window.OverdriveFighterPortrait=id=>'assets/fighters/'+({'OF-C1-032':'Boydd','OF-C1-051':'Hanma','OF-C1-070':'Len-Yin','OF-C1-089':'Blossom','OF-C1-114':'Arcturus','OF-C1-120':'Mourner','OF-C1-126':'Placide','OF-C1-132':'Rynhard','OF-RVAS-001':'Missbigotten','OF-RVAS-029':'Duke','OF-MZ-001':'MahaZeno'}[id]||'Blossom')+'.jpg';
 window.OverdriveOpponentDeck=(engine,preset)=>{
- const [raw,style]=String(preset).split(':'),number=[32,51,70,89,114,120,126,132,142,170].includes(Number(raw))?Number(raw):89,deck=engine.fighterStarter(number);
+ const [raw,style]=String(preset).split(':'),number=[32,51,70,89,114,120,126,132,142,170,200].includes(Number(raw))?Number(raw):89,deck=engine.fighterStarter(number);
  if(style==='pressure'||style==='defense'){
   const fighter=engine.def(deck.fighter),wanted=style==='pressure'?'Golpe':'Guarda',remove=Object.keys(deck.main).filter(id=>engine.def(id).color!=='Genérica'&&engine.def(id).type!==wanted).sort((a,b)=>(engine.def(b).cost||0)-(engine.def(a).cost||0))[0];
   const candidate=[...engine.catalog.values()].filter(c=>c.type===wanted&&c.color!=='Genérica'&&fighter.colors.includes(c.color)&&!deck.main[c.id]&&!engine.script(c.id).comboZone).sort((a,b)=>style==='pressure'?(a.cost||0)-(b.cost||0):(b.block||0)-(a.block||0))[0];
@@ -47,7 +47,7 @@ window.OverdriveDesktopAI=(view,catalog,difficulty='normal',style='balanced')=>{
  const portraits=[...document.querySelectorAll('.poster-half img')];
  portraits.forEach(image=>image.addEventListener('load',()=>framePortrait(image)));
  const enemy=document.querySelector('.poster-enemy img');
- const updateEnemy=()=>{const n=Number(document.getElementById('opponent').value.split(':')[0])||89;enemy.dataset.fighter=n===142?'OF-RVAS-001':n===170?'OF-RVAS-029':'OF-C1-'+String(n).padStart(3,'0');enemy.src=OverdriveFighterPortrait(enemy.dataset.fighter);enemy.alt='Adversário: '+({'32':'Boydd','51':'Hanma','70':'Len Yin','89':'Blossom','114':'Arcturus','120':'Mourner','126':'Placide','132':'Rynhard','142':'Lady Missbigotten','170':'Duke'}[n]);document.querySelector('.poster-enemy strong').textContent=({'32':'BOYDD','51':'HANMA','70':'LEN YIN','89':'BLOSSOM','114':'ARCTURUS','120':'MOURNER','126':'PLACIDE','132':'RYNHARD','142':'MISSBIGOTTEN','170':'DUKE'}[n]);framePortrait(enemy);};document.getElementById('opponent').addEventListener('change',updateEnemy);updateEnemy();
+ const updateEnemy=()=>{const n=Number(document.getElementById('opponent').value.split(':')[0])||89;enemy.dataset.fighter=n===142?'OF-RVAS-001':n===170?'OF-RVAS-029':n===200?'OF-MZ-001':'OF-C1-'+String(n).padStart(3,'0');enemy.src=OverdriveFighterPortrait(enemy.dataset.fighter);enemy.alt='Adversário: '+({'32':'Boydd','51':'Hanma','70':'Len Yin','89':'Blossom','114':'Arcturus','120':'Mourner','126':'Placide','132':'Rynhard','142':'Lady Missbigotten','170':'Duke','200':'MahaZeno'}[n]);document.querySelector('.poster-enemy strong').textContent=({'32':'BOYDD','51':'HANMA','70':'LEN YIN','89':'BLOSSOM','114':'ARCTURUS','120':'MOURNER','126':'PLACIDE','132':'RYNHARD','142':'MISSBIGOTTEN','170':'DUKE','200':'MAHAZENO'}[n]);framePortrait(enemy);};document.getElementById('opponent').addEventListener('change',updateEnemy);updateEnemy();
  const resize=new ResizeObserver(()=>portraits.forEach(framePortrait));
  portraits.forEach(image=>resize.observe(image.parentElement));
  const deck=document.getElementById('playerDeck'),label=document.getElementById('selectedDeckName');
@@ -57,7 +57,7 @@ window.OverdriveDesktopAI=(view,catalog,difficulty='normal',style='balanced')=>{
   image.dataset.fighter=id;
   image.src=OverdriveFighterPortrait(id);
   framePortrait(image);
-  image.alt='Seu lutador: '+({'OF-C1-032':'Boydd','OF-C1-051':'Hanma','OF-C1-070':'Len Yin','OF-C1-089':'Blossom','OF-C1-114':'Arcturus','OF-C1-120':'Mourner','OF-C1-126':'Placide','OF-C1-132':'Rynhard','OF-RVAS-001':'Lady Missbigotten','OF-RVAS-029':'Duke'}[id]||'Blossom');
+  image.alt='Seu lutador: '+({'OF-C1-032':'Boydd','OF-C1-051':'Hanma','OF-C1-070':'Len Yin','OF-C1-089':'Blossom','OF-C1-114':'Arcturus','OF-C1-120':'Mourner','OF-C1-126':'Placide','OF-C1-132':'Rynhard','OF-RVAS-001':'Lady Missbigotten','OF-RVAS-029':'Duke','OF-MZ-001':'MahaZeno'}[id]||'Blossom');
  };
  deck.addEventListener('change',update);new MutationObserver(update).observe(deck,{childList:true});
  document.getElementById('aiDifficulty').addEventListener('change',e=>document.getElementById('difficultyHint').textContent={easy:'Ataques simples e defesa reduzida para aprender os fundamentos.',normal:'Equilibra ataque, defesa e uso das cartas.',hard:'Prioriza a sequência de Overdrive, Quebra e oportunidades de finalizar.'}[e.target.value]);

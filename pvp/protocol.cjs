@@ -26,7 +26,7 @@ function command(engine, seat, input) {
   const result = Object.fromEntries(Object.entries(legal).filter(([k]) => !['options', 'required', ...extra].includes(k)));
   for (const k of extra) if (a[k] !== undefined) result[k] = clone(a[k]);
   // All additional choices are performed through the engine's own choice protocol.
-  if (['play', 'block', 'replenish', 'fighterSkill', 'startSkill', 'balanceDiscard', 'expansionMournerSkill', 'expansionPlacideSkill', 'expansionExcalium'].includes(a.type)) result.selectEnergy = true;
+  if (['tokenAttack', 'play', 'block', 'replenish', 'fighterSkill', 'startSkill', 'balanceDiscard', 'expansionMournerSkill', 'expansionPlacideSkill', 'expansionExcalium'].includes(a.type)) result.selectEnergy = true;
   return result;
 }
 function project(engine, seat, names) {
@@ -49,7 +49,7 @@ function project(engine, seat, names) {
     // Synthetic backs have no correspondence to the opponent's real hand or either deck.
     side.deck = Array.from({length:side.deckCount}, (_,i) => ({uid:`back-deck-${local}-${i}`,hidden:true}));
     if (local === 1) side.hand = Array.from({length:side.handCount}, (_,i) => ({uid:`back-hand-${i}`,hidden:true}));
-    for (const zone of ['hand','stamina','extra','arena','discard','banished','revealedHand','deckContents']) for (const card of side[zone]||[]) if (card.owner !== undefined) card.owner = index(card.owner);
+    for (const zone of ['hand','stamina','extra','arena','discard','banished','revealedHand','deckContents','reserve']) for (const card of side[zone]||[]) if (card.owner !== undefined) card.owner = index(card.owner);
     side.fighter.owner = local;
   });
   for (const f of candidates) if (f.card.owner !== undefined) f.card.owner = index(f.card.owner);

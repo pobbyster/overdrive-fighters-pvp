@@ -9,7 +9,8 @@
  async function ready(){
   const art=[...document.querySelectorAll('.rivals-art-button img,.menu-logo,header h1 img,.rivals-menu-hud img,.poster-half img')];
   if(body.classList.contains('rivals-arena-template')){const background=new Image();background.src='assets/rivals/arena-ia-template.webp';art.push(background);}
-  await Promise.all([document.fonts.ready,...art.map(img=>img.decode().catch(()=>{}))]);
+  // CSS and layout are ready; image decoding must not hide the entire screen.
+  for(const img of art)img.decoding='async';
   root.classList.remove('rivals-pending');body.classList.add('rivals-entering');
   body.addEventListener('animationend',()=>body.classList.remove('rivals-entering'),{once:true});
  }
@@ -22,7 +23,7 @@
   if(url.origin!==location.origin||!/(home|arena|decks|settings|rules|tutorial)\.html$/.test(url.pathname)||url.href===location.href)return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   event.preventDefault();if(leaving)return;leaving=true;body.classList.remove('rivals-entering');body.classList.add('rivals-leaving');
-  setTimeout(()=>location.assign(url.href),160);
+  setTimeout(()=>location.assign(url.href),80);
  });
  addEventListener('pageshow',event=>{if(event.persisted){leaving=false;body.classList.remove('rivals-leaving');root.classList.remove('rivals-pending');}});
 })();

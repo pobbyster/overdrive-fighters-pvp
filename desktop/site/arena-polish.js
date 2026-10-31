@@ -35,6 +35,9 @@ addEventListener('of-game-render',event=>{
  const hint=$('decisionHint'),choice=view.choice;
  if(choice?.player===0){
   if(['ownEnergy','energy'].includes(choice.kind)){const selected=document.querySelectorAll('#ownEnergy .card.selected').length;hint.textContent='Pagamento · '+selected+' de '+choice.required+' energia(s) selecionada(s). '+(choice.kind==='ownEnergy'?'Escolha energias ativas para virar.':'Escolha energias inativas para reativar.');}
+  else if(choice.kind==='maha:curseTarget')hint.textContent='Zeno-O-Oni · escolha um Lutador para receber 1 marcador Amaldiçoado. O dano por marcadores será resolvido em seguida.';
+  else if(choice.kind==='maha:overdrive')hint.textContent='Overdrive · escolha uma Única do Adicional. Passe o mouse para ampliar a carta.';
+  else if(choice.kind==='maha:protection')hint.textContent='Proteção de MahaZeno · escolha 1 energia ativa ou inativa para devolver ao fundo do Baralho. Uma vez por partida.';
   else if(choice.kind==='extraEffect')hint.textContent='Alvos · faltam '+(choice.remaining||1)+' carta(s). Escolha uma das Zonas Extras destacadas.';
   else if(choice.kind==='balanceScry')hint.textContent='Olhe as três cartas observadas. Escolha a próxima carta do topo; depois ordene as restantes. Já escolhidas: '+(choice.selectedCount||0)+'.';
   else if(!choice.kind.startsWith('expansion:')&&!choice.kind.startsWith('rivals:')&&$('actionButtons').classList.contains('search-card-grid'))hint.textContent='Busca · escolha 1 carta entre as opções ilustradas. Apenas cartas válidas para este efeito estão disponíveis.';

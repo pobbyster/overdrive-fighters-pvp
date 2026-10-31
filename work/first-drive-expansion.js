@@ -124,6 +124,7 @@
     if(sc.fluxo&&side.expansionMourner)b.expansionUnblockable=true;
     if(sc.fury&&p===this.s.active){b.expansionFirstFury=!side.expansionFirstFury;side.expansionFirstFury=true;}
    }
+   if(a.type==='tokenAttack'){addAttack(this.current(),side.expansionNextAttack||0,'Arcturus · Golpes revelados');side.expansionNextAttack=0;}
    for(const link of a.expansionCostTriggers||[])this.push(link);
    return result;
   };
@@ -296,7 +297,7 @@
    const b=this.current();
    if(a.type==='block'&&b&&(b.expansionUnblockable||s.players[b.p].expansionMourner&&this.script(this.find(b.uid)?.card).fluxo)&&(a.uids||[]).length)throw Error('Overdrive de Mourner: Ações com Fluxo não podem ser bloqueadas até o final deste turno.');
    const result=previous.apply.call(this,p,a);
-   if(a.type==='tokenAttack'){addAttack(this.current(),side.expansionNextAttack||0,'Arcturus · Golpes revelados');side.expansionNextAttack=0;}
+
    return result;
   };
   const cardOps=proto.runOps;
@@ -304,7 +305,7 @@
   proto.view=function(p){
    const v=previous.view.call(this,p);if(!v)return v;
    for(let i=0;i<2;i++){
-    const side=this.s.players[i];v.players[i].expansionReturned=side.expansionReturned||0;v.players[i].expansionFury=clone(side.expansionFury||{});v.players[i].expansionMourner=!!side.expansionMourner;v.players[i].golpeDamageMarks=side.golpeDamageMarks||0;
+    const side=this.s.players[i];v.players[i].expansionReturned=side.expansionReturned||0;v.players[i].expansionFury=clone(side.expansionFury||{});v.players[i].expansionFuryTemporary=clone(side.expansionFuryTemporary||{});v.players[i].expansionMourner=!!side.expansionMourner;v.players[i].golpeDamageMarks=side.golpeDamageMarks||0;
     // Somente as cartas deliberadamente reveladas atravessam a visão adversária.
     v.players[i].revealedHand=side.hand.filter(c=>c.expansionRevealed).map(clone);
    }

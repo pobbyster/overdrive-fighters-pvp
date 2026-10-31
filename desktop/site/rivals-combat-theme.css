@@ -20,3 +20,12 @@ body.rivals-playing{min-height:100svh;background:#a400e9 url('assets/rivals/back
 .rivals-playing #decisionHud .search-card{background:#f6effa;color:#70267a}
 .rivals-playing .card-hover-hud{background:#fff!important;border-color:#e0c9eb!important}.rivals-playing .card-hover-hud span{color:#722487}
 .rivals-playing #combatFeedback p{background:#fff;color:#7a00c2;border-color:#e9d5f1}
+
+/* Até quatro versos representam a pilha; a profundidade acompanha a contagem pública. */
+.rivals-playing :is(#ownDeck,#enemyDeck){overflow:visible}
+.deck-stack{display:block;position:relative;isolation:isolate;margin:0 5px 6px 0}
+.table-surface .pile .deck-stack img{display:block;width:100%;max-width:none;border-radius:3px;border:1px solid #e8dca7;box-sizing:border-box}
+.deck-stack .deck-top{position:relative;z-index:4;box-shadow:1px 2px 3px #0009}
+.deck-stack .deck-layer{position:absolute;inset:0;height:100%;z-index:calc(4 - var(--deck-layer));transform:translate(calc(var(--deck-depth) * var(--deck-layer) / 3),calc(var(--deck-depth) * var(--deck-layer) / 3));box-shadow:1px 1px 1px #05020c}
+.deck-empty{display:block;padding:20px 0;color:#c8b6d0;font-size:10px}
+.rivals-playing :is(#ownDeck,#enemyDeck)[data-deck-count="0"]{box-shadow:none}

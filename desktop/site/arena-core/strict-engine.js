@@ -1,11 +1,11 @@
 /* Overdrive Fighters: motor original, independente de DOM, baseado no livro v0.2.
  * Não contém código do EDOPro. API de comandos/eventos inspirada na separação do core.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./strict-card-scripts.js'),require('./first-drive-expansion.js'),require('./rivals-04.js'),require('./rivals-05.js'),require('./rivals-06.js'),require('./rules-version.js'),require('./game-modes.js'));else root.OverdriveCore=factory(root.OverdriveCardScripts,root.OverdriveExpansion,root.OverdriveRivals04,root.OverdriveRivals05,root.OverdriveRivals06,root.OverdriveRulesVersion,root.OverdriveModes);})(typeof globalThis!=='undefined'?globalThis:this,function(CardScripts,Expansion,Rivals04,Rivals05,Rivals06,RulesVersion,GameModes){
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./strict-card-scripts.js'),require('./first-drive-expansion.js'),require('./rivals-04.js'),require('./rivals-05.js'),require('./rivals-06.js'),require('./rules-version.js'),require('./game-modes.js'),require('./mahazeno.js'));else root.OverdriveCore=factory(root.OverdriveCardScripts,root.OverdriveExpansion,root.OverdriveRivals04,root.OverdriveRivals05,root.OverdriveRivals06,root.OverdriveRulesVersion,root.OverdriveModes,root.OverdriveMahaZeno);})(typeof globalThis!=='undefined'?globalThis:this,function(CardScripts,Expansion,Rivals04,Rivals05,Rivals06,RulesVersion,GameModes,MahaZeno){
 'use strict';
 const copy=x=>JSON.parse(JSON.stringify(x)),other=p=>1-p,id=n=>'OF-C1-'+String(n).padStart(3,'0');
 const {SUPPORTED,scripts}=CardScripts;
-const VERSION='of-core-js-0.11.3',RULESET_ID=RulesVersion.RULESET_ID;
+const VERSION='of-core-js-0.13.0',RULESET_ID=RulesVersion.RULESET_ID;
 class Engine {
  constructor(catalog){this.catalog=new Map(catalog.map(x=>[x.id,copy(x)]));this.s=null;this.commands=[];this.initial=null;}
  def(card){return card?.tokenDefinition||this.catalog.get(typeof card==='string'?card:card.id);}
@@ -40,6 +40,7 @@ class Engine {
   if(f.card.onDestroy)this.push({kind:'effect',p:f.p,ops:f.card.onDestroy,context:{p:f.p},label:f.card.name+' — destruída'});if(f.card.redemption&&cause==='redemption-condition')this.s.players[f.p].hp+=2;
   this.log('Ficha '+f.card.name+' destruída'+(cause==='redemption-condition'?'; ganha 2 de vida.':'.'),'efeito de ficha');return true;
  }
+ tokenAttackCost(card){return card?.token&&(card.balanceToken||/^Galacstrix\b/i.test(card.name||''))?1:0;}
  tokenAvailable(p,uid){const f=this.find(uid);return !!(f?.p===p&&f.z==='extra'&&f.card.token&&f.card.ready<=this.s.turn&&f.card.usedTurn!==this.s.turn&&!f.card.pendingUse);}
  beginTokenUse(p,uid,kind,zone){
   if(!this.tokenAvailable(p,uid))throw Error('Ficha indisponível ou já utilizada neste turno.');
@@ -70,7 +71,7 @@ class Engine {
    names[c.name]=(names[c.name]||0)+q;if(names[c.name]>3)throw Error('Mais de três cópias: '+c.name);n+=q;if(c.color==='Genérica')g+=q;
   }
   if(n!==40)throw Error('Principal incompleto: '+n+' de 40 ações. Complete o baralho no editor.');if(g>15)throw Error('Principal com '+g+' ações genéricas; o limite é 15.');
-  const reserve=Object.entries(d.extra);let total=0;for(const [cardId,q] of reserve){const c=this.def(cardId);if(!c||c.type==='Lutador'||!Number.isInteger(q)||q<1||q>3)throw Error('Carta ou quantidade inválida no adicional.');if(c.color!=='Genérica'&&!fighter.colors.includes(c.color))throw Error('Cor incompatível no adicional: '+c.name);if(!this.supported(cardId))throw Error('Carta do adicional sem script: '+c.name);names[c.name]=(names[c.name]||0)+q;if(names[c.name]>3)throw Error('Mais de três cópias de '+c.name+' somando principal e adicional.');total+=q;}
+  const reserve=Object.entries(d.extra);let total=0;for(const [cardId,q] of reserve){const c=this.def(cardId);if(!c||c.type==='Lutador'||!Number.isInteger(q)||q<1||q>3)throw Error('Carta ou quantidade inválida no adicional.');if(!c.specialPermanent&&c.color!=='Genérica'&&!fighter.colors.includes(c.color))throw Error('Cor incompatível no adicional: '+c.name);if(!this.supported(cardId))throw Error('Carta do adicional sem script: '+c.name);names[c.name]=(names[c.name]||0)+q;if(names[c.name]>3)throw Error('Mais de três cópias de '+c.name+' somando principal e adicional.');total+=q;}
   if(total!==0&&total!==15)throw Error('Adicional incompleto: '+total+' de 15 cartas. Complete-o ou jogue apenas com o principal (3.2.1).');
   return true;
  }
@@ -129,6 +130,7 @@ class Engine {
   if(p===this.s.active&&opponentUids.length){this.draw(other(p),1,true);if(this.s.winner===null){this.s.choice={kind:'revide',player:other(p),suspended:link?.id,cause:{payer:p,energyUids:[...opponentUids]}};this.s.priority=other(p);this.log((p?'IA':'Você')+' utilizou '+opponentUids.length+' estâmina(s) inativa(s) do adversário: compra mecânica de 1 carta e oportunidade opcional de Revide.','11.1');}}
  }
  activatePaid(p,a){const side=this.s.players[p];
+  if(a.type==='tokenAttack'){const use=this.beginTokenUse(p,a.uid,'attack',a.zone),token=this.find(a.uid).card,b={id:++this.s.next,p,uid:a.uid,attack:use.power,zone:use.zone,blocks:[],blocked:false,cancelled:false,flow:false,revide:false,from:'extra',token:true};this.s.combats.push(b);return this.push({kind:'attack',p,uid:a.uid,combat:b.id,context:{p},label:token.name});}
   if(a.type==='fighterSkill'){
    const boydd=this.def(side.fighter).number===32;side.fighterTapped=true;side.overdriveLocked=true;
    return this.push({kind:'effect',p,ops:[{op:boydd?'nextSocoNoGuards':'lenFocusBonus'}],context:{p},label:this.def(side.fighter).name+' — habilidade'});
@@ -213,7 +215,7 @@ if(a.type!=='chooseGuardDiscard'||!choice.uids.includes(a.uid))throw Error('Esco
   if(a.type==='startSkill'){
    if(!this.canFighterSkill(p))throw Error('A habilidade de Blossom exige um estado aberto no seu turno e o lutador desvirado.');this.beginPayment(p,a,{own:1,opp:0});return;
   }
-  if(a.type==='tokenAttack'){if(!this.canIndependent(p))throw Error('Ataque de ficha exige sua fase de combate livre.');const use=this.beginTokenUse(p,a.uid,'attack',a.zone),token=this.find(a.uid).card;const b={id:++this.s.next,p,uid:a.uid,attack:use.power,zone:use.zone,blocks:[],blocked:false,cancelled:false,flow:false,revide:false,from:'extra',token:true};this.s.combats.push(b);this.push({kind:'attack',p,uid:a.uid,combat:b.id,context:{p},label:token.name});this.s.priority=other(p);this.s.passes=0;return;}if(a.type==='block'){this.block(p,a);return;}
+  if(a.type==='tokenAttack'){if(!this.canIndependent(p)||!this.tokenAvailable(p,a.uid))throw Error('Ataque de ficha exige sua fase de combate livre e uma ficha disponível.');const token=this.find(a.uid).card;if(!['Inferior','Meio','Superior'].includes(token.zone||a.zone))throw Error('Zona inválida.');this.beginPayment(p,a,{own:this.tokenAttackCost(token),opp:0});return;}if(a.type==='block'){this.block(p,a);return;}
   if(a.type==='fighterSkill'){if(!this.canActivatedFighterSkill(p))throw Error('Habilidade indisponível ou custo insuficiente.');this.beginPayment(p,a,{own:1,opp:0});return;}
   if(a.type==='fighterOverdrive'){this.fighterOverdrive(p,a);return;}
   if(a.type==='finta'){this.finta(p,a);return;}
@@ -327,9 +329,9 @@ const uids=side.deck.filter(c=>this.def(c).type==='Guarda').map(c=>c.uid);if(uid
  }}
  finishCombat(b){const c=this.find(b.uid)?.card;if(!c)return;const sc=this.script(c);const blockers=b.blocks.filter(x=>!x.cancelled),block=blockers.reduce((n,x)=>n+(b.ignoreBelowPower!==undefined&&x.value<b.ignoreBelowPower?0:x.value),0)+(b.aggregateBlockBonus||0);
   const rawBasicDamage=b.cancelled?0:Math.max(0,b.attack-block),rawImpetusDamage=!b.cancelled&&blockers.some(x=>{const c=this.find(x.uid)?.card;return c&&!c.token;})?(b.revide&&sc.revideImpetus!==undefined?sc.revideImpetus:(b.impetusBase??sc.impetus??0))+(b.extraImpetus||0):0;
-  const marks=b.token?0:(this.s.players[other(b.p)].golpeDamageMarks||0),basicDamage=this.adjustDamage(other(b.p),rawBasicDamage+(rawBasicDamage>0?marks:0)),impetusDamage=this.adjustDamage(other(b.p),rawImpetusDamage+(rawImpetusDamage>0?marks:0));const damage=basicDamage+impetusDamage;if(damage&&!b.token&&this.def(c).name.toLowerCase().includes('redassalt'))this.s.players[b.p].redassaltDealt=true;if(damage&&!b.token&&!b.cancelled)this.s.players[b.p].golpeHit=true;b.basicDamage=basicDamage;b.impetusDamage=impetusDamage;
+  const marks=b.token?0:(this.s.players[other(b.p)].golpeDamageMarks||0),basicDamage=this.adjustDamage(other(b.p),rawBasicDamage+(rawBasicDamage>0?marks:0)),impetusDamage=this.adjustDamage(other(b.p),rawImpetusDamage+(rawImpetusDamage>0?marks:0)+(this.effectDamageBonus?.(b.p,rawImpetusDamage)||0));const damage=basicDamage+impetusDamage;if(damage&&!b.token&&this.def(c).name.toLowerCase().includes('redassalt'))this.s.players[b.p].redassaltDealt=true;if(damage&&!b.token&&!b.cancelled)this.s.players[b.p].golpeHit=true;b.basicDamage=basicDamage;b.impetusDamage=impetusDamage;
   if(!b.cancelled){this.damage(other(b.p),basicDamage,b.p,true);if(this.s.winner===null&&impetusDamage)this.damage(other(b.p),impetusDamage,b.p,true);if(this.s.winner===null&&sc.selfDamageHalfAttack)this.damage(b.p,Math.ceil(Math.max(0,b.attack)/2),b.p);if(this.s.winner!==null){if(b.from==='stamina')this.move(b.uid,'discard');return;}if(sc.break&&damage){b.brokeSequence=this.s.players[other(b.p)].od>0;this.s.players[other(b.p)].od=0;this.log('Quebra: sequência adversária zerada.','14.1.1');}
-   if(!b.token&&b.p===this.s.active)this.s.lastComboZone=b.zone;const side=this.s.players[b.p],seq=this.script(side.fighter).sequence;if(!b.token&&!b.fighterOverdrive)side.od=seq[side.od===seq.length?seq.length-1:side.od]===b.zone?Math.min(seq.length,side.od+1):(seq[0]===b.zone?1:0);
+   if(!b.token&&b.p===this.s.active)this.s.lastComboZone=b.zone;const side=this.s.players[b.p],seq=this.script(side.fighter).sequence;if(!b.fighterOverdrive)side.od=seq[side.od===seq.length?seq.length-1:side.od]===b.zone?Math.min(seq.length,side.od+1):(seq[0]===b.zone?1:0);
   }
   const ctx={p:b.p,flow:b.flow,revide:b.revide,combat:b.id,focusPower:this.s.players[b.p].power};const triggers=[];for(const effect of b.endEffects||[])triggers.push({p:effect.p,ops:effect.ops,context:{p:effect.p},label:effect.label});if(damage&&!b.cancelled)for(const effect of b.hitTokenEffects||[])triggers.push({p:effect.p,ops:[{op:'createGalacstrix',name:effect.name,power:effect.power}],context:{p:effect.p},label:effect.name+' — Golpe alvo bateu'});if(!b.cancelled&&b.brokeSequence&&sc.onBreak)triggers.push({p:b.p,ops:sc.onBreak,context:ctx,label:this.def(c).name+' — sequência quebrada'});
   if(damage&&['hanma','len-yin'].includes(b.fighterOverdrive))triggers.push({p:b.p,ops:[{op:'zoneModifier',zone:b.zone,property:b.fighterOverdrive==='hanma'?'attack':'cost',n:b.fighterOverdrive==='hanma'?2:1,untilTurn:this.s.turn+1}],context:{p:b.p},label:'Overdrive — efeito da Zona'});
@@ -349,7 +351,7 @@ const uids=side.deck.filter(c=>this.def(c).type==='Guarda').map(c=>c.uid);if(uid
   }
   this.s.history.push({id:b.id,p:b.p,idCard:this.find(b.uid)?.card.id,zone:b.zone,attack:b.attack,block:b.blockValue,damage:b.damage,revide:b.revide});this.s.completed.push(copy(b));this.s.combats.pop();for(const uid of [b.uid,...b.blocks.map(x=>x.uid)])this.finishTokenUse(uid);
  }
- assertInvariants(){const uids=[];for(const side of this.s.players){const cs=['hand','stamina','extra','arena','deck','discard','banished'].flatMap(z=>side[z]);if(cs.filter(c=>!c.token).length!==40)throw Error('Invariante: conservação das 40 cartas.');if(side.stamina.length>7||side.extra.length>4)throw Error('Invariante: capacidade de zona.');uids.push(...cs.map(c=>c.uid));}if(new Set(uids).size!==uids.length)throw Error('Invariante: instância duplicada.');}
+ assertInvariants(){const uids=[];for(const side of this.s.players){const cs=['hand','stamina','extra','arena','deck','discard','banished'].flatMap(z=>side[z]);if(cs.filter(c=>!c.token&&!this.def(c).specialPermanent).length!==40)throw Error('Invariante: conservação das 40 cartas.');if(side.stamina.length>7||side.extra.length>4)throw Error('Invariante: capacidade de zona.');uids.push(...cs.map(c=>c.uid));}if(new Set(uids).size!==uids.length)throw Error('Invariante: instância duplicada.');}
  view(p){if(!this.s)return null;const s=this.s;return {viewer:p,mode:s.mode||'advanced',version:VERSION,ruleset:RULESET_ID,revision:s.revision,turn:s.turn,active:s.active,priority:s.priority,phase:s.phase,ending:s.ending,autoEnd:s.autoEnd,winner:s.winner,log:copy(s.log),stack:s.stack.map(l=>({id:l.id,label:l.label||l.kind,kind:l.kind,p:l.p})),combats:copy(s.combats),completed:copy(s.completed),history:copy(s.history),choice:s.choice?{kind:s.choice.kind,player:s.choice.player,required:s.choice.required,remaining:s.choice.required?Math.max(0,s.choice.required-(s.choice.selected?.length||0)):undefined,cause:copy(s.choice.cause||null),uids:s.choice.player===p?s.choice.uids:undefined}:null,players:s.players.map((side,i)=>({name:side.name,hp:side.hp,power:side.power,od:side.od,fighter:copy(side.fighter),deckCount:side.deck.length,handCount:side.hand.length,hand:i===p?copy(side.hand):[],stamina:copy(side.stamina),extra:side.extra.map(c=>i===p||c.public||c.publicUntil===s.turn?copy(c):{uid:c.uid,hidden:true,ready:c.ready,slot:c.slot}),arena:copy(side.arena),discard:copy(side.discard),banished:copy(side.banished),prepared:side.prepared,replenished:side.replenished,startSkill:side.startSkill,fighterTapped:!!side.fighterTapped,overdriveLocked:!!side.overdriveLocked})),actions:this.legalActions(p)};}
  legalActions(p){if(!this.s||this.s.winner!==null)return [];const s=this.s;
   if(s.phase==='mulligan')return s.players[p].mulligan?[]:[{type:'mulligan',hand:[],energy:[]}];
@@ -364,7 +366,7 @@ const uids=side.deck.filter(c=>this.def(c).type==='Guarda').map(c=>c.uid);if(uid
   const attackAllowed=revide||this.canIndependent(p);
   if(attackAllowed&&own.od===3&&!own.overdriveLocked&&!own.fighterTapped&&this.script(own.fighter).fighterOverdrive)for(const zone of ['Inferior','Meio','Superior'])acts.push({type:'fighterOverdrive',uid:own.fighter.uid,zone});
   for(const c of [...this.usable(p),...own.discard.filter(c=>this.script(c).fromDiscardLife||this.script(c).discardCopy)]){
-   const d=this.def(c),sc=this.script(c);if(c.token){if(!revide&&this.canIndependent(p))for(const zone of c.zone?[c.zone]:['Inferior','Meio','Superior'])acts.push({type:'tokenAttack',uid:c.uid,zone});continue;}if(!this.comboAllowed(c,s.lastComboZone))continue;if(sc.oncePerTurn&&own.onceUsed[d.name])continue;if(d.type==='Guarda'||d.type==='Golpe'&&!attackAllowed||d.type==='Truque'&&(revide||!b&&s.autoEnd))continue;
+   const d=this.def(c),sc=this.script(c);if(c.token){if(!revide&&this.canIndependent(p)&&this.energies(p,true).length>=this.tokenAttackCost(c))for(const zone of c.zone?[c.zone]:['Inferior','Meio','Superior'])acts.push({type:'tokenAttack',uid:c.uid,zone});continue;}if(!this.comboAllowed(c,s.lastComboZone))continue;if(sc.oncePerTurn&&own.onceUsed[d.name])continue;if(d.type==='Guarda'||d.type==='Golpe'&&!attackAllowed||d.type==='Truque'&&(revide||!b&&s.autoEnd))continue;
    if(sc.requiresHighCostDiscard&&[...own.discard,...this.s.players.flatMap(side=>side.arena)].filter(c=>typeof this.def(c).cost==='number'&&this.def(c).cost>=3).length<2)continue;if(sc.psychicFrom&&!this.psychicAllowed(p,c))continue;if(sc.requiresOwnExtra&&!own.extra.length)continue;if(sc.requiresDisparo&&(!b||b.finished||this.def(this.find(b.uid).card).subtype!=='Disparo'))continue;
    if(sc.requiresBlockTarget&&(!b||b.finished||!b.blocks.some(g=>!g.cancelled)))continue;if(sc.requiresOwnBlocked&&(!b||b.finished||b.cancelled||b.p!==p||!b.blocked||!b.blocks.some(g=>!g.cancelled)))continue;if(sc.requiresAttack&&(!b||b.finished))continue;
    if(sc.variable&&p!==s.active)continue;
@@ -395,6 +397,7 @@ Engine.prototype.activatePaid=function(p,a){const result=originalPaid.call(this,
 const originalOps=Engine.prototype.runOps;
 Engine.prototype.runOps=function(ops,ctx){for(const op of ops){if(this.s.winner!==null)return;if(op.op==='fixedDamage')this.damage(other(ctx.p),op.n);else originalOps.call(this,[op],ctx);}};
 function chooseAI(view,catalog){const acts=view.actions;if(!acts.length)return null;const byId=new Map(catalog.map(c=>[c.id,c]));const player=view.viewer??1,own=view.players[player],find=uid=>[...own.hand,...own.extra,...own.stamina,...own.discard].find(c=>c.uid===uid),def=uid=>Rivals06.definition(find(uid),find(uid)?.tokenDefinition||byId.get(find(uid)?.id),view);
+ if(view.choice?.kind==='maha:curseTarget')return acts.find(a=>a.uid===view.players[1-player].fighter.uid)||acts[0];
  if(view.choice?.kind==='rivals:06Extras'){const enemy=new Set(view.players[1-player].extra.map(c=>c.uid));return acts.find(a=>enemy.has(a.uid))||acts.find(a=>a.option==='done')||acts[0];}if(view.choice?.kind?.startsWith('rivals:'))return acts.find(a=>a.target===1-player)||acts.find(a=>a.uid)||acts[0];
  if(view.choice?.kind?.startsWith('expansion:'))return acts.find(a=>a.option==='done')&&acts.filter(a=>a.uid).length===0?acts.find(a=>a.option==='done'):acts.find(a=>a.uid)||acts[0];
  if(view.choice?.kind?.startsWith('balance'))return acts[0];if(view.choice?.kind==='ownEnergy')return {type:'chooseOwnEnergy',uids:acts[0].options.slice(0,acts[0].required)};if(view.choice?.kind==='energy')return {type:'chooseEnergy',uids:acts[0].options.slice(0,acts[0].required)};
@@ -405,7 +408,7 @@ function chooseAI(view,catalog){const acts=view.actions;if(!acts.length)return n
  if(acts.some(a=>a.type==='remainingChoose'))return acts.find(a=>a.target===1-player)||acts.find(a=>a.use===true)||acts[0];if(view.phase==='mulligan')return {type:'mulligan',hand:[],energy:[]};
  const finta=acts.find(a=>a.type==='finta');if(finta&&view.combats.at(-1)?.p===player)return finta;
  const boost=acts.find(a=>a.type==='play'&&def(a.uid)?.number===104);if(boost&&view.combats.at(-1)?.p===player)return boost;
- const tokenAttack=acts.find(a=>a.type==='tokenAttack');if(tokenAttack)return tokenAttack;const od=acts.find(a=>a.type==='overdrive'||a.type==='fighterOverdrive');if(od)return od;const newOD=acts.find(a=>a.type==='expansionMournerOD'||a.type==='rivalsOverdrive');if(newOD)return newOD;const newSkill=acts.find(a=>a.type==='expansionReveal'||a.type==='expansionMournerSkill'||a.type==='expansionPlacideSkill');if(newSkill)return newSkill;
+ const tokenAttack=acts.find(a=>a.type==='tokenAttack');if(tokenAttack)return tokenAttack;const od=acts.find(a=>a.type==='overdrive'||a.type==='fighterOverdrive'||a.type==='mahaOverdrive');if(od)return od;const newOD=acts.find(a=>a.type==='expansionMournerOD'||a.type==='rivalsOverdrive');if(newOD)return newOD;const newSkill=acts.find(a=>a.type==='expansionReveal'||a.type==='expansionMournerSkill'||a.type==='expansionPlacideSkill');if(newSkill)return newSkill;
  const attack=acts.filter(a=>a.type==='play'&&(def(a.uid)?.type==='Golpe'||a.mode==='guardStrike')&&(a.mode!=='life'||own.hp>def(a.uid).cost)).sort((a,b)=>((b.mode==='guardStrike'?def(b.uid).block:def(b.uid).power||0)-(def(b.uid).cost||0)*.35)-((a.mode==='guardStrike'?def(a.uid).block:def(a.uid).power||0)-(def(a.uid).cost||0)*.35));if(attack.length){const chosen=attack[0];if(chosen.mode==='guardStrike'){const seq=byId.get(own.fighter.id)&&scripts[byId.get(own.fighter.id).number]?.sequence,next=seq?.[Math.min(own.od,seq.length-1)];return attack.find(a=>a.uid===chosen.uid&&a.zone===next)||chosen;}return chosen;}
  const replen=acts.filter(a=>a.type==='replenish');if(replen.length&&(own.hand.length<=1||!attack.length))return replen.at(-1);
  const skill=acts.find(a=>a.type==='startSkill');if(skill&&own.handCount<5)return skill;
@@ -504,7 +507,7 @@ Rivals06.install(Engine,scripts,GameModes);
 // Atualização de cartas 0.9: regras compartilhadas por IA, Arcade e servidor PvP.
 const u09={};for(const k of ['script','runOps','apply','legalActions','activatePaid','beginPayment','completePayment','view','finishCombat','move','createToken','destroyToken'])u09[k]=Engine.prototype[k];
 const psychicAction=(e,c)=>['Golpe','Guarda','Truque'].includes(e.def(c).type)&&e.def(c).name.toLowerCase().includes('psychic');
-Engine.prototype.refreshBoydd=function(){if(!this.s)return;const count=this.s.players.reduce((n,s)=>n+s.extra.length,0);for(const b of this.s.combats){if(b.boyddExtraBonus===undefined)continue;b.attack+=count-b.boyddExtraBonus;b.boyddExtraBonus=count;const m=b.attackModifiers?.find(m=>m.name==='Boydd · Zonas Extras');if(m)m.value=count;}};
+Engine.prototype.refreshBoydd=function(){if(!this.s)return;const count=this.s.players.reduce((n,s)=>n+s.extra.length,0);for(const b of this.s.combats){if(b.boyddExtraBonus===undefined)continue;b.attack+=count-b.boyddExtraBonus;b.boyddExtraBonus=count;const m=b.attackModifiers?.find(m=>m.name==='Boydd · primeiro Golpe · Zonas Extras');if(m)m.value=count;}};
 for(const k of ['move','createToken','destroyToken'])Engine.prototype[k]=function(...args){const result=u09[k].apply(this,args);this.refreshBoydd();return result;};
 Engine.prototype.script=function(card){if(card?.token&&card.balanceToken){const sc=u09.script.call(this,card),ops=sc.hit||sc.success;return card.balanceToken==='raven'?{onBlock:ops}:{onAttack:ops};}return u09.script.call(this,card);};
 Engine.prototype.activatePaid=function(p,a){
@@ -513,7 +516,8 @@ Engine.prototype.activatePaid=function(p,a){
   this.move(a.uid,'banished');return this.push({kind:'effect',p,ops:[{op:'balanceSearch',name:'Psychic',types:['Golpe','Guarda'],from}],context:{p},label:'Psychic — banir e '+(from==='deck'?'buscar':'reciclar')});
  }
  const result=u09.activatePaid.call(this,p,a),b=this.current();
- if(a.type==='play'&&b?.uid===a.uid&&!b.token&&this.script(this.s.players[p].fighter).extraAttackAura){b.boyddExtraBonus=0;(b.attackModifiers||(b.attackModifiers=[])).push({name:'Boydd · Zonas Extras',value:0});this.refreshBoydd();}
+ if(a.type==='tokenAttack'){const token=this.find(a.uid)?.card,ops=token&&this.script(token).onAttack;if(ops)this.push({kind:'effect',p,ops,context:{p,source:a.uid,combat:this.current().id},label:token.name+' — ao golpear'});}
+ if(a.type==='play'&&b?.uid===a.uid&&!b.token&&this.script(this.s.players[p].fighter).firstStrikeExtraAura){const side=this.s.players[p],first=side.boyddFirstStrikeTurn!==this.s.turn;side.boyddFirstStrikeTurn=this.s.turn;if(first){b.boyddExtraBonus=0;(b.attackModifiers||(b.attackModifiers=[])).push({name:'Boydd · primeiro Golpe · Zonas Extras',value:0});this.refreshBoydd();}}
  if(a.type==='block')for(const uid of a.uids){const c=this.find(uid)?.card,ops=c?.token&&this.script(c).onBlock;if(ops)this.push({kind:'effect',p,ops,context:{p,source:uid,combat:b.id},label:c.name+' — ao bloquear'});}
  return result;
 };
@@ -549,11 +553,12 @@ Engine.prototype.apply=function(p,a){const c=this.s.choice,side=this.s.players[p
   this.s.choice={kind:'psychicReveal',player:p,uids:[top.uid],update09Reveal:true};return;
  }
  const result=u09.apply.call(this,p,a);
- if(a.type==='tokenAttack'){const token=this.find(a.uid)?.card,ops=token&&this.script(token).onAttack;if(ops)this.push({kind:'effect',p,ops,context:{p,source:a.uid,combat:this.current().id},label:token.name+' — ao golpear'});}
+
  return result;
 };
 Engine.prototype.finishCombat=function(b){this.refreshBoydd();return u09.finishCombat.call(this,b);};
 Engine.prototype.view=function(p){const v=u09.view.call(this,p);if(v&&this.s.choice?.update09Reveal)v.revealedCards=this.s.choice.uids.map(uid=>copy(this.find(uid).card));return v;};
+MahaZeno.install(Engine,scripts,SUPPORTED);
 Engine.RULESET_ID=RULESET_ID;
 return {Engine,chooseAI,SUPPORTED,VERSION,RULESET_ID};
 });

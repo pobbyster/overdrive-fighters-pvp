@@ -42,7 +42,7 @@ class Rooms {
         const name=String(msg.name||'Jogador').trim().slice(0,24).replace(/[\x00-\x1f]/g,'')||'Jogador';
         if(msg.type==='create') {
           if(this.rooms.size>=this.maxRooms)fail('Servidor cheio. Tente novamente mais tarde.');
-          if(!['standard','advanced','deathmatch'].includes(msg.mode))fail('Modo inválido.');
+          if(!Object.hasOwn(Modes.modes,msg.mode))fail('Modo inválido.');
           let code; do {code=randomBytes(5).toString('hex').toUpperCase();}while(this.rooms.has(code));
           room={code,mode:msg.mode,match:{score:[0,0],round:1,stage:'opening',lastWinner:null,first:null},seats:[null,null],engine:null,touched:this.now(),activityAt:this.now(),decisionAt:this.now()};this.rooms.set(code,room);index=0;
         } else {

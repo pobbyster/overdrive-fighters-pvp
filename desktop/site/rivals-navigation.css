@@ -1,9 +1,9 @@
 /* Navegação com a mesma identidade desde o primeiro quadro. */
 html{background:#a200e9}
-body.rivals-entering{animation:rivals-arrive .24s ease-out both}
-body.rivals-leaving{animation:rivals-depart .16s ease-in both;pointer-events:none}
-@keyframes rivals-arrive{from{opacity:0;filter:blur(3px)}to{opacity:1;filter:none}}
-@keyframes rivals-depart{to{opacity:0;filter:blur(3px)}}
+body.rivals-entering{animation:rivals-arrive .14s ease-out both}
+body.rivals-leaving{animation:rivals-depart .08s ease-in both;pointer-events:none}
+@keyframes rivals-arrive{from{opacity:.6}to{opacity:1}}
+@keyframes rivals-depart{to{opacity:.6}}
 @media(prefers-reduced-motion:reduce){body.rivals-entering,body.rivals-leaving{animation:none}}
 /* Centraliza os quatro controles do editor no mesmo eixo do botão Som. */
 .rivals-editor .editor-tools{position:absolute;right:165px;top:15px;height:49px;align-items:center!important;margin:0!important}

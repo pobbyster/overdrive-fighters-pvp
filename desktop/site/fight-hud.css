@@ -9,3 +9,6 @@ body.arcade-battle .fight-hud{margin:0 0 14px;border-radius:0;padding-right:75px
 @media(prefers-reduced-motion:reduce){.fight-health i{transition:none}}
 
 .rivals-playing #turnTools{flex-direction:column;align-items:stretch;gap:8px}.rivals-playing #turnTools button{width:100%}
+.fight-values .combat-marker-readout{display:inline-flex;gap:9px;margin-left:auto;align-items:center}.fight-values .combat-marker-readout:empty{display:none}.fight-status[data-player="1"] .combat-marker-readout{margin-left:0;margin-right:auto;order:-1}
+.fighter-marker{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#3e1756;white-space:nowrap}.fighter-marker img{height:23px;width:23px;object-fit:contain;border-radius:50%}.fighter-marker b{font-weight:900;min-width:12px}
+@media(max-width:850px){.fight-values .combat-marker-readout{gap:5px}.fighter-marker{font-size:11px;gap:2px}.fighter-marker img{width:18px;height:18px}}

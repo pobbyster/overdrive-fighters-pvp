@@ -117,6 +117,16 @@
         "Inferior",
         "Inferior"
       ]
+    },
+    {
+      "number": 200,
+      "id": "OF-MZ-001",
+      "name": "MahaZeno",
+      "sequence": [
+        "Inferior",
+        "Inferior",
+        "Inferior"
+      ]
     }
   ]
 }

@@ -15,3 +15,7 @@ body:not([data-background="default"]) .arena-background{opacity:.3}
 .screen-header .screen-label{padding-right:130px}
 .settings-page h2{font-family:Impact,'Arial Narrow',sans-serif;font-style:italic;letter-spacing:.025em}
 .settings-page>a.primary{display:inline-block;padding:14px 20px;border-radius:10px;background:linear-gradient(135deg,#a72056,#ff4b92);color:#fff;text-decoration:none;margin-top:12px}
+.table-surface[data-field="roudge"],#fieldPreview[data-field="roudge"]{background:#45392d url('assets/playmats/roudge-arena.webp') center/100% 100% no-repeat!important;border-color:#bc8b52}
+.table-surface[data-field="roudge"] :is(.seat,.energy-row,.shared-zone,.arena-chain){background:transparent!important}
+.table-surface[data-field="roudge"] :is(.extra-slot,.fighter-slot,.pile){background:#100b1780!important}
+.table-surface[data-field="roudge"] :is(.slot-label,.pile-label,.shared-zone>h2,.energy-row>span){color:#fff4dd!important;text-shadow:0 1px 3px #000,0 0 4px #000}

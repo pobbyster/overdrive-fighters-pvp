@@ -9,7 +9,7 @@ const socket=()=>({readyState:1,messages:[],send(text){this.messages.push(JSON.p
 function lobby(options={},mode='advanced') {const rooms=new Rooms(options),a=socket(),b=socket();rooms.handle(a,{protocol:1,type:'create',name:'A',mode});rooms.handle(b,{protocol:1,type:'join',name:'B',code:a.roomCode});for(const s of [a,b])rooms.handle(s,{protocol:1,type:'ready',deck,ruleset:Engine.RULESET_ID});const room=rooms.rooms.get(a.roomCode);rooms.handle(a,{protocol:1,type:'coinCall',call:'heads'});const winner=room.opening.winner;rooms.handle(winner?b:a,{protocol:1,type:'coinChoose',first:winner?1:0});return {rooms,a,b,room};}
 function act(rooms,s,action,sequence,revision){rooms.handle(s,{protocol:1,type:'action',sequence,revision,action});}
 test('Each mode starts both seats with the correct energy count and hidden hands/decks',()=>{
- for(const [mode,count] of Object.entries({standard:3,advanced:5,deathmatch:7})){
+ for(const [mode,count] of Object.entries({prime:2,standard:3,advanced:5,deathmatch:7})){
   const {room}=lobby({},mode);
   for(const seat of [0,1]){
    const {view:v}=project(room.engine,seat,['A','B']);assert.equal(v.players[0].stamina.length,count);assert.equal(v.players[1].stamina.length,count);

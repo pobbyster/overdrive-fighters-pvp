@@ -1,6 +1,6 @@
 {
   "name": "overdrive-fighters-pvp",
-  "version": "0.11.3",
+  "version": "0.13.0",
   "private": true,
   "scripts": {
     "start": "node pvp/server.cjs",

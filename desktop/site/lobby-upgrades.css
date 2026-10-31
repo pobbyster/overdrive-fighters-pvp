@@ -1,4 +1,4 @@
-.rivals-editor .editor-preview #editorCardText{display:block!important;-webkit-line-clamp:unset!important;line-clamp:unset!important;max-height:150px!important;min-height:80px!important;overflow-y:auto!important;white-space:pre-wrap;overflow-wrap:anywhere;scrollbar-width:thin;scrollbar-color:#b32be0 #eee1f6;overscroll-behavior:contain;resize:vertical}
+.rivals-editor .editor-preview #editorCardText{display:block!important;-webkit-line-clamp:unset!important;line-clamp:unset!important;max-height:260px!important;min-height:150px!important;overflow-y:auto!important;white-space:pre-wrap;overflow-wrap:anywhere;scrollbar-width:thin;scrollbar-color:#b32be0 #eee1f6;overscroll-behavior:contain;resize:vertical}
 .rivals-editor .editor-preview #editorCardText:focus-visible{outline:2px solid #8d00ed;outline-offset:2px}
 .rivals-editor #workspace>#deckPanel{overflow-y:auto!important;overscroll-behavior:contain}
 .selected-deck-caption[role=button]{cursor:pointer;border-radius:14px!important;transition:box-shadow .15s}
@@ -20,3 +20,15 @@
 @media(max-width:560px){#arenaDeckChoices{grid-template-columns:1fr}.arena-deck-picker{padding:16px}#availableRoomsPanel{max-height:40dvh}}
 
 #modeDescription,#gameModeHelp p{font-size:11px!important;line-height:1.45!important}#gameModeHelp summary{font-size:12px;cursor:pointer}#setup>.selection-settings{overflow-y:auto}#pvpLobby{max-height:82svh;overflow-y:auto}
+
+/* Nome do deck no cabeçalho e adicional em uma fileira sobreposta. */
+.rivals-editor .editor-tools #deckName{order:-1;width:190px!important;min-width:150px;max-width:230px;flex:1 1 190px;height:36px;margin-right:10px;background:#fff;color:#54275d;border:1px solid #e1c7ec;border-radius:10px;padding:6px 10px;font-size:12px}
+.rivals-editor #deckContents{container-type:inline-size}
+.rivals-editor .deck-section[data-drop-zone=extra] .board-cards{--extra-card-width:clamp(48px,9cqw,82px);--extra-step:min(52px,calc((100cqw - var(--extra-card-width) - 20px) / 14));display:grid;grid-template-columns:none!important;grid-auto-flow:column;grid-auto-columns:var(--extra-step);justify-content:start;gap:0;overflow:visible!important;padding-right:var(--extra-card-width)!important}
+.rivals-editor .deck-section[data-drop-zone=extra] .board-card{width:var(--extra-card-width);position:relative;z-index:1}
+.rivals-editor .deck-section[data-drop-zone=extra] .board-card:hover,.rivals-editor .deck-section[data-drop-zone=extra] .board-card:focus-within{z-index:30;filter:drop-shadow(0 0 4px #7d00c999)}
+.rivals-editor .deck-section[data-drop-zone=extra] .board-card .board-art{display:block;width:100%}
+.rivals-editor .deck-section[data-drop-zone=extra] .board-card-controls{right:2px;bottom:2px}
+.rivals-editor .editor-preview #editorCardText{line-height:1.5}
+
+.rivals-editor .editor-preview{flex:0 0 auto}

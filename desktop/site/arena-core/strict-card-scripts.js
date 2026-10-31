@@ -16,7 +16,7 @@ const scripts={
 24:{onPlay:[{op:'balanceToken',name:'Galacstrix Coruja',power:1,effect:'owl'}],tokenRevidePower:2},
 25:{revideAttack:3,onPlay:[{op:'balanceToken',name:'Galacstrix Dragão',power:3,effect:'dragon'}]},
 26:{onBlock:[{op:'balanceToken',name:'Galacstrix Corvo',power:2,effect:'raven'}]},
-27:{onPlay:[{op:'balanceToken',name:'Galacstrix Tigre',power:2,effect:'tiger'}]},
+27:{onPlay:[{op:'balanceToken',name:'Galacstrix Tigre',power:1,effect:'tiger'}]},
   48:{additionalDiscard:1},107:{deflect:true,additionalDiscard:1},
   97:{onPlay:[{op:"draw",n:2},{op:"discardOwn"}]},
   36:{preparation:true,revideAttack:2,hit:[{op:'destroyExtraChoice',enemy:true,preparation:true}]},
@@ -62,7 +62,7 @@ const scripts={
   34:{preparation:true,attackBonus:(e,p)=>e.s.players[p].extra.length?1:0,onPlay:[{op:'draw',n:1,when:'revide'}]},
   35:{},49:{deflect:true},
   // Lutadores em integração; a validação da Arena ainda aguarda seus Overdrives.
-  32:{fighter:true,extraAttackAura:true,sequence:['Inferior','Meio','Superior'],fighterOverdrive:'boydd'},
+  32:{fighter:true,firstStrikeExtraAura:true,sequence:['Inferior','Meio','Superior'],fighterOverdrive:'boydd'},
   51:{fighter:true,sequence:['Meio','Superior','Superior'],impetusHitDraw:true,fighterOverdrive:'hanma'},
   70:{fighter:true,sequence:['Meio','Meio','Meio'],fighterOverdrive:'len-yin',errata:'Efeito ativado: pague 1 energia ativa e vire Len Yin. Enquanto estiver virada, ela não pode ativar novamente este efeito nem realizar Overdrive. O bônus pela diferença absoluta de Poder vale para o primeiro Golpe com Foco do turno, mesmo sem cumprir o requisito do Foco. Len Yin desvira no preparo do seu próximo turno.'},
   40:{break:true,revideAttack:3},
@@ -141,6 +141,7 @@ Object.assign(scripts,{
  162:{onPlay:[{op:'rivals05Card'}]},163:{onPlay:[{op:'rivals05Card'}]},164:{onPlay:[{op:'rivals05Card'}]},165:{onPlay:[{op:'rivals05Card'}]},166:{onPlay:[{op:'rivals05Card'}]},167:{onPlay:[{op:'rivals05Card'}]},168:{hit:[{op:'rivals05Card'}]},169:{}
 });
 Object.assign(scripts,{170:{fighter:true,sequence:["Inferior","Inferior","Inferior"],fighterOverdrive:'duke'},171:{gemite:true},172:{gemite:true},173:{gemite:true},174:{gemite:true},175:{gemite:true},176:{onPlay:[{op:'rivals06Union'}]}});
+for(let n=200;n<=209;n++){SUPPORTED.push(n);scripts[n]={};}scripts[200]={fighter:true,sequence:['Inferior','Inferior','Inferior']};scripts[203]={onPlay:[{op:'mahaTroca'}]};
 return {SUPPORTED,scripts};
 });
 

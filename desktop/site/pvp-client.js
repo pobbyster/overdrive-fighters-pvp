@@ -10,7 +10,7 @@
   def(card){const base=card?.tokenDefinition||this.catalog.get(typeof card==='string'?card:card?.id)||{name:'Carta oculta',number:0};return OverdriveRivals06.definition(card,base,this.s);}
   script(card){return card?.token?{}:window.OverdriveCardScripts.scripts[this.def(card).number]||{};}
   current(){return this.s.combats.at(-1)||null;}
-  find(uid){for(let p=0;p<2;p++){const s=this.s.players[p];if(s.fighter.uid===uid)return {p,z:'fighter',card:s.fighter};for(const z of ['hand','stamina','extra','arena','discard','banished']){const i=s[z].findIndex(c=>c.uid===uid);if(i>=0)return {p,z,i,card:s[z][i]};}}return this.candidates.find(f=>f.card.uid===uid)||null;}
+  find(uid){for(let p=0;p<2;p++){const s=this.s.players[p];if(s.fighter.uid===uid)return {p,z:'fighter',card:s.fighter};for(const z of ['hand','stamina','extra','arena','discard','banished','reserve']){const i=(s[z]||[]).findIndex(c=>c.uid===uid);if(i>=0)return {p,z,i,card:s[z][i]};}}return this.candidates.find(f=>f.card.uid===uid)||null;}
   energies(p,active){return this.s.players[p].stamina.filter(c=>c.active===active);}
   payment(p,c,mode='normal',x=0,zone){return this.costs[[c.uid,mode,x,...(mode==='guardStrike'?[zone]:[])].join(':')]||{own:0,opp:0};}
   guardCost(p,c,index=0){return index===0?(this.guardCosts[c.uid]??this.def(c).cost):this.def(c).cost;}
@@ -22,6 +22,9 @@
  const lobby=document.createElement('section');lobby.id='pvpLobby';lobby.className='panel pvp-lobby';
  lobby.innerHTML='<span class="eyebrow">ARENA PVP · SALA PRIVADA</span><h2>Desafie outro jogador</h2><p>Escolha seu deck acima. Compartilhe o endereço do servidor e o código da sala. O duelo começa quando ambos confirmarem seus decks.</p><div class="pvp-fields"><label>Servidor<input id="pvpServer" spellcheck="false" placeholder="ws://127.0.0.1:4310/pvp"></label><label>Seu nome<input id="pvpName" maxlength="24" value="Jogador"></label><label>Código da sala<input id="pvpCode" maxlength="10" autocomplete="off" spellcheck="false"></label></div><div class="pvp-buttons"><button id="pvpCreate" class="primary">Criar sala</button><button id="pvpJoin">Entrar na sala</button><button id="pvpResume" hidden>Reconectar à sala</button><button id="pvpReady" hidden>Confirmar meu deck</button><button id="pvpLeave" hidden>Sair da sala</button></div><p id="pvpRoomInfo"></p><p id="pvpStatus" role="status" aria-live="polite">Requer um servidor PvP em execução.</p>';
  $('setup').after(lobby);
+ const nameKey='of-pvp-player-name';
+ try{const saved=localStorage.getItem(nameKey);if(saved!==null)$('pvpName').value=saved.slice(0,24);}catch{}
+ $('pvpName').addEventListener('input',()=>{try{localStorage.setItem(nameKey,$('pvpName').value.slice(0,24));}catch{}});
  const clock=document.createElement('p');clock.id='pvpDecisionClock';clock.setAttribute('role','timer');clock.hidden=true;document.body.append(clock);
  const banner=document.createElement('aside');banner.id='pvpBanner';banner.hidden=true;banner.setAttribute('role','status');banner.innerHTML='<span></span><button id="pvpReconnect">Reconectar</button><button id="pvpResign">Desistir / sair</button>';document.body.append(banner);
  const sideButton=document.createElement('button');sideButton.id='pvpSideDeck';sideButton.textContent='Trocas / próximo duelo';sideButton.hidden=true;banner.append(sideButton);

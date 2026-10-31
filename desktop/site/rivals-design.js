@@ -9,6 +9,10 @@
  document.body.classList.add('rivals-design');
  if(document.body.classList.contains('main-menu')){
   document.body.classList.add('rivals-home');document.querySelector('.menu-logo').src=asset('logo');
+  const fighters=document.createElement('div');fighters.className='menu-fighters';fighters.setAttribute('aria-hidden','true');
+  for(const name of ['blossom','hanma']){const figure=document.createElement('div');figure.className='menu-fighter menu-fighter-'+name;const image=document.createElement('img');image.src=asset('menu-'+name);image.alt='';image.draggable=false;image.decoding='async';figure.append(image);fighters.append(figure);}
+  document.body.prepend(fighters);
+  const particles=document.createElement('div');particles.className='menu-particles';particles.setAttribute('aria-hidden','true');for(let i=0;i<32;i++){const dot=document.createElement('i');dot.style.cssText='--x:'+((i*37)%101)+'%;--drift:'+(((i*17)%90)-45)+'px;--duration:'+(8+i%7)+'s;--delay:'+(-i*.73)+'s;--size:'+(2+i%5)+'px';particles.append(dot);}document.body.append(particles);const pauseParticles=()=>particles.classList.toggle('paused',document.hidden);addEventListener('visibilitychange',pauseParticles);pauseParticles();
   const names=[['arena.html','ai','Arena IA'],['arena.html?pvp','pvp','Arena PvP'],['decks.html','menu-decks','Decks'],['tutorial.html','tutorial','Tutorial'],['rules.html','rules','Guia de Regras'],['settings.html','settings','Configurações']];
   for(const [href,name,label]of names)artButton(document.querySelector('.main-options a[href="'+href+'"]'),name,label);
   artButton($('exitGame'),'exit','Sair');
@@ -40,7 +44,7 @@
   // usamos apenas a ilustração, sem alterar as cartas e os retratos em combate.
   const portraitNames={'OF-C1-114':'Arcturus','OF-C1-120':'Mourner','OF-C1-126':'Placide','OF-C1-132':'Rynhard','OF-RVAS-001':'Missbigotten'};
   for(const image of poster.querySelectorAll('.poster-half img')){
-   const update=()=>{const name=portraitNames[image.dataset.fighter],selection={'OF-C1-114':1,'OF-C1-089':15,'OF-C1-126':5,'OF-C1-132':7,'OF-C1-051':11,'OF-C1-032':9,'OF-C1-070':13,'OF-C1-120':3,'OF-RVAS-001':17,'OF-RVAS-029':19}[image.dataset.fighter];image.toggleAttribute('data-rivals-portrait',!!name);if(!pvp&&selection){const url=asset('selection-'+(selection+(image.closest('.poster-enemy')?1:0)));if(image.getAttribute('src')!==url)image.src=url;}else if(name){const url=asset('fighter-'+name);if(image.getAttribute('src')!==url)image.src=url;}};
+   const update=()=>{const name=portraitNames[image.dataset.fighter],selection={'OF-C1-114':1,'OF-C1-089':15,'OF-C1-126':5,'OF-C1-132':7,'OF-C1-051':11,'OF-C1-032':9,'OF-C1-070':13,'OF-C1-120':3,'OF-RVAS-001':17,'OF-RVAS-029':19,'OF-MZ-001':21}[image.dataset.fighter];image.toggleAttribute('data-rivals-portrait',!!name);if(!pvp&&selection){const url=asset('selection-'+(selection+(image.closest('.poster-enemy')?1:0)));if(image.getAttribute('src')!==url)image.src=url;}else if(name){const url=asset('fighter-'+name);if(image.getAttribute('src')!==url)image.src=url;}};
    new MutationObserver(update).observe(image,{attributes:true,attributeFilter:['src','data-fighter']});update();
   }
   const launch=document.querySelector('.session-launch');if(launch){launch.classList.add('rivals-launch');artButton($('matchHistory'),'history','Histórico e replays');artButton($('challengeLibrary'),'challenges','Desafios de aprendizado');}
