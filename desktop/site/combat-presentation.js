@@ -6,7 +6,7 @@
  const rail=p=>document.querySelector('.fight-status[data-player="'+p+'"]')||document.querySelector(p?'.enemy-rail':'.own-rail');
  function emit(kind,p,label,value){
   dispatchEvent(new CustomEvent('of-combat-visual',{detail:{kind,p,label,value}}));
-  const target=rail(p),r=target?.getBoundingClientRect();if(!r?.width)return;
+  const target=rail(p),r=(target?.querySelector('.fight-portrait')||target)?.getBoundingClientRect();if(!r?.width)return;
   const item=document.createElement('div');item.className='combat-fx';item.dataset.kind=kind;item.dataset.player=String(p);
   const number=document.createElement('b');number.textContent=value??'';const text=document.createElement('small');text.textContent=label;item.append(number,text);
   const lane=[...layer.children].filter(n=>n.dataset.player===String(p)).length%3;
@@ -17,7 +17,7 @@
   const duration=reduced?1100:1500+400*strength;
   if(!reduced){
    item.animate([{opacity:0,transform:'translate(-50%,-20%) scale(.65)'},{opacity:1,transform:'translate(-50%,-50%) scale(1.1)',offset:.16},{opacity:1,transform:'translate(-50%,-80%) scale(1)',offset:.7},{opacity:0,transform:'translate(-50%,-150%) scale(.95)'}],{duration,easing:'ease-out'});
-   const panel=target.querySelector('.fight-readout,.fighter-panel');if(panel)panel.animate(kind==='damage'||kind==='effect'?[{filter:'brightness(1)'},{filter:'brightness(1.6)',transform:'translateX(-4px)',offset:.25},{transform:'translateX(4px)',offset:.5},{filter:'brightness(1)',transform:'translateX(0)'}]:[{filter:'brightness(1)'},{filter:'brightness(1.5)',offset:.4},{filter:'brightness(1)'}],{duration:400*strength+120});
+   const panel=target.querySelector('.fight-health,.fighter-panel');if(panel)panel.animate(kind==='damage'||kind==='effect'?[{filter:'brightness(1)'},{filter:'brightness(1.6)',transform:'translateX(-4px)',offset:.25},{transform:'translateX(4px)',offset:.5},{filter:'brightness(1)',transform:'translateX(0)'}]:[{filter:'brightness(1)'},{filter:'brightness(1.5)',offset:.4},{filter:'brightness(1)'}],{duration:400*strength+120});
   }
   setTimeout(()=>item.remove(),duration);
  }

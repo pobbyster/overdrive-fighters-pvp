@@ -1,14 +1,57 @@
+@font-face{font-family:Minercraftory019;src:url('assets/hud019/Minercraftory.ttf') format('truetype');font-display:swap;font-weight:400}
 .rivals-playing #game>.game-banner,.rivals-playing #game .fighter-rail{display:none!important}
 .rivals-playing #game .arena-layout{grid-template-columns:minmax(0,1fr)!important;max-width:900px;margin-inline:auto}
 .rivals-playing #game .battlefield{grid-column:1!important;grid-row:auto!important}
-.fight-hud{display:grid;grid-template-columns:1fr 160px 1fr;gap:22px;padding:12px 22px;margin:0 0 14px;background:linear-gradient(180deg,#fff,#f4e9fa);border:1px solid #ead6f0;border-radius:14px;color:#702087;box-shadow:inset -2px -3px 6px #0002;position:relative;z-index:5;font-family:'OFS Neue Plak',Arial,sans-serif}
-.fight-status{display:flex;gap:12px;min-width:0;align-items:center}.fight-status[data-player="1"]{flex-direction:row-reverse;text-align:right}.fight-portrait{width:105px;height:70px;border:0!important;padding:0!important;background:none!important;flex-shrink:0;border-radius:6px;overflow:hidden}.fight-portrait img{width:100%;height:100%;object-fit:cover}.fight-readout{flex:1;min-width:0}.fight-name{font:italic 900 clamp(13px,1.6vw,24px)/1.1 'OFS Neue Plak',Arial,sans-serif;text-transform:uppercase;display:block;color:#8100cf}.fight-health{height:14px;transform:skewX(-12deg);background:#ddc7e2;border:1px solid #9e5bb5;margin:6px 2px}.fight-health i{display:block;height:100%;background:linear-gradient(90deg,#ff501e,#b300f7);transition:width .3s}.fight-status[data-player="1"] .fight-health i{margin-left:auto;background:linear-gradient(90deg,#9c00e9,#ff3993)}.fight-values{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:10px;font-weight:700}.fight-status[data-player="1"] .fight-values{justify-content:flex-end}.fight-power{color:#f04c24}.fight-overdrive{display:flex;gap:4px;align-items:center;padding:0!important;background:none!important;box-shadow:none!important;border:0!important;font-size:9px!important;color:#8224a0!important}.fight-overdrive i{font-style:normal;display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid #bea5d0;border-radius:50%;background:#f2e8f7;color:#9c7bb1}.fight-overdrive i.filled{background:linear-gradient(130deg,#ff6c24,#9c00ed);color:white;border-color:#a35db3}.fight-center{text-align:center;align-self:center}.fight-center b{display:block;font-size:10px;letter-spacing:2px;color:#ec4e24}.fight-center strong{display:block;font:italic 900 28px/1.1 'OFS Neue Plak',Arial,sans-serif;color:#8500cf}.fight-center span{font-size:9px;display:block;line-height:1.3}.fight-status .combat-marker-readout{font-size:9px}.fight-status .combat-marker-readout:empty{display:none}
-body.arcade-battle .fight-hud{margin:0 0 14px;border-radius:0;padding-right:75px}#deckViewer{width:min(1050px,96vw);color:#68247e;background:white;border-color:#ddc2e9}#deckViewer .close{background:#f3e8f8;color:#7900b8;border-color:#d6b4e4}.deck-view-layout{display:grid;grid-template-columns:230px 1fr;gap:20px;clear:both}.deck-view-preview{width:100%;max-height:65vh;object-fit:contain;align-self:start;position:sticky;top:0}.deck-view-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:10px;max-height:65vh;overflow:auto;padding:5px}.deck-view-cards button{padding:0;border:0;background:none}.deck-view-cards img{width:100%;display:block}.deck-view-cards button:focus-visible{outline:3px solid #a000e5;outline-offset:2px}
-@media(max-width:850px){.fight-hud{gap:10px;padding:10px;grid-template-columns:1fr 110px 1fr}.fight-status{gap:7px}.fight-portrait{width:70px;height:55px}.fight-values{gap:5px;font-size:9px}.fight-overdrive{font-size:8px!important}.fight-overdrive i{width:14px;height:14px}.fight-name{font-size:14px}.deck-view-layout{grid-template-columns:160px 1fr}}
-@media(max-width:550px){.fight-hud{grid-template-columns:1fr 70px 1fr;gap:7px}.fight-status{display:block!important}.fight-portrait{width:65px;height:33px}.fight-name{font-size:10px}.fight-health{height:9px}.fight-values{font-size:8px}.fight-overdrive{font-size:6px!important}.fight-overdrive i{width:12px;height:12px}.fight-center b{font-size:7px;letter-spacing:0}.fight-center strong{font-size:21px}.fight-center span{font-size:7px}.deck-view-layout{grid-template-columns:100px 1fr;gap:10px}.deck-view-cards{grid-template-columns:repeat(auto-fill,minmax(62px,1fr))}body.arcade-battle .fight-hud{padding-right:45px}}
+.fight-hud{position:relative;container-type:inline-size;isolation:isolate;width:100%;aspect-ratio:5996/641;margin:0 0 12px;padding:0;border:0;background:none;box-shadow:none;color:#8100cf;font-family:'OFS Neue Plak',Arial,sans-serif;z-index:5}
+.fight-frame019{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.fight-status{position:absolute;inset:0;pointer-events:none;min-width:0}
+.fight-readout,.fight-values,.fight-center{display:contents}
+.fight-portrait{position:absolute!important;left:3.1%;top:22.6%;width:12.275%;height:51.17%;z-index:0;border:0!important;padding:0!important;margin:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;overflow:hidden;pointer-events:auto}
+.fight-portrait img{display:block;width:100%;height:100%;object-fit:contain;border-radius:0}
+.fight-status[data-player="1"] .fight-portrait{left:84.65%;width:12.275%}
+.fight-name,.fight-power,.fight-hp,.fight-health,.fight-overdrive,.fight-super,.fight-status .combat-marker-readout{position:absolute;z-index:2;margin:0;min-width:0}
+.fight-name,.fight-power,.fight-score019{font-family:Minercraftory019,monospace;font-weight:400;font-style:normal;line-height:1.15}
+.fight-name{left:15.3%;top:18%;width:16.6%;font-size:clamp(6px,1.65cqw,30px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase}
+.fight-power{left:43%;top:22%;width:2.3%;font-size:clamp(5px,1.4cqw,24px);text-align:left;color:#ff4c20}
+.fight-power:before{content:none}
+.fight-status[data-player="1"] .fight-name{left:64.7%;width:20%;text-align:right}
+.fight-status[data-player="1"] .fight-power{left:54.3%;width:2.3%;text-align:right;color:#8100ff}
+.fight-status[data-player="1"] .fight-power:before{float:right;margin-top:.7em}
+.fight-health{left:15.15%;top:41.65%;width:29.7%;height:9.85%;background:#ded6e4;clip-path:polygon(0 0,98.4% 0,100% 100%,1.6% 100%);overflow:hidden}
+.fight-health i{display:block;height:100%;background:linear-gradient(90deg,#ff501e,#8100ff);transition:width .3s}
+.fight-status[data-player="1"] .fight-health{left:55%;clip-path:polygon(1.6% 0,100% 0,98.4% 100%,0 100%)}
+.fight-status[data-player="1"] .fight-health i{margin-left:auto;background:linear-gradient(90deg,#8100ff,#ff501e)}
+.fight-hp{left:37.3%;top:22%;width:2.5%;text-align:left;font-family:Minercraftory019,monospace;font-size:clamp(5px,1.4cqw,24px);line-height:1.15;color:#ff4c20}
+.fight-status[data-player="1"] .fight-hp{left:59.5%;width:2.7%;text-align:right;color:#8100ff}
+.fight-overdrive{left:16.5%;top:54.5%;width:6.7%;height:18.2%;display:flex;justify-content:space-between;align-items:center;padding:0!important;background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;font-size:0!important;pointer-events:auto}
+.fight-overdrive i{display:grid;place-items:center;width:29%;height:100%;border:0;border-radius:50%;background:none;padding:0}
+.fight-overdrive i.filled{background:linear-gradient(130deg,#ff6c24,#9c00ed);box-shadow:0 0 4px #b24bc0}
+.fight-overdrive .zone-symbol{display:block!important;width:78%!important;height:78%!important;object-fit:contain;border-radius:0;opacity:.3}
+.fight-overdrive .filled .zone-symbol{opacity:1;filter:brightness(1.3)}
+.fight-status[data-player="1"] .fight-overdrive{left:76.6%;flex-direction:row-reverse}
+.fight-super{left:23.7%;top:54.45%;width:7.5%;height:18.25%;pointer-events:auto}
+.fight-super>span{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+.fight-super-meter{position:relative;width:100%;height:100%}
+.fight-super-meter i{position:absolute;top:0;left:calc(var(--super-slot)*20%);width:21.4%;height:100%;background:none}
+.fight-super-meter i.filled{background:url('assets/hud019/super-1.webp') center/100% 100% no-repeat}
+.fight-status[data-player="1"] .fight-super{left:68.6%}
+.fight-status[data-player="1"] .fight-super-meter i{left:auto;right:calc(var(--super-slot)*20%)}
+.fight-status[data-player="1"] .fight-super-meter i.filled{background-image:url('assets/hud019/super-2.webp')}
+.fight-status .combat-marker-readout{left:31.9%;top:54.45%;width:13%;height:18.25%;display:flex;flex-wrap:nowrap;justify-content:safe flex-end;gap:4px;font-size:clamp(6px,.6cqw,11px);align-items:center;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;pointer-events:auto}
+.fight-status[data-player="1"] .combat-marker-readout{left:55%;justify-content:flex-start}
+.fight-status .combat-marker-readout:empty{display:none}
+.fighter-marker,.fighter-damage-marker{display:inline-flex;flex:none;align-items:center;gap:3px;white-space:nowrap;background:#fffc;border-radius:5px;padding:1px 3px;color:#481861}
+.fighter-marker img{height:clamp(10px,1cqw,20px);width:clamp(10px,1cqw,20px);object-fit:contain}.fighter-marker b{font-weight:900}.fury-zone{font-size:.85em}
+.fight-center>b{position:absolute;z-index:2;left:43%;top:17%;width:14%;text-align:center;font-size:clamp(5px,.6cqw,11px);color:#ed4e24;letter-spacing:.08em}
+.fight-score019{position:absolute;z-index:2;left:46%;top:26%;width:8%;height:37%;display:grid;grid-template-columns:repeat(3,1fr);align-items:center;justify-items:center;font-size:clamp(12px,2.85cqw,52px);color:#8100ff}
+.score-x019{visibility:hidden}
+.fight-turn019{position:absolute;z-index:2;left:40%;top:66%;width:20%;text-align:center;font-size:clamp(4px,.55cqw,10px);line-height:1.3;font-weight:700;color:#792499}
+body.arcade-battle .fight-hud{margin:0 0 12px;border-radius:0;padding:0}
+#deckViewer{width:min(1050px,96vw);color:#68247e;background:white;border-color:#ddc2e9}#deckViewer .close{background:#f3e8f8;color:#7900b8;border-color:#d6b4e4}.deck-view-layout{display:grid;grid-template-columns:230px 1fr;gap:20px;clear:both}.deck-view-preview{width:100%;max-height:65vh;object-fit:contain;align-self:start;position:sticky;top:0}.deck-view-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:10px;max-height:65vh;overflow:auto;padding:5px}.deck-view-cards button{padding:0;border:0;background:none}.deck-view-cards img{width:100%;display:block}.deck-view-cards button:focus-visible{outline:3px solid #a000e5;outline-offset:2px}
+@media(max-width:850px){.deck-view-layout{grid-template-columns:160px 1fr}.fighter-marker{gap:1px;padding:0 2px}.fight-status .combat-marker-readout{gap:2px}}
+@media(max-width:550px){.deck-view-layout{grid-template-columns:100px 1fr;gap:10px}.deck-view-cards{grid-template-columns:repeat(auto-fill,minmax(62px,1fr))}.fight-center>b{font-size:4px}.fight-turn019{font-size:4px}.fighter-marker img{height:8px;width:8px}.fight-status .combat-marker-readout{font-size:5px}}
 @media(prefers-reduced-motion:reduce){.fight-health i{transition:none}}
 
-.rivals-playing #turnTools{flex-direction:column;align-items:stretch;gap:8px}.rivals-playing #turnTools button{width:100%}
-.fight-values .combat-marker-readout{display:inline-flex;gap:9px;margin-left:auto;align-items:center}.fight-values .combat-marker-readout:empty{display:none}.fight-status[data-player="1"] .combat-marker-readout{margin-left:0;margin-right:auto;order:-1}
-.fighter-marker{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#3e1756;white-space:nowrap}.fighter-marker img{height:23px;width:23px;object-fit:contain;border-radius:50%}.fighter-marker b{font-weight:900;min-width:12px}
-@media(max-width:850px){.fight-values .combat-marker-readout{gap:5px}.fighter-marker{font-size:11px;gap:2px}.fighter-marker img{width:18px;height:18px}}
+/* Override legacy fixed pixel sizes: the symbols follow the printed circles. */
+#fightHud .fight-overdrive i{width:29%!important;height:100%!important;min-width:0!important;flex:0 0 29%;box-shadow:none!important}
+#fightHud .fight-overdrive i .zone-symbol{width:90%!important;height:90%!important;display:block;margin:auto;object-fit:contain}

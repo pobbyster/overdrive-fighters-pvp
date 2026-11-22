@@ -13,7 +13,7 @@
  catalog.querySelector('.catalog-layout').hidden=true;
  const center=document.createElement('section');center.className='deck-board';center.setAttribute('aria-label','Lutador e baralhos');
  center.append(document.getElementById('deckContents'));
- const help=document.createElement('p');help.className='deck-board-help';help.textContent='Arraste cartas para as áreas ou use + Principal / + Adicional. Use ⇄ para transferir uma cópia e − para remover.';center.append(help);
+ const help=document.createElement('p');help.className='deck-board-help';help.textContent='Arraste cartas para as áreas ou use + Principal / + Adicional. Arraste uma carta para fora da área central para remover uma cópia. Escape cancela. Use ⇄ para transferir e − para remover.';center.append(help);
  const preview=document.createElement('section');preview.className='editor-preview';preview.innerHTML='<div class="eyebrow">CARTA EM DESTAQUE</div><img id="editorArt" alt="Prévia da carta" hidden><h2 id="editorCardName">Escolha seu lutador</h2><p id="editorCardMeta">Passe o mouse ou dê foco a uma carta para ler seus detalhes.</p><p id="editorCardText"></p>';
  aside.prepend(preview);
  workspace.replaceChildren(aside,center,catalogColumn);
@@ -28,19 +28,20 @@
  const previewCard=id=>{
   if(previewId===id)return;previewId=id;clearTimeout(previewTimer);
   const c=get(id);if(!c)return;
-  const art=document.getElementById('editorArt');art.src=thumbnailURL(id);art.alt=c.name;art.hidden=false;
+  const art=document.getElementById('editorArt');art.src=imageURL(id);art.alt=c.name;art.hidden=false;
   previewTimer=setTimeout(()=>{const image=new Image();image.src=imageURL(id);image.decode().catch(()=>{}).then(()=>{if(previewId===id)art.src=imageURL(id);});},100);
   document.getElementById('editorCardName').textContent=c.name;
-  document.getElementById('editorCardMeta').textContent=[c.type,c.color,c.specialPermanent?'Permanente especial · somente no Adicional':c.type==='Lutador'?'Poder '+c.power:'Custo '+c.cost,c.zone].filter(Boolean).join(' · ');
-  document.getElementById('editorCardText').textContent=c.searchText||'Consulte o texto na arte da carta.';
+  document.getElementById('editorCardMeta').textContent=[c.type,c.color,c.type==='Super'?'Transformação · uma cópia no Adicional':c.specialPermanent?'Permanente especial · somente no Adicional':c.type==='Lutador'?'Poder '+c.power:'Custo '+c.cost,c.zone].filter(Boolean).join(' · ');
+  const readout=window.OverdriveCardReadout;if(readout){document.getElementById('editorCardMeta').textContent=readout.metadata(c);document.getElementById('editorCardText').replaceChildren(readout.fragment(c));}else document.getElementById('editorCardText').textContent=c.searchText||'Consulte o texto na arte da carta.';
  };
  const originalRender=renderDeck;
  const orderKey='overdrive-editor-type-order';let organized=false,orderMode='type';try{const saved=localStorage.getItem(orderKey);organized=['true','type','name'].includes(saved);orderMode=saved==='name'?'name':'type';}catch{}
- const compareEntries=([a],[b])=>{const x=get(a),y=get(b),rank={Lutador:0,Golpe:1,Guarda:2,Truque:3};return (orderMode==='type'?(rank[x.type]??4)-(rank[y.type]??4):0)||x.name.localeCompare(y.name,'pt-BR',{sensitivity:'base',numeric:true});};
+ const compareEntries=([a],[b])=>{const x=get(a),y=get(b),rank={Lutador:0,Golpe:1,Truque:2,Guarda:3};return (orderMode==='type'?(rank[x.type]??4)-(rank[y.type]??4)||(Number.isFinite(y.cost)?y.cost:-1)-(Number.isFinite(x.cost)?x.cost:-1):0)||x.name.localeCompare(y.name,'pt-BR',{sensitivity:'base',numeric:true});};
  const orderTools=document.createElement('div');orderTools.className='deck-order-tools';
- const order=document.createElement('select');order.id='deckOrder';order.setAttribute('aria-label','Organizar baralho por');order.innerHTML='<option value="type">Tipo: Golpe → Guarda → Truque</option><option value="name">Nome: A–Z</option>';order.value=orderMode;
+ const order=document.createElement('select');order.id='deckOrder';order.setAttribute('aria-label','Organizar baralho por');order.innerHTML='<option value="type">Tipo: Golpe → Truque → Guarda · custo ↓</option><option value="name">Nome: A–Z</option>';order.value=orderMode;
  const organize=document.createElement('button');organize.id='organizeDeck';organize.type='button';organize.className='rivals-hud-link';organize.textContent='Organizar';organize.title='Organizar principal e adicional pela opção selecionada';orderTools.append(order,organize);center.prepend(orderTools);
- organize.onclick=()=>{organized=true;orderMode=order.value;try{localStorage.setItem(orderKey,orderMode);}catch{}for(const zone of ['main','extra'])deck[zone]=Object.fromEntries(Object.entries(deck[zone]).sort(compareEntries));changed();notify(orderMode==='type'?'Organizado: Golpe, Guarda e Truque, com nomes de A–Z.':'Baralho organizado por nome, de A–Z.');};
+ addEventListener('of-deck-reorder',()=>{organized=false;try{localStorage.setItem(orderKey,'manual');}catch{}});
+ organize.onclick=()=>{delete deck.order;organized=true;orderMode=order.value;try{localStorage.setItem(orderKey,orderMode);}catch{}for(const zone of ['main','extra'])deck[zone]=Object.fromEntries(Object.entries(deck[zone]).sort(compareEntries));changed();notify(orderMode==='type'?'Organizado: Golpe, Truque e Guarda; custos decrescentes, nomes de A–Z no desempate.':'Baralho organizado por nome, de A–Z.');};
  const originalCards=renderCards;
  renderCards=function(){originalCards();document.querySelectorAll('#cardsGrid img').forEach((img,i)=>{img.loading=i<6?'eager':'lazy';img.fetchPriority=i<6?'high':'low';});};
  renderDeck=function(){
@@ -51,9 +52,11 @@
    section.querySelectorAll('.visual-deck-row').forEach(row=>row.remove());
    const grid=document.createElement('div');grid.className='board-cards';
    if(zone==='extra')grid.style.setProperty('--extra-count',Math.max(1,count(map)));
-   for(const [id,q] of (organized?Object.entries(map).sort(compareEntries):Object.entries(map)))for(let i=0;i<q;i++){
+   const sequence=zone!=='fighter'&&deck.order?.[zone]?deckSequence(deck,zone):(organized?Object.entries(map).sort(compareEntries):Object.entries(map)).flatMap(([id,q])=>Array(q).fill(id));
+   if(zone!=='fighter'&&!deck.order?.[zone]){deck.order||={};deck.order[zone]=[...sequence];}
+   for(const [index,id]of sequence.entries()){
     const c=get(id),tile=document.createElement('div');tile.className='board-card';
-    tile.innerHTML=`<button class="board-art" data-detail="${id}" data-pointer-drag="${id}" data-drag-source="${zone}" aria-label="Ver ${esc(c.name)}">${cardHTML(c)}</button><div class="board-card-controls">${zone==='fighter'?'':`<button data-move="${id}" data-zone="${zone}" aria-label="Mover ${esc(c.name)} para ${zone==='main'?'adicional':'principal'}">⇄</button>`}<button data-remove="${id}" data-zone="${zone}" aria-label="Remover ${esc(c.name)}">−</button></div>`;
+    tile.innerHTML=`<button class="board-art" data-detail="${id}" data-pointer-drag="${id}" data-drag-source="${zone}" data-deck-index="${index}" aria-label="Ver ${esc(c.name)}">${cardHTML(c)}</button><div class="board-card-controls">${zone==='fighter'?'':`<button data-move="${id}" data-zone="${zone}" aria-label="Mover ${esc(c.name)} para ${zone==='main'?'adicional':'principal'}">⇄</button>`}<button data-remove="${id}" data-zone="${zone}" aria-label="Remover ${esc(c.name)}">−</button></div>`;
     grid.append(tile);
    }
    section.append(grid);
@@ -88,7 +91,7 @@
   if(deck[zone][id])remove(id,zone);
  },true);
  const shortcuts=document.createElement('p');shortcuts.className='mouse-shortcuts';
- shortcuts.textContent='Mouse: esquerdo adiciona ao principal · direito remove 1 cópia · Shift + direito adiciona ao adicional.';
+ shortcuts.textContent='Arraste dentro do baralho para reordenar; Alt + ← / → também move cartas. Mouse: esquerdo adiciona ao principal · direito remove 1 cópia · Shift + direito adiciona ao adicional.';
  center.prepend(shortcuts);
  setView('builder');
  if(deck.fighter)previewCard(deck.fighter);

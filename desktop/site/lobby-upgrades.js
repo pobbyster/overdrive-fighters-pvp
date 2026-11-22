@@ -53,11 +53,11 @@
   ws.onopen=()=>ws.send(JSON.stringify({protocol:1,type:'listRooms'}));
   ws.onmessage=event=>{if(seq!==generation)return;let msg;try{msg=JSON.parse(event.data);}catch{return;}if(msg.type==='error'){status.textContent='Este servidor ainda não oferece a lista de salas. Você pode entrar pelo código.';received=true;clearTimeout(deadline);ws.close();return;}if(msg.type!=='roomList'||!Array.isArray(msg.rooms))return;
    received=true;clearTimeout(deadline);const compatible=msg.ruleset===OverdriveCore.RULESET_ID;
-   status.textContent=!compatible?'A versão deste servidor é diferente. Atualize o servidor para jogar com esta prévia.':msg.rooms.length?'Salas aguardando um segundo jogador.':'Nenhuma sala aberta no momento. Crie uma sala para jogar.';
+   status.textContent=!compatible?'A versão deste servidor é diferente. Atualize o servidor para jogar com esta prévia.':msg.rooms.length?'Escolha uma sala Aberta para jogar ou Em Partida para assistir.':'Nenhuma sala disponível no momento. Crie uma sala para jogar.';
    const signature=JSON.stringify([msg.ruleset,msg.rooms]);if(lastList===signature){ws.close();return;}lastList=signature;list.replaceChildren();
    for(const room of msg.rooms){if(!/^[A-F0-9]{10}$/.test(room.code))continue;const row=document.createElement('div');row.className='available-room';
-    const info=document.createElement('div'),name=document.createElement('strong'),detail=document.createElement('small');name.textContent=room.host;detail.textContent=OverdriveModes.describe(room.mode)+' · '+room.code;info.append(name,detail);
-    const join=document.createElement('button');join.type='button';join.textContent='Entrar';join.disabled=!compatible;join.setAttribute('aria-label','Entrar na sala de '+room.host);join.onclick=()=>{$('pvpCode').value=room.code;$('pvpJoin').click();};row.append(info,join);list.append(row);
+    const info=document.createElement('div'),name=document.createElement('strong'),detail=document.createElement('small');name.textContent=room.host;detail.textContent=(room.started?'Em Partida':'Aberta')+' · '+OverdriveModes.describe(room.mode)+' · '+room.code;info.append(name,detail);
+    const join=document.createElement('button');join.type='button';join.textContent=room.started?'Assistir':'Entrar';join.disabled=!compatible;join.setAttribute('aria-label',(room.started?'Assistir à partida de ':'Entrar na sala de ')+room.host);join.onclick=()=>{if(room.started){const link=new URL('spectator.html',url.href.replace(/^ws/,'http'));link.hash=new URLSearchParams({code:room.code,server:url.href}).toString();location.href=link.href;}else{$('pvpCode').value=room.code;$('pvpJoin').click();}};row.append(info,join);list.append(row);
    }ws.close();
   };
   ws.onerror=()=>{if(seq===generation)status.textContent='Servidor indisponível. Confira o endereço e tente atualizar.';};

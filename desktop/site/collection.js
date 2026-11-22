@@ -16,7 +16,7 @@ const generic=(d,z='main')=>Object.entries(d[z]).reduce((n,[id,q])=>n+(get(id)?.
 let deck={name:'Meu primeiro Overdrive',fighter:null,main:{},extra:{}},view='database',pile=[],hand=[],noticeTimer,page=1,printing=false;
 let trainingDeck=null;
 let selectedCost='',curveScope='main',library=[],libraryOrphans=[],libraryReadFailed=false,activeSavedId=null,pointerDrag=null,suppressClickUntil=0;
-function imageURL(id){return IMAGES[id];}
+function imageURL(id){return IMAGES[id]||(get(id)?'assets/'+id+'.webp':undefined);}
 function thumbnailURL(id){return window.OverdriveCardThumbs?.[id]||imageURL(id);}
 const searchIndex=new Map(CARDS.map(c=>[c.id,normalize([c.name,c.searchText,c.id,c.source,c.type,c.subtype,c.group,c.zone||''].join(' '))]));
 function backupBeforeWrite(key){
@@ -36,6 +36,7 @@ function validate(d){
   const c=get(id);
   if(!c||!Number.isInteger(q)||q<1||q>3||c.type==='Lutador')throw Error('Carta ou quantidade inválida.');
   if(!fighter)throw Error('Escolha um lutador primeiro.');
+  if(c.type==='Super'&&(z!=='extra'||fighter.number!==c.superFighter||q!==1))throw Error('Super: uma cópia no Adicional do seu próprio Lutador.');
   if(c.specialPermanent&&(z!=='extra'||fighter.number!==200||q!==1))throw Error('Demônios: apenas uma cópia no Adicional de MahaZeno.');
   if(!c.specialPermanent&&c.color!=='Genérica'&&!fighter.colors.includes(c.color))throw Error('Esta cor não pertence ao seu lutador.');
   if((d.main[id]||0)+(d.extra[id]||0)>3)throw Error('Limite de 3 cópias por carta, somando principal e adicional.');
@@ -60,9 +61,10 @@ function save(){try{backupBeforeWrite(STORAGE_KEY);localStorage.setItem(STORAGE_
 
 function changed(){save();pile=[];hand=[];renderDeck();renderCards();renderHand();}
 function cardHTML(c,print=false){return `<div class="card original" style="--card-color:${COLORS[c.color]}"><img src="${print?imageURL(c.id):thumbnailURL(c.id)}" alt="${esc(c.name)} — ${esc(c.type)}${c.subtype?' • '+esc(c.subtype):''} — ${esc(c.color)}" draggable="false" ${print?'':'loading="lazy"'} decoding="async" width="751" height="1048"></div>`;}
-function compatible(c){const f=get(deck.fighter);return c.type==='Lutador'||!!f&&(c.specialPermanent?f.number===200:c.color==='Genérica'||f.colors.includes(c.color));}
+function compatible(c){const f=get(deck.fighter);return c.type==='Lutador'||!!f&&(c.type==='Super'?f.number===c.superFighter:c.specialPermanent?f.number===200:c.color==='Genérica'||f.colors.includes(c.color));}
 function canAdd(c,z){
  if(!compatible(c)||c.type==='Lutador')return false;
+ if(c.type==='Super'&&(z!=='extra'||(deck.extra[c.id]||0)>=1))return false;
  if(c.specialPermanent&&(z!=='extra'||(deck.extra[c.id]||0)>=1))return false;
  if(['main','extra'].reduce((n,z)=>n+Object.entries(deck[z]).reduce((sum,[id,q])=>sum+(get(id)?.name===c.name?q:0),0),0)>=3)return false;
  if(count(deck[z])>=(z==='main'?40:15))return false;
@@ -124,8 +126,9 @@ function renderCurve(){
  $('curveSummary').textContent=`${total} ${total===1?'carta':'cartas'} · Média dos custos fixos: ${average===null?'—':average.toLocaleString('pt-BR',{maximumFractionDigits:2})}${variable?' · '+variable+' com custo X':''}`;
  document.querySelectorAll('[data-curve-scope]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.curveScope===curveScope)));
 }
-function snapshot(d){return {name:d.name,fighter:d.fighter,main:{...d.main},extra:{...d.extra}};}
-function signature(d){return JSON.stringify({name:d.name,fighter:d.fighter,main:Object.entries(d.main).sort(),extra:Object.entries(d.extra).sort()});}
+function deckSequence(d,z){const remaining={...d[z]},result=[];for(const id of (Array.isArray(d.order?.[z])?d.order[z]:[]))if(remaining[id]>0){result.push(id);remaining[id]--;}for(const [id,q]of Object.entries(remaining))for(let i=0;i<q;i++)result.push(id);return result;}
+function snapshot(d){return {name:d.name,fighter:d.fighter,main:{...d.main},extra:{...d.extra},order:{main:deckSequence(d,'main'),extra:deckSequence(d,'extra')}};}
+function signature(d){return JSON.stringify({name:d.name,fighter:d.fighter,main:Object.entries(d.main).sort(),extra:Object.entries(d.extra).sort(),order:{main:deckSequence(d,'main'),extra:deckSequence(d,'extra')}});}
 function isDirty(){const saved=library.find(entry=>entry.id===activeSavedId);return !saved||signature(saved.deck)!==signature(deck);}
 function renderSaveStatus(){
  const saved=library.find(entry=>entry.id===activeSavedId);
@@ -180,7 +183,9 @@ function downloadDeck(d){
 }
 function validDrag(data){return data&&get(data.id)&&['catalog','main','extra','fighter'].includes(data.source)&&
  (data.source==='catalog'||data.source==='fighter'&&deck.fighter===data.id||['main','extra'].includes(data.source)&&deck[data.source][data.id]>0);}
+function dragDestination(node,data){const area=node?.closest('[data-drop-zone]');if(area)return area.dataset.dropZone;return node&&validDrag(data)&&data.source!=='catalog'&&!node.closest('.deck-board,#deckContents,dialog')?'remove':null;}
 function canDrop(data,target){
+ if(target==='remove')return validDrag(data)&&data.source!=='catalog';
  if(!validDrag(data)||!['main','extra','fighter'].includes(target))return false;
  const c=get(data.id);
  if(c.type==='Lutador'){
@@ -192,7 +197,9 @@ function canDrop(data,target){
  if(data.source==='catalog')return canAdd(c,target);
  return count(deck[target])<(target==='main'?40:15);
 }
-function performDrop(data,target){
+function reorderDeckCard(data,node,x){const z=data.source;if(!['main','extra'].includes(z))return;const list=deckSequence(deck,z),from=Number.isInteger(data.index)?data.index:list.indexOf(data.id);if(list[from]!==data.id)return;const card=node?.closest('[data-deck-index]')||node?.closest('.board-card')?.querySelector('[data-deck-index]');let to=card?Number(card.dataset.deckIndex):list.length;if(card){const r=card.getBoundingClientRect();if(x>r.left+r.width/2)to++;}if(from<to)to--;if(from===to)return;const [id]=list.splice(from,1);list.splice(Math.max(0,Math.min(to,list.length)),0,id);deck.order={main:deckSequence(deck,'main'),extra:deckSequence(deck,'extra'),[z]:list};dispatchEvent(new Event('of-deck-reorder'));changed();notify('Carta reposicionada. Salve o baralho para guardar a ordem.');}
+function performDrop(data,target,node,x){
+ if(target==='remove'&&validDrag(data)&&data.source!=='catalog'){const before=JSON.stringify(deck);remove(data.id,data.source);if(JSON.stringify(deck)!==before)notify('Uma cópia removida do baralho.');return;}
  if(!validDrag(data))return;
  const c=get(data.id);
  if(!['main','extra','fighter'].includes(target))return;
@@ -201,7 +208,7 @@ function performDrop(data,target){
   add(data.id);return;
  }
  if(target==='fighter'){notify('Esta área aceita apenas lutadores.');return;}
- if(data.source===target)return;
+ if(data.source===target){reorderDeckCard(data,node,x);return;}
  if(data.source==='catalog')add(data.id,target);
  else if(['main','extra'].includes(data.source))move(data.id,data.source);
 }
@@ -210,18 +217,18 @@ function readDrag(event){try{return JSON.parse(event.dataTransfer.getData('appli
 let nativeDrag=null;
 document.addEventListener('dragstart',e=>{
  const source=e.target.closest('[data-drag-id]');if(!source||view!=='builder'){e.preventDefault();return;}
- nativeDrag={id:source.dataset.dragId,source:source.dataset.dragSource};
+ nativeDrag={id:source.dataset.dragId,source:source.dataset.dragSource,index:source.dataset.deckIndex===undefined?undefined:Number(source.dataset.deckIndex)};
  e.dataTransfer.setData('application/x-overdrive-card',JSON.stringify(nativeDrag));e.dataTransfer.setData('text/plain',JSON.stringify(nativeDrag));e.dataTransfer.effectAllowed=nativeDrag.source==='catalog'?'copy':'move';
  document.body.classList.add('dragging');
 });
 document.addEventListener('dragover',e=>{
- const target=e.target.closest('[data-drop-zone]');if(!target||!nativeDrag)return;
+ const target=e.target.closest('[data-drop-zone]');if(!nativeDrag)return;if(!target){if(dragDestination(e.target,nativeDrag)==='remove'){e.preventDefault();e.dataTransfer.dropEffect='move';}return;}
  e.preventDefault();clearDropHighlights();const valid=canDrop(nativeDrag,target.dataset.dropZone);
  target.classList.add(valid?'drop-hover':'drop-invalid');e.dataTransfer.dropEffect=valid?(nativeDrag.source==='catalog'?'copy':'move'):'none';
 });
 document.addEventListener('dragleave',e=>{const target=e.target.closest('[data-drop-zone]');if(target&&!target.contains(e.relatedTarget))target.classList.remove('drop-hover','drop-invalid');});
 document.addEventListener('drop',e=>{
- const target=e.target.closest('[data-drop-zone]');if(target){e.preventDefault();performDrop(readDrag(e),target.dataset.dropZone);}
+ const data=readDrag(e),destination=dragDestination(e.target,data);if(destination&&nativeDrag){e.preventDefault();performDrop(data,destination,e.target,e.clientX);}
  nativeDrag=null;clearDropHighlights();document.body.classList.remove('dragging');suppressClickUntil=Date.now()+200;
 });
 document.addEventListener('dragend',()=>{nativeDrag=null;clearDropHighlights();document.body.classList.remove('dragging');suppressClickUntil=Date.now()+200;});
@@ -230,7 +237,7 @@ function endPointerDrag(){
 }
 document.addEventListener('pointerdown',e=>{
  const grip=e.target.closest('[data-pointer-drag]');if(!grip||view!=='builder'||e.button!==0)return;
- pointerDrag={id:grip.dataset.pointerDrag,source:grip.dataset.dragSource,x:e.clientX,y:e.clientY,pointerId:e.pointerId,active:false,ghost:null};
+ pointerDrag={id:grip.dataset.pointerDrag,source:grip.dataset.dragSource,index:grip.dataset.deckIndex===undefined?undefined:Number(grip.dataset.deckIndex),x:e.clientX,y:e.clientY,pointerId:e.pointerId,active:false,ghost:null};
  grip.setPointerCapture(e.pointerId);if(grip.classList.contains('drag-grip'))e.preventDefault();
 });
 document.addEventListener('pointermove',e=>{
@@ -241,15 +248,18 @@ document.addEventListener('pointermove',e=>{
  data.ghost.style.left=(e.clientX+12)+'px';data.ghost.style.top=(e.clientY+12)+'px';
  const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-drop-zone]');clearDropHighlights();
  if(target)target.classList.add(canDrop(data,target.dataset.dropZone)?'drop-hover':'drop-invalid');
+ data.ghost.classList.toggle('drag-removing',dragDestination(document.elementFromPoint(e.clientX,e.clientY),data)==='remove');
  if(e.clientY<65)window.scrollBy(0,-14);else if(e.clientY>window.innerHeight-65)window.scrollBy(0,14);
 });
 document.addEventListener('pointerup',e=>{
  if(!pointerDrag||pointerDrag.pointerId!==e.pointerId)return;
  const data=pointerDrag,target=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-drop-zone]');
- if(data.active){if(target)performDrop(data,target.dataset.dropZone);suppressClickUntil=Date.now()+300;}
+ if(data.active){const destination=dragDestination(document.elementFromPoint(e.clientX,e.clientY),data);if(destination)performDrop(data,destination,document.elementFromPoint(e.clientX,e.clientY),e.clientX);suppressClickUntil=Date.now()+300;}
  endPointerDrag();
 });
 document.addEventListener('pointercancel',endPointerDrag);
+document.addEventListener('keydown',e=>{if(!e.altKey||!['ArrowLeft','ArrowRight'].includes(e.key))return;const el=e.target.closest('[data-deck-index]');if(!el)return;e.preventDefault();const z=el.dataset.dragSource,list=deckSequence(deck,z),from=Number(el.dataset.deckIndex),to=from+(e.key==='ArrowLeft'?-1:1);if(to<0||to>=list.length)return;[list[from],list[to]]=[list[to],list[from]];deck.order={main:deckSequence(deck,'main'),extra:deckSequence(deck,'extra'),[z]:list};dispatchEvent(new Event('of-deck-reorder'));changed();document.querySelector('[data-drag-source="'+z+'"][data-deck-index="'+to+'"]')?.focus();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&pointerDrag){suppressClickUntil=Date.now()+300;endPointerDrag();}});
 function renderDeck(){
  $('deckName').value=deck.name;$('mainCount').textContent=count(deck.main);$('extraCount').textContent=count(deck.extra);$('genericCount').textContent=generic(deck);
  const section=(title,map,z)=>`<section class="deck-section drop-area" data-drop-zone="${z}" aria-label="Área do ${title.toLocaleLowerCase('pt-BR')}"><h3>${title} <span class="drop-hint">Solte cartas aqui</span></h3>${Object.entries(map).sort(([a],[b])=>get(a).name.localeCompare(get(b).name,'pt-BR')).map(([id,q])=>{
@@ -355,7 +365,7 @@ $('fileInput').onchange=async e=>{
   if(file.size>100000)throw Error('Arquivo muito grande.');
   const d=validate(JSON.parse(await file.text()));
   if(isDirty()&&(deck.fighter||count(deck.main)||count(deck.extra))&&!confirm('Importar este baralho e substituir o rascunho atual?')){e.target.value='';return;}
-  deck={name:d.name,fighter:d.fighter,main:{...d.main},extra:{...d.extra}};setActiveSaved(null);changed();notify('Baralho importado. Clique em Salvar baralho para guardá-lo na biblioteca.');
+  deck=snapshot(d);setActiveSaved(null);changed();notify('Baralho importado. Clique em Salvar baralho para guardá-lo na biblioteca.');
  }catch(err){notify('Não foi possível importar: '+err.message);}
  e.target.value='';
 };

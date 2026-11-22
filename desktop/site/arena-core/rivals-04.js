@@ -119,7 +119,7 @@
      else if(number===151)side.rivalsNextGuardBonus=(side.rivalsNextGuardBonus||0)+1;
      else if(number===153){const uids=this.energies(other(p),true).map(c=>c.uid);if(uids.length)choose(this,p,'freeze',uids,{source});else this.draw(other(p),1,false);}
      else if(number===154&&extras(this).length)choose(this,p,'extra',extras(this),{source,to:'deck',max:Math.min(2,extras(this).length),optional:true,selected:[]});
-     else if(number===155)choose(this,p,'trocaMode',[],{source});
+     else if(number===155)this.runOps([{op:'rivalsLoot'}],{p,source});
      else if(number===156){const uids=side.deck.slice(0,3).map(c=>c.uid);if(uids.length)choose(this,p,'top',uids,{source});else this.draw(p,1,false);}
      else if(number===157&&extras(this).length)choose(this,p,'extra',extras(this),{source,to:'hand',max:2,optional:true,selected:[]});
      else if(number===158)side.rivalsBlockBuff={turn:this.s.turn+1,n:2*(side.rivalsBlocks||0)};

@@ -4,7 +4,7 @@ window.OverdriveOpponentDeck=(engine,preset)=>{
  if(style==='pressure'||style==='defense'){
   const fighter=engine.def(deck.fighter),wanted=style==='pressure'?'Golpe':'Guarda',remove=Object.keys(deck.main).filter(id=>engine.def(id).color!=='Genérica'&&engine.def(id).type!==wanted).sort((a,b)=>(engine.def(b).cost||0)-(engine.def(a).cost||0))[0];
   const candidate=[...engine.catalog.values()].filter(c=>c.type===wanted&&c.color!=='Genérica'&&fighter.colors.includes(c.color)&&!deck.main[c.id]&&!engine.script(c.id).comboZone).sort((a,b)=>style==='pressure'?(a.cost||0)-(b.cost||0):(b.block||0)-(a.block||0))[0];
-  if(remove&&candidate){deck.main[remove]-=2;if(!deck.main[remove])delete deck.main[remove];deck.main[candidate.id]=2;}
+  if(remove&&candidate){const q=Math.min(2,deck.main[remove]);deck.main[remove]-=q;if(!deck.main[remove])delete deck.main[remove];deck.main[candidate.id]=q;const shift=Math.max(0,(deck.extra[candidate.id]||0)+q-3);if(shift){deck.extra[candidate.id]-=shift;if(!deck.extra[candidate.id])delete deck.extra[candidate.id];deck.extra[remove]=(deck.extra[remove]||0)+shift;}}
  }
  deck.name=engine.def(deck.fighter).name+' · '+({pressure:'Pressão',defense:'Defesa',balanced:'Equilibrada'}[style]||'Equilibrada');engine.validateDeck(deck);return deck;
 };
@@ -13,14 +13,14 @@ window.OverdriveDesktopAI=(view,catalog,difficulty='normal',style='balanced')=>{
  const p=view.viewer??1,own=view.players[p],enemy=view.players[1-p],defs=new Map(catalog.map(c=>[c.id,c])),cards=new Map([own.fighter,...own.hand,...own.extra,...own.stamina,...own.discard,...own.arena,...enemy.arena].map(c=>[c.uid,c]));
  const def=a=>OverdriveRivals06.definition(cards.get(a.uid),cards.get(a.uid)?.tokenDefinition||defs.get(cards.get(a.uid)?.id),view),script=a=>OverdriveCardScripts.scripts[def(a)?.number]||{};
  if(difficulty==='easy'){
-  if(baseline.type==='block'&&view.combats.at(-1)?.attack<own.hp*.5)return {type:'block',uids:[]};
+  if(baseline.type==='block'&&!view.combats.at(-1)?.superChallenge021&&view.combats.at(-1)?.attack<own.hp*.5)return {type:'block',uids:[]};
   if(baseline.type==='play'&&def(baseline)?.type==='Golpe')return view.actions.filter(a=>a.type==='play'&&def(a)?.type==='Golpe'&&(a.mode!=='life'||own.hp>def(a).cost)).sort((a,b)=>(def(a).power||0)-(def(b).power||0))[0]||baseline;return baseline;
  }
  if(baseline.type==='block'){
   const combat=view.combats.at(-1),pool=baseline.uids.length?view.actions.find(a=>a.type==='block').options.map(uid=>({uid,type:'block'})).filter(a=>!script(a).psychicCost&&!script(a).additionalDiscard).slice(0,12):[];
-  let best={type:'block',uids:[]},score=combat.attack;for(let mask=1;mask<2**pool.length;mask++){let value=0,cost=0,guards=0,spent=0,actions=false;const uids=[];for(let i=0;i<pool.length;i++)if(mask&(1<<i)){const a=pool[i],d=def(a),card=cards.get(a.uid),block=d.block||0;uids.push(a.uid);if(d.type==='Guarda'){cost+=Math.max(0,d.cost+(guards===0?(own.r05NextTax||0)-(own.r05GuardDiscount||0):0));guards++;}value+=combat.ignoreBelowPower!==undefined&&block<combat.ignoreBelowPower?0:block;spent+=(d.power||0)*.07+.1;actions||=!card.token;}if(cost>enemy.stamina.filter(c=>!c.active&&!c.r05Lock).length)continue;
+  let best={type:'block',uids:[]},score=combat.attack;for(let mask=1;mask<2**pool.length;mask++){let value=0,cost=0,guards=0,spent=0,actions=false;const uids=[];for(let i=0;i<pool.length;i++)if(mask&(1<<i)){const a=pool[i],d=def(a),card=cards.get(a.uid),block=d.block||0;uids.push(a.uid);if(d.type==='Guarda'){cost+=Math.max(0,d.cost+(guards===0?(own.r05NextTax||0)-(own.r05GuardDiscount||0):0));guards++;}value+=combat.ignoreBelowPower!==undefined&&block<combat.ignoreBelowPower?0:block;spent+=(d.power||0)*.07+.1;actions||=!card.token;}if(cost>enemy.stamina.filter(c=>!c.active&&!c.r05Lock&&!(c.lockedUntil>=view.turn)&&c.superLock021!==view.turn).length)continue;
    const damage=Math.max(0,combat.attack-value)+(actions?(combat.impetusBase||0)+(combat.extraImpetus||0):0),candidate=damage+cost*(style==='pressure'?.6:.25)+spent;if(candidate<score){score=candidate;best={type:'block',uids};}}
-  if(!pool.length)return baseline;return best;
+  if(!pool.length)return baseline;return combat.superChallenge021&&!best.uids.length?baseline:best;
  }
  const fighter=defs.get(own.fighter.id),sequence=OverdriveCardScripts.scripts[fighter.number]?.sequence||[],next=sequence[Math.min(own.od,sequence.length-1)],skill=view.actions.find(a=>a.type==='fighterSkill');
  const attacks=view.actions.filter(a=>a.type==='play'&&def(a)?.type==='Golpe'&&(a.mode!=='life'||own.hp>def(a).cost));

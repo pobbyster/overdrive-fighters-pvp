@@ -32,3 +32,5 @@
 .rivals-editor .editor-preview #editorCardText{line-height:1.5}
 
 .rivals-editor .editor-preview{flex:0 0 auto}
+
+.drag-ghost.drag-removing{outline:3px solid #f51a70;filter:saturate(.5)}.drag-ghost.drag-removing::after{content:"Solte para remover 1 cópia";position:absolute;inset:auto 0 0;background:#b60047;color:white;font: bold 14px system-ui;padding:8px;text-align:center}

@@ -2,7 +2,7 @@
 // The network boundary never accepts an engine snapshot or internal payment flags.
 const clone = x => structuredClone(x);
 const variable = {
-  mulligan: ['hand', 'energy'], block: ['uids'], prepare: ['slot'],
+  mulligan: ['hand', 'energy'], block: ['uids'], addBlock: ['uids'], prepare: ['slot'],
   chooseEnergy: ['uids'], chooseOwnEnergy: ['uids'], orderTriggers: ['ids'], orderDiscard: ['uids']
 };
 function playerTarget(action) {
@@ -26,7 +26,7 @@ function command(engine, seat, input) {
   const result = Object.fromEntries(Object.entries(legal).filter(([k]) => !['options', 'required', ...extra].includes(k)));
   for (const k of extra) if (a[k] !== undefined) result[k] = clone(a[k]);
   // All additional choices are performed through the engine's own choice protocol.
-  if (['tokenAttack', 'play', 'block', 'replenish', 'fighterSkill', 'startSkill', 'balanceDiscard', 'expansionMournerSkill', 'expansionPlacideSkill', 'expansionExcalium'].includes(a.type)) result.selectEnergy = true;
+  if (['tokenAttack', 'play', 'block', 'addBlock', 'replenish', 'fighterSkill', 'startSkill', 'balanceDiscard', 'expansionMournerSkill', 'expansionPlacideSkill', 'expansionExcalium'].includes(a.type)) result.selectEnergy = true;
   return result;
 }
 function project(engine, seat, names) {
@@ -49,8 +49,8 @@ function project(engine, seat, names) {
     // Synthetic backs have no correspondence to the opponent's real hand or either deck.
     side.deck = Array.from({length:side.deckCount}, (_,i) => ({uid:`back-deck-${local}-${i}`,hidden:true}));
     if (local === 1) side.hand = Array.from({length:side.handCount}, (_,i) => ({uid:`back-hand-${i}`,hidden:true}));
-    for (const zone of ['hand','stamina','extra','arena','discard','banished','revealedHand','deckContents','reserve']) for (const card of side[zone]||[]) if (card.owner !== undefined) card.owner = index(card.owner);
-    side.fighter.owner = local;
+    for (const zone of ['hand','stamina','extra','arena','discard','banished','revealedHand','deckContents','reserve','superReserve']) for (const card of side[zone]||[]) if (card.owner !== undefined) card.owner = index(card.owner);
+    side.fighter.owner = local;if(side.superCard)side.superCard.owner=local;
   });
   for (const f of candidates) if (f.card.owner !== undefined) f.card.owner = index(f.card.owner);
   v.actions = v.actions.map(a => mapAction(a, seat));

@@ -14,7 +14,22 @@
  proto.fighterStarter=function(n){if(n!==170)return base.fighterStarter.call(this,n);const main={};for(const num of [171,172,173,174,175,176,143,144,145,146])main['OF-RVAS-'+String(num-141).padStart(3,'0')]=3;for(const num of [1,3,6,9,10])main['OF-C1-'+String(num).padStart(3,'0')]=2;return {name:'Duke — Gemite',fighter:'OF-RVAS-029',main,extra:{}};};
  proto.start=function(...args){base.start.apply(this,args);const pending=[];for(let p=0;p<2;p++)if(isDuke(this,p)){const side=this.s.players[p];side.deck=[...side.stamina,...side.hand,...side.deck];side.stamina=[];side.hand=[];for(const c of side.deck)c.public=false;pending.push(p);}if(pending.length){this.s.r06Opening=pending;nextOpening(this);}return this.view(0);};
  proto.newTurn=function(){base.newTurn.call(this);for(const side of this.s.players){side.r06DoubleGuardTurn=0;side.r06GuardMultiplier=1;side.r06Prevent=0;side.r06PreventTurn=0;}};
- proto.move=function(uid,to){const result=base.move.call(this,uid,to);if(to!=='arena')delete result.r06Attack;if(to!=='extra')delete result.r06Fixed;return result;};
+ // Fixar replaces a move from the Arena to the discard, including moves
+ // caused by an effect before the normal combat cleanup.
+ proto.move=function(uid,to){
+  const f=this.find(uid);
+  if(to==='discard'&&f?.z==='arena'&&gemite(base.def.call(this,f.card))){
+   const latest=[...this.s.completed,...this.s.combats].filter(b=>b.uid===uid||b.blocks.some(g=>g.uid===uid)).sort((a,b)=>b.id-a.id)[0];
+   const guard=latest?.blocks.find(g=>g.uid===uid&&!g.cancelled);
+   if(guard&&this.s.players[f.p].extra.length<4){
+    const slot=guard.origin==='extra'&&!this.s.players[f.p].extra.some(c=>c.slot===guard.slot)?guard.slot:undefined;
+    const card=this.putEffectExtra(f.p,uid,false,slot);card.ready=this.s.turn;card.public=true;card.r06Fixed=true;
+    effect(this,f.p,{op:'rivals06Fixar',number:base.def.call(this,card).number},uid,this.def(card).name+' — Fixar');return card;
+   }
+   if(guard)this.log(this.def(f.card).name+': Fixar sem Zona Extra livre (limite de quatro).','Fixar');
+  }
+  const result=base.move.call(this,uid,to);if(to!=='arena')delete result.r06Attack;if(to!=='extra')delete result.r06Fixed;return result;
+ };
  proto.adjustDamage=function(p,n){const side=this.s.players[p],available=side.r06PreventTurn===this.s.turn?side.r06Prevent||0:0,prevented=Math.min(Math.max(0,n),available);if(prevented){side.r06Prevent-=prevented;this.log('Gemite Topázio preveniu '+prevented+' de dano.','Fixar');}return Math.max(0,n-prevented);};
  proto.previewDamage=function(p,basic,impetus){let n=this.s.players[p].r06PreventTurn===this.s.turn?this.s.players[p].r06Prevent||0:0;const a=Math.max(0,basic-n);n=Math.max(0,n-basic);const b=Math.max(0,impetus-n);return {basic:a,impetus:b,total:a+b};};
  proto.damage=function(p,n,source=other(p),prepared=false){return base.damage.call(this,p,prepared?n:this.adjustDamage(p,n),source);};
@@ -22,7 +37,7 @@
  proto.play=function(p,a,revide){if(a.mode!=='guardStrike')return base.play.call(this,p,a,revide);const f=this.find(a.uid),d=f&&base.def.call(this,f.card);if(f?.p!==p||f.z!=='extra'||f.card.ready>this.s.turn||!gemite(d)||d.type!=='Guarda'||!zones.includes(a.zone)||!revide&&!this.canIndependent(p))throw Error('Gemite exige uma Guarda disponível da sua Zona Extra e turno próprio ou Revide.');if(a.type!=='play'||a.copyUid||a.free||a.x)throw Error('Jogada Gemite inválida.');this.beginPayment(p,{...a,revide},this.payment(p,f.card,a.mode,0,a.zone));};
  proto.activatePaid=function(p,a){if(a.type==='play'&&a.mode==='guardStrike'){const card=this.find(a.uid)?.card;if(!card)throw Error('Guarda Gemite ausente.');card.r06Attack={zone:a.zone,power:this.def(card).block};}return base.activatePaid.call(this,p,a);};
  proto.block=function(p,a){if((a.uids||[]).some(uid=>{const f=this.find(uid);return f?.z==='extra'&&f.card.r06Fixed;}))throw Error('Gemite com Fixar permanece revelada na Zona Extra e não pode bloquear novamente.');return base.block.call(this,p,a);};
- proto.cleanup=function(b,orders){const fixed=b.cancelled?[]:b.blocks.filter(g=>!g.cancelled).map(g=>({g,f:this.find(g.uid)})).filter(({f})=>f&&f.z==='arena'&&scripts[base.def.call(this,f.card).number]?.gemite);base.cleanup.call(this,b,orders);for(const {g,f}of fixed){if(this.find(g.uid)?.z!=='arena')continue;const side=this.s.players[f.p];if(side.extra.length<4){const slot=g.origin==='extra'&&!side.extra.some(c=>c.slot===g.slot)?g.slot:undefined;const card=this.putEffectExtra(f.p,g.uid,false,slot);card.ready=this.s.turn;card.public=true;card.r06Fixed=true;effect(this,f.p,{op:'rivals06Fixar',number:base.def.call(this,card).number},card.uid,this.def(card).name+' — Fixar');}else this.move(g.uid,'discard');}};
+ proto.cleanup=function(b,orders){const fixed=b.blocks.filter(g=>!g.cancelled).map(g=>({g,f:this.find(g.uid)})).filter(({f})=>f&&f.z==='arena'&&scripts[base.def.call(this,f.card).number]?.gemite);base.cleanup.call(this,b,orders);for(const {g,f}of fixed){if(this.find(g.uid)?.z!=='arena')continue;const side=this.s.players[f.p];if(side.extra.length<4){const slot=g.origin==='extra'&&!side.extra.some(c=>c.slot===g.slot)?g.slot:undefined;const card=this.putEffectExtra(f.p,g.uid,false,slot);card.ready=this.s.turn;card.public=true;card.r06Fixed=true;effect(this,f.p,{op:'rivals06Fixar',number:base.def.call(this,card).number},card.uid,this.def(card).name+' — Fixar');}else this.move(g.uid,'discard');}};
  proto.runOps=function(ops,ctx){for(const op of ops){if(this.s.winner!==null)return;if(op.when==='revide'&&!ctx.revide||op.when==='flow'&&!ctx.flow)continue;const p=ctx.p,side=this.s.players[p],source=ctx.source;
   if(op.op==='rivals06Fixar'){const n=op.number;
    if(n===171)this.draw(p,1,false);

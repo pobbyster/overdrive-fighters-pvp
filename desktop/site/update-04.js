@@ -51,7 +51,7 @@
   const discardReady=actions.some(action=>action.uid&&['discard','banished'].includes(e.find(action.uid)?.z)&&e.find(action.uid)?.p===0);
   $('ownDiscard')?.classList.toggle('rivals-ready-pile',discardReady);
   if($('ownDiscard'))$('ownDiscard').title=discardReady?'Há efeitos ativáveis no Descarte. Clique para escolher.':'Consultar Descarte e cartas banidas';
-  const fighter=view.players[0].fighter.uid;
+  const fighter=view.players[0].fighter.uid;if(actions.some(a=>a.type==='overdrive'))ready.add(fighter);document.querySelectorAll('#ownExtra [data-card="'+fighter+'"]').forEach(n=>n.classList.toggle('rivals-activatable',ready.has(fighter)));
   $('playerStats')?.classList.toggle('rivals-skill-ready',ready.has(fighter));
  }
  addEventListener('of-game-render',event=>availability(event.detail));

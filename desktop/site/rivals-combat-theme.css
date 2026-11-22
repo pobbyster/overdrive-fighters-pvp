@@ -1,5 +1,5 @@
 /* Apenas identidade visual: preserva a geometria original do combate. */
-body.rivals-playing{min-height:100svh;background:#a400e9 url('assets/rivals/background-menu.webp') center/cover fixed!important;--hud-text:#54275d;--hud-muted:#72517a;--hud-border:#e6d4ed}
+body.rivals-playing{min-height:100svh;background:#603eda url('assets/rivals/background-combat.webp') center/cover fixed!important;--hud-text:#54275d;--hud-muted:#72517a;--hud-border:#e6d4ed}
 .rivals-playing>.arena-header{background:#fffffff2;border-color:#ead9ef;box-shadow:0 3px 15px #65004820}
 .rivals-playing .arena-header :is(a,button),.rivals-playing #duelBadge{background:#fff;color:#8500d1;border-color:#ead9ef;border-radius:20px;box-shadow:inset -2px -3px 5px #0002}
 .rivals-playing #game>.game-banner{background:#fffffff2;color:#7d00ce;border-radius:15px;box-shadow:inset -2px -3px 6px #0002}

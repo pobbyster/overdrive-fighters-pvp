@@ -16,14 +16,14 @@ const scripts={
 24:{onPlay:[{op:'balanceToken',name:'Galacstrix Coruja',power:1,effect:'owl'}],tokenRevidePower:2},
 25:{revideAttack:3,onPlay:[{op:'balanceToken',name:'Galacstrix Dragão',power:3,effect:'dragon'}]},
 26:{onBlock:[{op:'balanceToken',name:'Galacstrix Corvo',power:2,effect:'raven'}]},
-27:{onPlay:[{op:'balanceToken',name:'Galacstrix Tigre',power:1,effect:'tiger'}]},
+27:{onPlay:[{op:'balanceToken',name:'Galacstrix Tigre',power:2,effect:'tiger'}]},
   48:{additionalDiscard:1},107:{deflect:true,additionalDiscard:1},
   97:{onPlay:[{op:"draw",n:2},{op:"discardOwn"}]},
   36:{preparation:true,revideAttack:2,hit:[{op:'destroyExtraChoice',enemy:true,preparation:true}]},
   37:{desvio:true,requiresOwnExtra:true,onPlay:[{op:'destroyExtraChoice',draw:2}]},
   39:{desvio:true,onPlay:[{op:'searchExtraGuard'}]},
   58:{finta:true,onPlay:[{op:'nextAttackBonus',n:2,overdrive:2}]},
-  7:{baseAttack:(e,p)=>e.s.players[p].discard.length,revideAttack:2,selfDamageHalfAttack:true},
+  7:{attackBonus:(e,p)=>(e.s.players[p].superCharge||0)>=3?2:0},
   15:{onBlock:[{op:'ascension'}]},
   88:{desvio:true,onPlay:[{op:'nextFocusSocoBonus',n:2}]},
   3:{deflect:true,onBlock:[{op:'honored'}]},
@@ -56,10 +56,10 @@ const scripts={
   10:{break:true,hit:[{op:'extraDamage'}]},
   11:{variable:true,onPlay:[{op:'healX'},{op:'end'}]},
   12:{deflect:true,success:[{op:'powerDown'}]},
-  14:{variable:true,onPlay:[{op:'damageX'},{op:'end'}]},
+  14:{onPlay:[{op:'fixedDamage',n:2}]},
   // Artes oficiais conferidas: textos de ambientação não são efeitos.
   33:{},
-  34:{preparation:true,attackBonus:(e,p)=>e.s.players[p].extra.length?1:0,onPlay:[{op:'draw',n:1,when:'revide'}]},
+  34:{preparation:true,attackBonus:(e,p)=>e.s.players[p].extra.length?1:0,revideAttack:1},
   35:{},49:{deflect:true},
   // Lutadores em integração; a validação da Arena ainda aguarda seus Overdrives.
   32:{fighter:true,firstStrikeExtraAura:true,sequence:['Inferior','Meio','Superior'],fighterOverdrive:'boydd'},
@@ -68,7 +68,7 @@ const scripts={
   40:{break:true,revideAttack:3},
   41:{revideAttack:3},
   42:{revideAttack:3,hit:[{op:'draw',n:2}]},
-  43:{comboZone:'Inferior',break:true,revideAttack:3,hit:[{op:'searchGuard'}]},
+  43:{break:true,revideAttack:3,hit:[{op:'searchGuard'}]},
   38:{chooseBuff:true,onPlay:[{op:'chosenNextBuff'}]},
   47:{success:[{op:'nextBlockBonus',n:1,thisTurn:true}]},
   46:{onBlock:[{op:'revealPreparation'}]},
@@ -76,11 +76,10 @@ const scripts={
   60:{requiresAttack:true,onPlay:[{op:'boostTarget',n:3,when:'dealtDamage'}]},
   54:{impetus:1},61:{impetus:2},64:{impetus:3},
   52:{impetus:1,onPlay:[{op:'nextAttackBonus',n:1}]},
-  53:{comboZone:'Meio',impetus:1,attackBonus:(e,p)=>e.s.players[p].damage>0?2:0},
+  53:{impetus:1,attackBonus:(e,p)=>e.s.players[p].damage>0?2:0},
   62:{impetus:2,onPlay:[{op:'nextAttackBonus',n:1}]},
-  63:{comboZone:'Meio',attackBonus:(e,p)=>e.s.players[p].damage>0?e.s.players[p].power:0},
-  // COMBO exige o último Golpe de ação não cancelado do dono do turno.
-  67:{comboZone:'Meio',break:true,impetus:3,revideImpetus:4},
+  63:{attackBonus:(e,p)=>e.s.players[p].damage>0?e.s.players[p].power:0},
+  67:{break:true,impetus:3,revideImpetus:4},
   66:{deflect:true,blockBonus:(e,p)=>e.s.players[p].power},
   65:{deflect:true,suruya:true},
   73:{focusThreshold:2,revideAttack:1,onPlay:[{op:'draw',n:1,focus:2}],hit:[{op:'draw',n:1,focus:2}]},
@@ -142,6 +141,10 @@ Object.assign(scripts,{
 });
 Object.assign(scripts,{170:{fighter:true,sequence:["Inferior","Inferior","Inferior"],fighterOverdrive:'duke'},171:{gemite:true},172:{gemite:true},173:{gemite:true},174:{gemite:true},175:{gemite:true},176:{onPlay:[{op:'rivals06Union'}]}});
 for(let n=200;n<=209;n++){SUPPORTED.push(n);scripts[n]={};}scripts[200]={fighter:true,sequence:['Inferior','Inferior','Inferior']};scripts[203]={onPlay:[{op:'mahaTroca'}]};
+for(const n of [210,212,213])SUPPORTED.push(n);
+scripts[210]={onPlay:[{op:'playtestExcaliumRevelation'}]};
+scripts[212]={onPlay:[{op:'playtestSnowRadiance'}]};
+scripts[213]={onPlay:[{op:'playtestHarmonicFlow'}]};
 return {SUPPORTED,scripts};
 });
 

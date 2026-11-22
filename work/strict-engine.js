@@ -1,18 +1,17 @@
 /* Overdrive Fighters: motor original, independente de DOM, baseado no livro v0.2.
  * Não contém código do EDOPro. API de comandos/eventos inspirada na separação do core.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./strict-card-scripts.js'),require('./first-drive-expansion.js'),require('./rivals-04.js'),require('./rivals-05.js'),require('./rivals-06.js'),require('./rules-version.js'),require('./game-modes.js'),require('./mahazeno.js'));else root.OverdriveCore=factory(root.OverdriveCardScripts,root.OverdriveExpansion,root.OverdriveRivals04,root.OverdriveRivals05,root.OverdriveRivals06,root.OverdriveRulesVersion,root.OverdriveModes,root.OverdriveMahaZeno);})(typeof globalThis!=='undefined'?globalThis:this,function(CardScripts,Expansion,Rivals04,Rivals05,Rivals06,RulesVersion,GameModes,MahaZeno){
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./strict-card-scripts.js'),require('./first-drive-expansion.js'),require('./rivals-04.js'),require('./rivals-05.js'),require('./rivals-06.js'),require('./rules-version.js'),require('./game-modes.js'),require('./mahazeno.js'),require('./supers-021.js'));else root.OverdriveCore=factory(root.OverdriveCardScripts,root.OverdriveExpansion,root.OverdriveRivals04,root.OverdriveRivals05,root.OverdriveRivals06,root.OverdriveRulesVersion,root.OverdriveModes,root.OverdriveMahaZeno,root.OverdriveSupers021);})(typeof globalThis!=='undefined'?globalThis:this,function(CardScripts,Expansion,Rivals04,Rivals05,Rivals06,RulesVersion,GameModes,MahaZeno,Supers021){
 'use strict';
 const copy=x=>JSON.parse(JSON.stringify(x)),other=p=>1-p,id=n=>'OF-C1-'+String(n).padStart(3,'0');
 const {SUPPORTED,scripts}=CardScripts;
-const VERSION='of-core-js-0.13.1',RULESET_ID=RulesVersion.RULESET_ID;
+const VERSION='of-core-js-0.21.0-preview',RULESET_ID=RulesVersion.RULESET_ID;
 class Engine {
  constructor(catalog){this.catalog=new Map(catalog.map(x=>[x.id,copy(x)]));this.s=null;this.commands=[];this.initial=null;}
  def(card){return card?.tokenDefinition||this.catalog.get(typeof card==='string'?card:card.id);}
  script(card){return card?.token?{}:scripts[this.def(card).number]||{};}
  psychicCosts(p,excluded=[]){return this.s.players[p].hand.filter(c=>!excluded.includes(c.uid)&&this.def(c).name.toLowerCase().includes('psychic')).map(c=>c.uid);}
  psychicAllowed(p,card){const sc=this.script(card),side=this.s.players[p],hand=side.hand.filter(c=>c.uid!==card.uid);return hand.length>0&&(side[sc.psychicFrom].some(c=>this.def(c).type==='Golpe'&&this.def(c).name.toLowerCase().includes('psychic'))||sc.psychicFrom==='discard'&&hand.some(c=>this.def(c).type==='Golpe'&&this.def(c).name.toLowerCase().includes('psychic')));}
- comboAllowed(card,previousZone){const required=this.script(card).comboZone;return !required||previousZone===required;}
  canActivatedFighterSkill(p){const side=this.s.players[p],n=this.def(side.fighter).number;
   return [70].includes(n)&&(p!==this.s.active||this.s.preparedTurn)&&this.s.priority===p&&!this.s.choice&&this.s.winner===null&&!this.s.ending&&['preparation','combat'].includes(this.s.phase)&&this.energies(p,true).length>=1&&!side.fighterTapped&&(!this.s.autoEnd||!!this.current());
  }
@@ -87,11 +86,11 @@ class Engine {
   this.s={version:VERSION,ruleset:RULESET_ID,revision:0,rng:seed,uid:0,next:0,turn:1,active:first,priority:0,mode,phase:'mulligan',passes:0,ending:false,autoEnd:false,players:[],stack:[],combats:[],completed:[],history:[],choice:null,winner:null,log:[]};
   for(const [p,d] of [a,b].entries()){
    const shuffledIds=[];for(const [cardId,q] of Object.entries(d.main))for(let i=0;i<q;i++)shuffledIds.push(cardId);this.shuffle(shuffledIds);const deck=shuffledIds.map(cardId=>this.card(cardId,p));
-   this.s.players.push({name:d.name,fighter:this.card(d.fighter,p),hp:20,power:this.def(d.fighter).power,od:0,deck,hand:deck.splice(0,4),stamina:[],extra:[],arena:[],discard:[],banished:[],mulligan:false,replenished:false,prepared:false,played:[],handBlock:false,damage:0,costDown:0,onceUsed:{}});
+   this.s.players.push({name:d.name,fighter:this.card(d.fighter,p),hp:30,superCharge:0,power:this.def(d.fighter).power,od:0,deck,hand:deck.splice(0,4),stamina:[],extra:[],arena:[],discard:[],banished:[],mulligan:false,replenished:false,prepared:false,played:[],handBlock:false,damage:0,costDown:0,onceUsed:{}});
    // Ordem atual: três energias, depois quatro cartas para a mão.
    const side=this.s.players[p];side.deck.unshift(...side.hand);side.stamina=side.deck.splice(0,initialEnergy);side.hand=side.deck.splice(0,4);side.stamina.forEach(c=>c.public=true);
   }
-  this.log('Preparação ('+mode+'): '+initialEnergy+' energias, 4 cartas na mão e 20 de vida.','5.1');return this.view(0);
+  this.log('Preparação ('+mode+'): '+initialEnergy+' energias, 4 cartas na mão e 30 de vida.','5.1');return this.view(0);
  }
  current(){return this.s.combats.at(-1)||null;}
  find(uid){for(let p=0;p<2;p++){const s=this.s.players[p];if(s.fighter.uid===uid)return {p,z:'fighter',i:0,card:s.fighter};for(const z of ['hand','stamina','extra','arena','deck','discard','banished']){const i=s[z].findIndex(c=>c.uid===uid);if(i>=0)return {p,z,i,card:s[z][i]};}}return null;}
@@ -99,7 +98,9 @@ class Engine {
  usable(p){return [...this.s.players[p].hand,...this.s.players[p].extra.filter(c=>c.ready<=this.s.turn&&(!c.token||this.tokenAvailable(p,c.uid)&&c.power>0))];}
  energies(p,active){return this.s.players[p].stamina.filter(c=>c.active===active);}
  canPrepare(p){const s=this.s,side=s?.players[p];return !!side&&s.winner===null&&s.phase==='preparation'&&s.preparedTurn&&p===s.active&&s.priority===p&&!s.choice&&!s.stack.length&&!this.current()&&!s.ending&&!s.autoEnd&&!side.prepared&&side.extra.length<4;}
- canFighterSkill(p){const s=this.s;return p===s.active&&s.priority===p&&!s.choice&&!s.stack.length&&!this.current()&&!s.ending&&!s.autoEnd&&s.preparedTurn&&['preparation','combat'].includes(s.phase)&&this.energies(p,true).length>=1&&this.script(s.players[p].fighter).startSkill&&s.players[p].startSkill&&!s.players[p].fighterTapped;}
+ energyColors(card){const f=this.find(card?.uid),d=this.def(card);return d?.color==='Genérica'&&f?.z==='stamina'?[...(this.def(this.s.players[f.p].fighter).colors||[])]:[d?.color].filter(Boolean);}
+ energyHasColor(card,color){return this.energyColors(card).includes(color);}
+ canFighterSkill(p){const s=this.s;return p===s.active&&s.priority===p&&!s.choice&&!s.stack.length&&!this.current()&&!s.ending&&!s.autoEnd&&s.preparedTurn&&s.phase==='preparation'&&s.players[p].hand.length>0&&s.players[p].stamina.length>0&&this.script(s.players[p].fighter).startSkill&&s.players[p].startSkill&&!s.players[p].fighterTapped;}
  canIndependent(p){return p===this.s.active&&this.s.phase==='combat'&&!this.s.ending&&!this.s.autoEnd&&!this.current()&&!this.s.stack.length;}
  paymentEnergies(p,active){return this.energies(p,active).filter(c=>!c.r05Lock);}
  guardCost(p,card,index=0){return this.def(card).cost;}
@@ -109,7 +110,7 @@ class Engine {
  }
  damage(p,n,source=other(p)){if(this.s.winner!==null)return;n=Math.max(0,Math.floor(n));this.s.players[p].hp-=n;this.s.players[p].receivedDamage=(this.s.players[p].receivedDamage||0)+n;if([0,1].includes(source))this.s.players[source].damage+=n;if(n)this.log((p?'IA':'Você')+' recebeu '+n+' de dano.','10.1');if(this.s.players[p].hp<=0){this.s.winner=other(p);this.s.phase='finished';this.log((p?'Você':'IA')+' venceu por dano.','17.2.1');}}
  push(link){link.id=++this.s.next;this.s.stack.push(link);return link;}
- payment(p,c,mode='normal',x=0){const d=this.def(c);if(this.script(c).energyFree&&mode==='normal')return {own:0,opp:0};if(mode==='banishCopy'){if(!this.script(c).discardCopy||this.find(c.uid)?.z!=='discard')throw Error('Banimento exige Frenecticale no Descarte ou na Arena.');return {own:0,opp:0};}if(mode==='life'){if(!this.script(c).fromDiscardLife||this.find(c.uid)?.z!=='discard')throw Error('Pagamento de vida exige este Redassalt no Descarte.');return {own:0,opp:0,life:d.cost};}const zoneCost=d.type==='Golpe'?this.zoneModifier(d.zone,'cost'):0;const normal=typeof d.cost==='number'?Math.max(0,d.cost-(d.type==='Golpe'?this.s.players[p].costDown:0))+zoneCost:x;
+ payment(p,c,mode='normal',x=0){const d=this.def(c);if(this.script(c).energyFree&&mode==='normal')return {own:0,opp:0};if(mode==='banishCopy'){if(!this.script(c).discardCopy||this.find(c.uid)?.z!=='discard')throw Error('Banimento exige Frenecticale no Descarte ou na Arena.');return {own:0,opp:0};}if(mode==='life'){if(!this.script(c).fromDiscardLife||this.find(c.uid)?.z!=='discard')throw Error('Pagamento de vida exige este Redassalt no Descarte.');return {own:0,opp:0,life:d.cost+1};}const zoneCost=d.type==='Golpe'?this.zoneModifier(d.zone,'cost'):0;const normal=typeof d.cost==='number'?Math.max(0,d.cost-(d.type==='Golpe'?this.s.players[p].costDown:0))+zoneCost:x;
   if(!Number.isInteger(normal)||normal<0||typeof d.cost!=='number'&&normal>7)throw Error('Custo X inválido.');
   if(mode==='alternative'){if(!Number.isInteger(d.alternateCost))throw Error('Sem custo alternativo.');return {own:0,opp:d.alternateCost+zoneCost+(d.type==='Golpe'?(this.s.players[p].nextAlternateCost||0):0)};}
   if(mode!=='normal')throw Error('Método de pagamento inválido.');return {own:normal,opp:0};
@@ -126,7 +127,7 @@ class Engine {
   if(pay.life){const side=this.s.players[p];side.hp-=pay.life;this.log((p?'IA':'Você')+' pagou '+pay.life+' de vida para jogar do Descarte.','efeito de carta');if(side.hp<=0){this.s.winner=other(p);this.s.phase='finished';this.s.choice=null;this.log((p?'Você':'IA')+' venceu após o adversário pagar toda a vida.','17.2.1');return;}}own.forEach(uid=>this.find(uid).card.active=false);opponentUids.forEach(uid=>this.find(uid).card.active=true);
   if(p===this.s.active&&pay.own&&this.energies(p,true).length===0)this.s.autoEnd=true;
   // REVIDE impresso depende do pagamento, não da janela de contra-ataque.
-  this.s.choice=null;this.s.passes=0;const link=this.activatePaid(p,{...intent,inactivePaid:pay.opp>0});this.s.priority=other(p);
+  this.s.choice=null;this.s.passes=0;const link=this.activatePaid(p,{...intent,inactivePaid:pay.opp>0});this.s.priority=intent.incremental019?p:other(p);
   if(p===this.s.active&&opponentUids.length){this.draw(other(p),1,true);if(this.s.winner===null){this.s.choice={kind:'revide',player:other(p),suspended:link?.id,cause:{payer:p,energyUids:[...opponentUids]}};this.s.priority=other(p);this.log((p?'IA':'Você')+' utilizou '+opponentUids.length+' estâmina(s) inativa(s) do adversário: compra mecânica de 1 carta e oportunidade opcional de Revide.','11.1');}}
  }
  activatePaid(p,a){const side=this.s.players[p];
@@ -136,13 +137,13 @@ class Engine {
    return this.push({kind:'effect',p,ops:[{op:boydd?'nextSocoNoGuards':'lenFocusBonus'}],context:{p},label:this.def(side.fighter).name+' — habilidade'});
   }
   if(a.type==='replenish'){side.replenished=true;return this.push({kind:'replenish',p,n:a.n});}
-  if(a.type==='startSkill'){side.startSkill=false;side.fighterTapped=true;side.overdriveLocked=true;return this.push({kind:'effect',p,ops:[{op:'draw',n:1}],context:{p},label:'Blossom: virar o lutador e comprar 1; Overdrive bloqueado neste turno'});}
+  if(a.type==='startSkill'){side.startSkill=false;side.fighterTapped=true;side.overdriveLocked=true;this.s.choice={kind:'blossom15Hand',player:p,uids:side.hand.map(c=>c.uid)};this.s.priority=p;return;}
   if(a.type==='block'){
-   const b=this.current();b.blocked=true;let last=null;for(const uid of a.galacstrixUids||[])this.push({kind:'effect',p,ops:this.script(this.find(uid).card).tokenEffect,context:{p},label:'Galacstrix — criar ficha'});
+   const b=this.current();b.blocked=true;b.blockOpen019=!!a.incremental019;let last=null;for(const uid of a.galacstrixUids||[])this.push({kind:'effect',p,ops:this.script(this.find(uid).card).tokenEffect,context:{p},label:'Galacstrix — criar ficha'});
    for(const uid of Object.values(a.psychicDiscards||{}))if(uid)this.move(uid,'discard');for(const uid of (a.guardDiscards||[]))this.move(uid,'discard');for(const uid of Object.values(a.suruyaDiscards||{}))if(uid)this.move(uid,'discard');
-   if(a.uids.length){b.aggregateBlockBonus=(side.nextBlockBonus||0)+(side.nextBlockTurn||0)+this.zoneModifier(b.zone,'block');side.nextBlockBonus=0;side.nextBlockTurn=0;}
-   for(const uid of a.uids){const loc=this.find(uid),c=loc.card,sc=this.script(c),d=this.def(c);const bonus=sc.blockBonus?.(this,p)||0,origin=loc.z;if(c.token)this.beginTokenUse(p,uid,'block');else this.move(uid,'arena');
-    const block={uid,value:d.block+bonus+(a.suruyaDiscards?.[uid]?1:0),origin,cancelled:false};b.blocks.push(block);if(origin==='hand')side.handBlock=true;
+   if(a.uids.length&&!b.blocks.length){b.aggregateBlockBonus=(b.aggregateBlockBonus||0)+(side.nextBlockBonus||0)+(side.nextBlockTurn||0)+this.zoneModifier(b.zone,'block');side.nextBlockBonus=0;side.nextBlockTurn=0;}
+   for(const uid of a.uids){const loc=this.find(uid),c=loc.card,sc=this.script(c),d=this.def(c);const bonus=sc.blockBonus?.(this,p)||0,origin=loc.z,originSlot=c.slot;if(c.token)this.beginTokenUse(p,uid,'block');else this.move(uid,'arena');
+    const block={uid,value:d.block+bonus+(a.suruyaDiscards?.[uid]?1:0),origin,slot:originSlot,cancelled:false};b.blocks.push(block);if(origin==='hand')side.handBlock=true;
     if(d.type==='Guarda'){const flow=side.played.length>0;side.played.push({id:c.id,subtype:d.subtype});last=this.push({kind:'guard',p,uid,combat:b.id,ops:sc.onBlock||[],context:{p,flow,source:uid,combat:b.id,psychicPaid:!!a.psychicDiscards?.[uid]},label:d.name});}
    }
    return last;
@@ -165,8 +166,11 @@ class Engine {
    combat.attackModifiers=[{name:d.name+' · ataque base',value:combat.attack-bonus},{name:d.name+' · efeito próprio',value:ownCardBonus},{name:d.name+' · REVIDE',value:revideBonus},{name:'Overdrive · Poder',value:overdriveBonus},{name:'Len Yin · primeiro Foco',value:lenBonus},{name:'Efeitos anteriores',value:pendingBonus-lenBonus},{name:'Efeitos da Zona',value:zoneBonus}].filter(m=>m.value);
    this.s.combats.push(combat);link=this.push({kind:'attack',p,uid:c.uid,combat:combat.id,context:ctx,label:d.name});ctx.combat=combat.id;
    combat.noGuards=nextSocoNoGuards;
-   combat.impetusBase=sc.impetusValue?.(this,p)??sc.impetus??0;combat.extraImpetus=d.subtype==='Corte'?(side.nextCutImpetus||0):0;if(d.subtype==='Corte')side.nextCutImpetus=0;if(combat.impetusBase||combat.extraImpetus||(a.inactivePaid&&sc.revideImpetus)){combat.firstImpetus=!side.impetusPlayed;side.impetusPlayed=true;(this.s.impetusActions||(this.s.impetusActions=[])).push({uid:c.uid,combat:combat.id,turn:this.s.turn});}
-   if(sc.onPlay?.length)this.push({kind:'effect',p,ops:sc.onPlay,context:ctx,label:d.name+' — efeito'});
+   combat.impetusBase=sc.impetusValue?.(this,p)??sc.impetus??0;
+   const stage=this.playtestStage(p,d.zone);combat.sequenceStage=stage;
+   if(d.sequenceImpetus&&stage===d.sequenceKeyword)combat.impetusBase+=d.sequenceImpetus;combat.extraImpetus=d.subtype==='Corte'?(side.nextCutImpetus||0):0;if(d.subtype==='Corte')side.nextCutImpetus=0;if(combat.impetusBase||combat.extraImpetus||(a.inactivePaid&&sc.revideImpetus)){combat.firstImpetus=!side.impetusPlayed;side.impetusPlayed=true;(this.s.impetusActions||(this.s.impetusActions=[])).push({uid:c.uid,combat:combat.id,turn:this.s.turn});}
+   if(sc.onPlay?.length&&(![16,108].includes(d.number)||stage===d.sequenceKeyword)&&(![118,129].includes(d.number)||stage===d.sequenceKeyword))this.push({kind:'effect',p,ops:sc.onPlay,context:ctx,label:d.name+' — efeito'});
+   if(d.sequenceEffect?.stage===stage&&!d.sequenceEffect.hit)this.push({kind:'effect',p,ops:d.sequenceEffect.ops,context:ctx,label:d.name+' — sequência de Overdrive'});
    this.s.priority=other(p);
   }else{
    ctx.combat=this.current()?.id;link=this.push({kind:'trick',p,uid:c.uid,ops:sc.onPlay||[],context:ctx,label:d.name});
@@ -186,7 +190,7 @@ class Engine {
   if(this.s.choice){const choice=this.s.choice;if(choice.player!==p)throw Error('A decisão pertence ao adversário.');
    if(choice.kind==='galacstrixCost'){if(a.type!=='chooseGalacstrix'||typeof a.use!=='boolean')throw Error('Escolha se deseja pagar pela ficha.');const uid=choice.uids[choice.index],cost=this.script(this.find(uid).card).tokenCost;if(a.use){if(this.energies(p,true).length<choice.pay.own+cost)throw Error('Energia insuficiente para criar a ficha.');choice.pay.own+=cost;choice.selected.push(uid);}choice.index++;if(choice.index<choice.uids.length)return;this.s.choice=null;this.beginPayment(p,{...choice.intent,galacstrixChosen:true,galacstrixUids:choice.selected},choice.pay);return;}if(choice.kind==='ownEnergy'){const uids=a.uids||[];if(a.type!=='chooseOwnEnergy'||uids.length!==choice.required||new Set(uids).size!==choice.required||uids.some(uid=>!this.energies(p,true).some(c=>c.uid===uid)))throw Error('Selecione exatamente as energias ativas exigidas.');this.s.choice=null;this.beginPayment(p,{...choice.intent,energyUids:uids},choice.pay);return;}if(choice.kind==='energy'){if(a.type!=='chooseEnergy')throw Error('Escolha as energias para pagar o custo anunciado.');this.completePayment(choice.payer,choice.intent,choice.pay,a.uids||[]);return;}
    if(choice.kind==='triggers'){if(a.type!=='orderTriggers')throw Error('Ordene seus gatilhos simultâneos.');const links=choice.links,ids=a.ids||[];if(ids.length!==links.length||new Set(ids).size!==links.length||ids.some(id=>!links.some(l=>l.orderId===id)))throw Error('Ordem de gatilhos inválida.');ids.forEach(id=>this.push(links.find(l=>l.orderId===id)));this.s.triggerGroups.shift();this.s.choice=null;this.advanceTriggerGroups();return;}
-   if(choice.kind==='psychicCost'){const skip=a.type==='declinePsychic';if(!skip&&(a.type!=='choosePsychicCost'||!choice.uids.includes(a.uid)))throw Error('Escolha descartar uma carta Psychic ou continuar sem o efeito.');if(choice.guards){choice.discards[choice.guards.shift()]=skip?null:a.uid;choice.uids=choice.uids.filter(uid=>uid!==a.uid);if(choice.guards.length)return;this.s.choice=null;this.block(p,{...choice.intent,psychicDiscards:choice.discards});}else{this.s.choice=null;this.play(p,{...choice.intent,...(skip?{psychicEffect:false}:{psychicDiscardUid:a.uid})},choice.revide);}return;}if(choice.kind==='psychicGuess'){if(a.type!=='declarePsychicType'||!['Golpe','Truque','Guarda'].includes(a.cardType))throw Error('Declare Golpe, Truque ou Guarda.');const hand=this.s.players[other(p)].hand;this.s.choice=null;if(hand.length){const c=hand[this.rng(hand.length)],correct=this.def(c).type===a.cardType;this.log('Psychic: carta revelada do tipo '+this.def(c).type+'; declaração '+(correct?'correta.':'incorreta.'),'efeito de carta');if(correct){if(choice.reward==='heal')this.s.players[p].hp+=3;else this.damage(other(p),3);}if(this.s.winner===null)this.s.choice={kind:'psychicReveal',player:p,uids:[c.uid]};}this.s.priority=this.s.active;return;}if(choice.kind==='psychicReveal'){if(a.type!=='acknowledgePsychic')throw Error('Confirme a revelação.');this.s.choice=null;this.s.priority=this.s.active;return;}if(choice.kind==='namedSearch'){if(a.type!=='chooseNamedCard'||!choice.uids.includes(a.uid)||this.find(a.uid)?.z!==choice.from)throw Error('Escolha uma carta válida para esta busca.');const name=this.def(this.find(a.uid).card).name;this.move(a.uid,choice.to);if(choice.from==='deck')this.shuffle(this.s.players[p].deck);this.log('Carta buscada: '+name+'.','efeito de carta');this.s.choice=null;if(choice.damageAfter)this.damage(p,choice.damageAfter,p);this.s.priority=this.s.active;return;}if(choice.kind==='spiritLuck'){if(a.type!=='chooseSpiritCard'||!choice.uids.includes(a.uid)||this.find(a.uid)?.z!=='deck')throw Error('Escolha uma das cartas observadas.');const side=this.s.players[p],cards=choice.uids.map(uid=>this.find(uid).card),chosen=cards.find(c=>c.uid===a.uid),rest=cards.filter(c=>c.uid!==a.uid);side.deck=side.deck.filter(c=>!choice.uids.includes(c.uid));this.shuffle(rest);side.deck.unshift(chosen);side.deck.push(...rest);this.s.choice=null;this.draw(p,1,false);this.s.priority=this.s.active;return;}if(choice.kind==='sharvat'){if(a.type!=='chooseSharvatZone'||!['Inferior','Meio','Superior'].includes(a.zone))throw Error('Escolha uma Zona de Combate.');(this.s.zoneModifiers||(this.s.zoneModifiers=[])).push({zone:a.zone,block:2,untilTurn:this.s.turn+1});this.s.choice=null;this.s.priority=this.s.active;return;}if(['ascension','honored'].includes(choice.kind)){const honored=choice.kind==='honored';if(a.type!==(honored?'chooseHonored':'chooseAscension')||a.uid&&!choice.uids.includes(a.uid))throw Error('Escolha uma carta da Zona Extra ou recuse.');if(a.uid){const f=this.find(a.uid);if(f?.p!==p||f.z!==(honored?'discard':'extra'))throw Error('Carta indisponível.');const bonus=honored?this.def(f.card).power:(this.def(f.card).type==='Guarda'?this.def(f.card).block:0);const b=this.s.combats.find(b=>b.id===choice.combat),guard=b?.blocks.find(g=>g.uid===choice.source);if(guard)guard.value+=bonus;if(honored)this.move(a.uid,'banished');else if(f.card.token)this.destroyToken(a.uid,'other-card');else this.move(a.uid,'discard');}this.s.choice=null;this.s.priority=this.s.active;return;}if(choice.kind==='extraEffect'){if(a.type!=='selectExtraEffect'||!choice.uids.includes(a.uid)||this.find(a.uid)?.z!=='extra')throw Error('Escolha uma Zona Extra válida.');(choice.selected||(choice.selected=[])).push(a.uid);choice.uids=choice.uids.filter(uid=>uid!==a.uid);if(choice.selected.length<(choice.required||1))return;for(const uid of choice.selected){const f=this.find(uid);if(f.card.token)this.destroyToken(uid,'other-card');else this.move(uid,'discard');}this.s.choice=null;if(choice.draw)this.draw(p,choice.draw,false);this.s.priority=this.s.active;return;}if(choice.kind==='searchExtraGuard'){if(a.type!=='selectExtraGuard'||!choice.uids.includes(a.uid)||this.find(a.uid)?.z!=='deck')throw Error('Escolha uma Guarda do baralho.');const side=this.s.players[p],slot=a.slot??[0,1,2,3].find(n=>!side.extra.some(c=>c.slot===n));if(!Number.isInteger(slot)||slot<0||slot>3||side.extra.some(c=>c.slot===slot))throw Error('Escolha uma Zona Extra livre.');const c=this.move(a.uid,'extra');c.slot=slot;c.ready=this.s.turn;c.public=false;c.publicUntil=0;this.shuffle(side.deck);this.s.choice=null;this.s.priority=this.s.active;return;}if(choice.kind==='guardCost'){
+   if(choice.kind==='psychicCost'){const skip=a.type==='declinePsychic';if(!skip&&(a.type!=='choosePsychicCost'||!choice.uids.includes(a.uid)))throw Error('Escolha descartar uma carta Psychic ou continuar sem o efeito.');if(choice.guards){choice.discards[choice.guards.shift()]=skip?null:a.uid;choice.uids=choice.uids.filter(uid=>uid!==a.uid);if(choice.guards.length)return;this.s.choice=null;this.block(p,{...choice.intent,psychicDiscards:choice.discards});}else{this.s.choice=null;this.play(p,{...choice.intent,...(skip?{psychicEffect:false}:{psychicDiscardUid:a.uid})},choice.revide);}return;}if(choice.kind==='psychicGuess'){if(a.type!=='declarePsychicType'||!['Golpe','Truque','Guarda'].includes(a.cardType))throw Error('Declare Golpe, Truque ou Guarda.');const hand=this.s.players[other(p)].hand;this.s.choice=null;if(hand.length){const c=hand[this.rng(hand.length)],correct=this.def(c).type===a.cardType;this.log('Psychic: carta revelada do tipo '+this.def(c).type+'; declaração '+(correct?'correta.':'incorreta.'),'efeito de carta');if(correct){if(choice.reward==='heal')this.s.players[p].hp+=3;else this.damage(other(p),3);}if(this.s.winner===null)this.s.choice={kind:'psychicReveal',player:p,uids:[c.uid]};}this.s.priority=this.s.active;return;}if(choice.kind==='psychicReveal'){if(a.type!=='acknowledgePsychic')throw Error('Confirme a revelação.');this.s.choice=null;this.s.priority=this.s.active;return;}if(choice.kind==='namedSearch'){if(a.type!=='chooseNamedCard'||!choice.uids.includes(a.uid)||this.find(a.uid)?.z!==choice.from)throw Error('Escolha uma carta válida para esta busca.');const name=this.def(this.find(a.uid).card).name;this.move(a.uid,choice.to);if(choice.from==='deck')this.shuffle(this.s.players[p].deck);this.log('Carta buscada: '+name+'.','efeito de carta');this.s.choice=null;if(choice.damageAfter)this.damage(p,choice.damageAfter,p);this.s.priority=this.s.active;return;}if(choice.kind==='spiritLuck'){if(a.type!=='chooseSpiritCard'||!choice.uids.includes(a.uid)||this.find(a.uid)?.z!=='deck')throw Error('Escolha uma das cartas observadas.');const side=this.s.players[p],cards=choice.uids.map(uid=>this.find(uid).card),chosen=cards.find(c=>c.uid===a.uid),rest=cards.filter(c=>c.uid!==a.uid);side.deck=side.deck.filter(c=>!choice.uids.includes(c.uid));this.shuffle(rest);side.deck.unshift(chosen);side.deck.push(...rest);this.s.choice=null;this.draw(p,1,false);this.s.priority=this.s.active;return;}if(choice.kind==='sharvat'){if(a.type!=='chooseSharvatZone'||!['Inferior','Meio','Superior'].includes(a.zone))throw Error('Escolha uma Zona de Combate.');(this.s.zoneModifiers||(this.s.zoneModifiers=[])).push({zone:a.zone,block:2,untilTurn:this.s.turn+1});this.s.choice=null;this.s.priority=this.s.active;return;}if(['ascension','honored'].includes(choice.kind)){const honored=choice.kind==='honored';if(a.type!==(honored?'chooseHonored':'chooseAscension')||a.uid&&!choice.uids.includes(a.uid))throw Error('Escolha uma carta da Zona Extra ou recuse.');if(a.uid){const f=this.find(a.uid);if(f?.p!==p||f.z!==(honored?'discard':'extra'))throw Error('Carta indisponível.');const bonus=honored?this.def(f.card).power:(this.def(f.card).type==='Guarda'?this.def(f.card).block:0);const b=this.s.combats.find(b=>b.id===choice.combat),guard=b?.blocks.find(g=>g.uid===choice.source);if(guard)guard.value+=bonus;if(honored)this.move(a.uid,'banished');else if(f.card.token)this.destroyToken(a.uid,'other-card');else this.move(a.uid,'discard');}this.s.choice=null;this.s.priority=this.s.active;return;}if(choice.kind==='blossom15Hand'||choice.kind==='blossom15Energy'){if(a.type!=='discardChoice'||!choice.uids.includes(a.uid))throw Error('Escolha uma Ação válida para a troca.');if(choice.kind==='blossom15Hand'){this.s.choice={kind:'blossom15Energy',player:p,uids:this.s.players[p].stamina.map(c=>c.uid),handUid:a.uid};}else{this.move(a.uid,'hand');this.move(choice.handUid,'stamina').active=false;this.s.choice=null;this.s.priority=other(p);}return;}if(choice.kind==='extraEffect'){if(a.type!=='selectExtraEffect'||!choice.uids.includes(a.uid)||this.find(a.uid)?.z!=='extra')throw Error('Escolha uma Zona Extra válida.');(choice.selected||(choice.selected=[])).push(a.uid);choice.uids=choice.uids.filter(uid=>uid!==a.uid);if(choice.selected.length<(choice.required||1))return;for(const uid of choice.selected){const f=this.find(uid);if(f.card.token)this.destroyToken(uid,'other-card');else this.move(uid,'discard');}this.s.choice=null;if(choice.draw)this.draw(p,choice.draw,false);this.s.priority=this.s.active;return;}if(choice.kind==='searchExtraGuard'){if(a.type!=='selectExtraGuard'||!choice.uids.includes(a.uid)||this.find(a.uid)?.z!=='deck')throw Error('Escolha uma Guarda do baralho.');const side=this.s.players[p],slot=a.slot??[0,1,2,3].find(n=>!side.extra.some(c=>c.slot===n));if(!Number.isInteger(slot)||slot<0||slot>3||side.extra.some(c=>c.slot===slot))throw Error('Escolha uma Zona Extra livre.');const c=this.move(a.uid,'extra');c.slot=slot;c.ready=this.s.turn;c.public=false;c.publicUntil=0;this.shuffle(side.deck);this.s.choice=null;this.s.priority=this.s.active;return;}if(choice.kind==='guardCost'){
 if(a.type!=='chooseGuardDiscard'||!choice.uids.includes(a.uid))throw Error('Escolha uma carta para descartar.');choice.selected.push(a.uid);choice.uids=choice.uids.filter(uid=>uid!==a.uid);if(choice.selected.length<choice.required)return;this.s.choice=null;this.block(p,{...choice.intent,guardDiscards:choice.selected});return;}if(choice.kind==='suruya'){if(a.type!=='chooseSuruya'||a.uid&&(!choice.uids.includes(a.uid)||Object.values(choice.discards).includes(a.uid)))throw Error('Escolha uma carta com Ímpeto ou não descarte.');choice.discards[choice.guards.shift()]=a.uid||null;if(choice.guards.length){choice.uids=choice.uids.filter(uid=>!Object.values(choice.discards).includes(uid));return;}this.s.choice=null;this.block(p,{...choice.intent,suruyaDiscards:choice.discards});return;}if(['searchGuard','searchFlow'].includes(choice.kind)){if(a.type!==(choice.kind==='searchFlow'?'selectFlowCard':'selectSearchCard')||!choice.uids.includes(a.uid)||this.find(a.uid)?.z!=='deck')throw Error('Escolha uma Guarda do baralho.');const c=this.find(a.uid).card;this.log('Carta buscada: '+this.def(c).name+'.','efeito de carta');this.move(a.uid,'hand');this.shuffle(this.s.players[p].deck);this.s.choice=null;this.s.priority=this.s.active;return;}if(choice.kind==='discard'){if(a.type!=='discardChoice'||!choice.uids.includes(a.uid))throw Error('Escolha uma carta da mão.');this.move(a.uid,'discard');if(choice.nextCutImpetus)this.s.players[p].nextCutImpetus=(this.s.players[p].nextCutImpetus||0)+choice.nextCutImpetus;this.s.choice=null;if(choice.followSearch)this.runOps([choice.followSearch],{p});this.s.priority=this.s.active;return;}
    if(choice.kind==='revide'){
     if(a.type==='declineRevide'){this.s.choice=null;this.s.priority=this.current()&&!this.current().blocked?other(this.current().p):other(this.s.active);this.s.passes=0;return;}
@@ -213,13 +217,13 @@ if(a.type!=='chooseGuardDiscard'||!choice.uids.includes(a.uid))throw Error('Esco
    if(!Number.isInteger(a.n)||a.n<1||a.n>4||a.n>4-this.s.players[p].hand.length)throw Error('Reposição limitada pela capacidade de quatro na mão (12.2.3).');this.beginPayment(p,a,{own:a.n,opp:0});return;
   }
   if(a.type==='startSkill'){
-   if(!this.canFighterSkill(p))throw Error('A habilidade de Blossom exige um estado aberto no seu turno e o lutador desvirado.');this.beginPayment(p,a,{own:1,opp:0});return;
+   if(!this.canFighterSkill(p))throw Error('Blossom exige Início de Turno, mão e Estâmina disponíveis e lutador desvirado.');this.beginPayment(p,a,{own:0,opp:0});return;
   }
   if(a.type==='tokenAttack'){if(!this.canIndependent(p)||!this.tokenAvailable(p,a.uid))throw Error('Ataque de ficha exige sua fase de combate livre e uma ficha disponível.');const token=this.find(a.uid).card;if(!['Inferior','Meio','Superior'].includes(token.zone||a.zone))throw Error('Zona inválida.');this.beginPayment(p,a,{own:this.tokenAttackCost(token),opp:0});return;}if(a.type==='block'){this.block(p,a);return;}
   if(a.type==='fighterSkill'){if(!this.canActivatedFighterSkill(p))throw Error('Habilidade indisponível ou custo insuficiente.');this.beginPayment(p,a,{own:1,opp:0});return;}
   if(a.type==='fighterOverdrive'){this.fighterOverdrive(p,a);return;}
   if(a.type==='finta'){this.finta(p,a);return;}
-  if(a.type==='desvio'){const b=this.current(),f=this.find(a.uid),g=this.find(a.golpeUid);if(!b||b.finished||b.cancelled||f?.p!==p||f.z!=='hand'||!this.script(f.card).desvio||g?.p!==p||g.z!=='hand'||this.def(g.card).type!=='Golpe'||this.def(g.card).zone!==b.zone)throw Error('Desvio exige esta carta e um Golpe da mão da mesma Zona do alvo.');this.move(a.uid,'discard');this.move(a.golpeUid,'discard');this.push({kind:'desvio',p,combat:b.id,label:'Desvio'});this.s.priority=other(p);this.s.passes=0;return;}
+  if(a.type==='desvio'){this.playtestResponse(p,a);return;}
   if(a.type==='play'||a.type==='overdrive'){this.play(p,a,false);return;}
   throw Error('Comando não reconhecido.');
  }
@@ -228,13 +232,13 @@ if(a.type!=='chooseGuardDiscard'||!choice.uids.includes(a.uid))throw Error('Esco
    if(this.s.players[p].overdriveLocked||this.s.players[p].fighterTapped)throw Error('O lutador virado não pode realizar Overdrive.');
    if(this.s.players[p].od!==3)throw Error('Complete a sequência para ativar Overdrive (13.2).');
    const f=this.find(a.uid);if(f?.p!==p||f.z!=='stamina'||!f.card.active)throw Error('Blossom exige uma ação ativa da Estâmina.');
-   const d=this.def(f.card);if(!this.comboAllowed(f.card,this.s.lastComboZone))throw Error('Condição de COMBO não satisfeita.');if(d.type!=='Golpe')throw Error('Nesta alfa, Overdrive de Blossom está homologado para ações de Golpe.');
+   const d=this.def(f.card);if(d.type!=='Golpe')throw Error('Nesta alfa, Overdrive de Blossom está homologado para ações de Golpe.');
    if(!revide&&!this.canIndependent(p))throw Error('Golpe de Overdrive exige turno próprio ou Revide.');this.s.players[p].od=0;a={...a,type:'play',free:true,revide};this.beginPayment(p,a,{own:0,opp:0});return;
   }
-  const f=this.find(a.uid);if(f?.p!==p||!(['hand','extra'].includes(f.z)||f.z==='discard'&&(this.script(f.card).fromDiscardLife||this.script(f.card).discardCopy))||(f.z==='extra'&&f.card.ready>this.s.turn))throw Error('A carta não está disponível nesta zona/turno (8.1.2).');
-  const d=this.def(f.card),sc=this.script(f.card);if((f.z==='discard')!==(['life','banishCopy'].includes(a.mode)))throw Error('Pague vida apenas ao jogar este Redassalt do Descarte.');if(d.type==='Golpe'&&!this.comboAllowed(f.card,this.s.lastComboZone))throw Error('COMBO exige o Golpe anterior do Jogador de Ataque na Zona '+sc.comboZone+'.');
+  const f=this.find(a.uid);if(f?.p!==p||!(['hand','extra'].includes(f.z)||f.z==='arena'&&a.superRebound021&&this.s.superReboundIntent021===a.uid||f.z==='discard'&&(this.script(f.card).fromDiscardLife||this.script(f.card).discardCopy))||(f.z==='extra'&&f.card.ready>this.s.turn))throw Error('A carta não está disponível nesta zona/turno (8.1.2).');
+  const d=this.def(f.card),sc=this.script(f.card);if((f.z==='discard')!==(['life','banishCopy'].includes(a.mode)))throw Error('Pague vida apenas ao jogar este Redassalt do Descarte.');
   if(sc.requiresHighCostDiscard&&[...this.s.players[p].discard,...this.s.players.flatMap(side=>side.arena)].filter(c=>typeof this.def(c).cost==='number'&&this.def(c).cost>=3).length<2)throw Error('Virada Estratégica exige duas cartas de custo 3 ou maior no Descarte.');if(sc.psychicFrom&&!this.psychicAllowed(p,f.card))throw Error('Psychic exige descarte da mão e um Golpe Psychic disponível.');if(sc.requiresOwnExtra&&!this.s.players[p].extra.length)throw Error('Esta carta exige uma carta na própria Zona Extra.');if(!this.supported(d.id))throw Error('Carta não homologada.');if(sc.oncePerTurn&&this.s.players[p].onceUsed[d.name])throw Error('Limite compartilhado de uma ativação por turno atingido.');
-  if(d.type==='Golpe'){if(!revide&&!this.canIndependent(p))throw Error('Golpes exigem fase de combate do turno próprio ou Revide.');}
+  if(d.type==='Golpe'){if(!revide&&!a.superRebound021&&!this.canIndependent(p))throw Error('Golpes exigem fase de combate do turno próprio ou Revide.');}
   else if(d.type==='Guarda')throw Error('Declare Guardas no conjunto de bloqueadores.');
   else if(d.type==='Truque'){
    if(sc.chooseBuff&&!['attack','block'].includes(a.option))throw Error('Escolha bônus ao próximo Golpe ou bloqueio.');
@@ -245,10 +249,11 @@ if(a.type!=='chooseGuardDiscard'||!choice.uids.includes(a.uid))throw Error('Esco
   }else throw Error('Tipo de carta inválido.');
   if(a.mode==='banishCopy'||sc.requiresCopyBanish){const copy=this.find(a.copyUid);if(!(sc.discardCopy||sc.requiresCopyBanish)||copy?.p!==p||copy.z!=='discard'||copy.card.uid===f.card.uid||copy.card.id!==f.card.id)throw Error('Bana outra cópia de Frenecticale do seu Descarte.');}else if(a.copyUid)throw Error('Este pagamento não utiliza banimento de cópia.');if(!sc.psychicCost&&a.psychicDiscardUid)throw Error('Este descarte adicional não pertence à carta.');a={...a,revide};const pay=this.payment(p,f.card,a.mode,a.x||0);if(sc.psychicCost&&a.psychicEffect!==false){const uids=this.psychicCosts(p,[a.uid]);if(!a.psychicDiscardUid){if(this.energies(p,true).length<pay.own||this.paymentEnergies(other(p),false).length<pay.opp)throw Error('Energia insuficiente.');this.s.choice={kind:'psychicCost',player:p,uids,intent:copy(a),revide};this.s.priority=p;return;}if(!uids.includes(a.psychicDiscardUid))throw Error('Descarte Psychic inválido.');}this.beginPayment(p,a,pay);
  }
- block(p,a){const b=this.current();if(!b||b.blocked||p!==other(b.p))throw Error('Não há declaração de bloqueio disponível.');
-  const uids=a.uids||[];if(new Set(uids).size!==uids.length)throw Error('Bloqueadores repetidos.');let opp=0,guardIndex=0;
+ block(p,a){const b=this.current();if(!b||b.finished||b.cancelled||b.blocked&&!(b.blockOpen019&&(a.incremental019||!(a.uids||[]).length))||p!==other(b.p))throw Error('Não há declaração de bloqueio disponível.');
+  const uids=a.uids||[];if(new Set(uids).size!==uids.length)throw Error('Bloqueadores repetidos.');let opp=0,guardIndex=b.blocks.filter(g=>this.def(this.find(g.uid)?.card)?.type==='Guarda').length;
   for(const uid of uids){const f=this.find(uid);if(f?.p!==p||!this.usable(p).some(c=>c.uid===uid)||typeof this.def(f.card).block!=='number')throw Error('Bloqueador inválido.');if(this.script(f.card).extraOnly&&f.z!=='extra')throw Error('Vigília no Templo apenas bloqueia da Zona Extra.');const d=this.def(f.card);
    if(d.type==='Guarda'){if(b.noGuards||this.script(this.find(b.uid).card).noGuardsWhenFlow&&b.flow)throw Error('Este golpe com Fluir não aceita Guardas.');opp+=this.guardCost(p,f.card,guardIndex++);}}
+  if(this.paymentEnergies(other(p),false).length<opp)throw Error('Não há energias suficientes para o custo (8.2). Retire Guardas da seleção ou escolha receber o Golpe.');
   const psychicGuards=uids.filter(uid=>this.script(this.find(uid).card).psychicCost),psychicUsed=Object.values(a.psychicDiscards||{}).filter(Boolean);
   if(psychicGuards.length&&!a.psychicDiscards){const available=this.psychicCosts(p,uids);if(this.paymentEnergies(other(p),false).length<opp)throw Error('Energia inativa insuficiente.');this.s.choice={kind:'psychicCost',player:p,uids:available,guards:psychicGuards,intent:copy(a),discards:{}};this.s.priority=p;return;}
   if(new Set(psychicUsed).size!==psychicUsed.length||psychicGuards.some(uid=>!Object.prototype.hasOwnProperty.call(a.psychicDiscards||{},uid))||psychicUsed.some(uid=>!this.psychicCosts(p,uids).includes(uid)))throw Error('Descarte Psychic inválido.');
@@ -259,15 +264,25 @@ if(a.type!=='chooseGuardDiscard'||!choice.uids.includes(a.uid))throw Error('Esco
   if(suruyas.length&&!a.suruyaDiscards){this.s.choice={kind:'suruya',player:p,uids:this.s.players[p].hand.filter(c=>!uids.includes(c.uid)&&!(a.guardDiscards||[]).includes(c.uid)&&!psychicUsed.includes(c.uid)&&this.script(c).impetus).map(c=>c.uid),guards:suruyas,intent:copy(a),discards:{}};this.s.priority=p;return;}
   if(a.suruyaDiscards){const used=Object.values(a.suruyaDiscards).filter(Boolean);if(new Set(used).size!==used.length||Object.keys(a.suruyaDiscards).some(uid=>!suruyas.includes(uid))||used.some(uid=>psychicUsed.includes(uid)||uids.includes(uid)||(a.guardDiscards||[]).includes(uid)||this.find(uid)?.p!==p||this.find(uid)?.z!=='hand'||!this.script(this.find(uid).card).impetus))throw Error('Descarte de Suruya inválido.');}
   this.beginPayment(p,a,{own:0,opp});
-  if(!opp){this.s.priority=b.p;this.s.passes=0;}
+  if(!opp){this.s.priority=a.incremental019?p:b.p;this.s.passes=0;}
  }
- finta(p,a){const b=this.current(),f=this.find(a.uid),g=this.find(a.guardUid),target=b?.blocks.find(x=>x.uid===a.target&&!x.cancelled);if(!b||b.finished||f?.p!==p||f.z!=='hand'||!this.script(f.card).finta||g?.p!==p||g.z!=='hand'||this.def(g.card).type!=='Guarda'||!target||this.def(this.find(target.uid).card).type!=='Guarda')throw Error('Finta exige carta com Finta e Guarda da mão, com Guarda alvo no combate.');
-  if(this.def(g.card).cost!==this.def(this.find(target.uid).card).cost)throw Error('Custos normais das Guardas devem ser iguais.');this.move(a.uid,'discard');this.move(a.guardUid,'discard');this.push({kind:'finta',p,target:a.target,combat:b.id,label:'Finta'});this.s.priority=other(p);this.s.passes=0;
+ finta(p,a){this.playtestResponse(p,a);}
+ playtestResponse(p,a){
+  const b=this.current(),f=this.find(a.uid),discard=this.find(a.discardUid),energy=this.find(a.energyUid);
+  const guard=b?.blocks.find(g=>g.uid===a.target&&!g.cancelled&&this.def(this.find(g.uid)?.card)?.type==='Guarda');
+  if(this.s.choice||this.s.priority!==p||!b||b.finished||b.cancelled||f?.p!==p||f.z!=='hand'||!this.script(f.card)[a.type]||
+     discard?.p!==p||discard.z!=='hand'||discard.card.uid===f.card.uid||energy?.p!==p||energy.z!=='stamina'||
+     (a.type==='finta'&&!guard))throw Error('Escolha outra carta da mão e uma energia da Estâmina para pagar a resposta.');
+  this.move(a.uid,'discard');
+  this.move(a.discardUid,'discard');
+  this.move(a.energyUid,'deck');
+  this.push({kind:a.type,p,target:a.target,combat:b.id,label:a.type==='finta'?'Finta':'Desvio'});
+  this.s.priority=other(p);this.s.passes=0;
  }
- pass(p){const b=this.current();this.s.passes++;this.s.priority=other(p);if(this.s.passes<2)return;this.s.passes=0;
+ pass(p){const b=this.current();if(b?.blockOpen019&&p===other(b.p))b.blockOpen019=false;this.s.passes++;this.s.priority=other(p);if(this.s.passes<2)return;this.s.passes=0;
   const top=this.s.stack.at(-1);
-  if(top){if(top.kind==='attack'&&b&&!b.blocked){this.s.priority=other(b.p);return;}this.resolveTop();return;}
-  if(b){if(!b.blocked){this.s.priority=other(b.p);return;}this.finishCombat(b);return;}
+  if(top){if(top.kind==='attack'&&b&&!b.blocked&&!b.cancelled){this.s.priority=other(b.p);return;}this.resolveTop();return;}
+  if(b){if(!b.blocked&&!b.cancelled){this.s.priority=other(b.p);return;}this.finishCombat(b);return;}
   if(this.s.phase==='preparation'){
    if(!this.s.preparedTurn){this.prepareTurn();return;}this.s.phase='combat';this.s.priority=this.s.active;this.log('Fase de Combates.','6.3');return;
   }
@@ -275,7 +290,7 @@ if(a.type!=='chooseGuardDiscard'||!choice.uids.includes(a.uid))throw Error('Esco
   if(this.s.phase==='end'){this.s.turn++;this.s.active=other(this.s.active);this.newTurn();}
  }
  clearArena(){this.resolveTokenTurnEnd();for(const side of this.s.players)for(const c of [...side.arena])this.move(c.uid,'discard');this.s.completed=[];this.log('Sequência encerrada: cartas da Arena recolhidas para o descarte.','6.4');}
- newTurn(){this.s.impetusActions=[];this.s.zoneNextAttacks=(this.s.zoneNextAttacks||[]).filter(m=>m.untilTurn>=this.s.turn);this.s.zoneModifiers=(this.s.zoneModifiers||[]).filter(m=>m.untilTurn>=this.s.turn);this.s.lastComboZone=null;this.resolveTokenTurnStart();this.s.phase='preparation';this.s.priority=this.s.active;this.s.passes=0;this.s.ending=false;this.s.autoEnd=false;this.s.preparedTurn=false;for(const side of this.s.players){side.played=[];side.redassaltDealt=false;side.nextRedassaltBonus=0;side.nextBlockTurn=0;side.focusPlayed=false;side.lenFocusBonus=0;side.golpeHit=false;side.impetusPlayed=false;side.handBlock=false;side.damage=0;side.receivedDamage=0;side.costDown=0;side.startSkill=false;side.onceUsed={};side.overdriveLocked=!!side.fighterTapped;}const p=this.s.players[this.s.active];p.replenished=false;p.prepared=false;this.log('Turno '+this.s.turn+' — '+(this.s.active?'IA':'Você')+'.','6.1.1');}
+ newTurn(){this.s.impetusActions=[];this.s.zoneNextAttacks=(this.s.zoneNextAttacks||[]).filter(m=>m.untilTurn>=this.s.turn);this.s.zoneModifiers=(this.s.zoneModifiers||[]).filter(m=>m.untilTurn>=this.s.turn);this.resolveTokenTurnStart();this.s.phase='preparation';this.s.priority=this.s.active;this.s.passes=0;this.s.ending=false;this.s.autoEnd=false;this.s.preparedTurn=false;for(const side of this.s.players){side.played=[];side.redassaltDealt=false;side.nextRedassaltBonus=0;side.nextBlockTurn=0;side.focusPlayed=false;side.lenFocusBonus=0;side.golpeHit=false;side.impetusPlayed=false;side.handBlock=false;side.damage=0;side.receivedDamage=0;side.costDown=0;side.startSkill=false;side.onceUsed={};side.overdriveLocked=!!side.fighterTapped;}const p=this.s.players[this.s.active];p.replenished=false;p.prepared=false;this.log('Turno '+this.s.turn+' — '+(this.s.active?'IA':'Você')+'.','6.1.1');}
  prepareTurn(){const p=this.s.active,side=this.s.players[p];side.stamina.forEach(c=>c.active=true);side.startSkill=true;side.fighterTapped=false;side.overdriveLocked=false;
   if(this.s.turn===2)this.draw(p,Math.max(0,4-side.hand.length),true);
   if(this.s.turn>=3&&side.stamina.length<7&&side.deck.length){const c=side.deck.shift();c.epoch++;c.active=true;c.public=true;side.stamina.push(c);this.log('Uma energia adicionada à Estâmina.','6.2.5');}
@@ -296,7 +311,7 @@ if(a.type!=='chooseGuardDiscard'||!choice.uids.includes(a.uid))throw Error('Esco
  }
  runOps(ops,ctx){for(const op of ops){if(this.s.winner!==null)break;if(op.when==='flow'&&!ctx.flow||op.when==='revide'&&!ctx.revide)continue;const side=this.s.players[ctx.p],enemy=this.s.players[other(ctx.p)];if(op.focus&&(ctx.focusPower??side.power)<op.focus)continue;
   if(op.when==='otherImpetus'&&!(this.s.impetusActions||[]).some(a=>a.turn===this.s.turn&&a.uid!==ctx.source&&[...this.s.combats,...this.s.completed].some(b=>b.id===a.combat&&!b.cancelled)))continue;if(op.when==='dealtDamage'&&!side.damage||op.preparation&&!side.extra.length||op.overdrive&&side.od<op.overdrive)continue;
-  if(op.op==='createGalacstrix')this.createToken(ctx.p,{name:op.name,power:op.power,fugaz:true,onDestroy:op.onDestroy||null});else if(op.op==='attachHitToken'){const b=this.s.combats.find(b=>b.id===ctx.target);if(b&&!b.finished&&!b.cancelled)(b.hitTokenEffects||(b.hitTokenEffects=[])).push({p:ctx.p,name:op.name,power:op.power});}else if(op.op==='psychicGuess'&&enemy.hand.length){this.s.choice={kind:'psychicGuess',player:ctx.p,reward:op.reward};}else if(op.op==='namedSearch'){const from=op.from||'deck',uids=side[from].filter(c=>(op.action?['Golpe','Guarda','Truque'].includes(this.def(c).type):this.def(c).type==='Golpe')&&this.def(c).name.toLowerCase().includes(op.archetype.toLowerCase())).map(c=>c.uid);if(uids.length)this.s.choice={kind:'namedSearch',player:ctx.p,uids,from,to:op.to||'hand',damageAfter:op.damageAfter||0};else if(op.damageAfter)this.damage(ctx.p,op.damageAfter,ctx.p);}else if(op.op==='discardForSearch'){if(side.hand.length)this.s.choice={kind:'discard',player:ctx.p,uids:side.hand.map(c=>c.uid),followSearch:{op:'namedSearch',archetype:op.archetype,from:op.from,to:'hand',damageAfter:1}};}else if(op.op==='spiritLuck'){const b=this.s.combats.find(b=>b.id===ctx.combat);if(b?.blocks.length===1){const uids=side.deck.slice(0,3).map(c=>c.uid);if(uids.length)this.s.choice={kind:'spiritLuck',player:ctx.p,uids};else this.draw(ctx.p,1,false);}}else if(op.op==='sharvat'){this.s.choice={kind:'sharvat',player:ctx.p};}else if(op.op==='honored'){const uids=side.discard.filter(c=>this.def(c).type==='Golpe'&&['Soco','Chute'].includes(this.def(c).subtype)).map(c=>c.uid);if(uids.length)this.s.choice={kind:'honored',player:ctx.p,uids,source:ctx.source,combat:ctx.combat};}else if(op.op==='ascension'&&side.extra.length){this.s.choice={kind:'ascension',player:ctx.p,uids:side.extra.map(c=>c.uid),source:ctx.source,combat:ctx.combat};}else if(op.op==='nextFocusSocoBonus')side.nextFocusSocoBonus=(side.nextFocusSocoBonus||0)+op.n;else if(op.op==='destroyExtraChoice'){const target=op.enemy?enemy:side;if(target.extra.length)this.s.choice={kind:'extraEffect',player:ctx.p,uids:target.extra.map(c=>c.uid),required:op.ownExtraCount?Math.min(side.extra.length,target.extra.length):1,selected:[],draw:op.draw||0};}
+  if(op.op==='createGalacstrix')this.createToken(ctx.p,{name:op.name,power:op.power,fugaz:true,onDestroy:op.onDestroy||null});else if(op.op==='attachHitToken'){const b=this.s.combats.find(b=>b.id===ctx.target);if(b&&!b.finished&&!b.cancelled)(b.hitTokenEffects||(b.hitTokenEffects=[])).push({p:ctx.p,name:op.name,power:op.power});}else if(op.op==='psychicGuess'&&enemy.hand.length){this.s.choice={kind:'psychicGuess',player:ctx.p,reward:op.reward};}else if(op.op==='namedSearch'){const from=op.from||'deck',uids=side[from].filter(c=>(op.action?['Golpe','Guarda','Truque'].includes(this.def(c).type):this.def(c).type==='Golpe')&&this.def(c).name.toLowerCase().includes(op.archetype.toLowerCase())).map(c=>c.uid);if(uids.length)this.s.choice={kind:'namedSearch',player:ctx.p,uids,from,to:op.to||'hand',damageAfter:op.damageAfter||0};else if(op.damageAfter)this.damage(ctx.p,op.damageAfter,ctx.p);}else if(op.op==='discardForSearch'){if(side.hand.length)this.s.choice={kind:'discard',player:ctx.p,uids:side.hand.map(c=>c.uid),followSearch:{op:'namedSearch',archetype:op.archetype,from:op.from,to:'hand',damageAfter:1}};}else if(op.op==='spiritLuck'){const b=this.s.combats.find(b=>b.id===ctx.combat);if(b?.blocks.length===1){const uids=side.deck.slice(0,3).map(c=>c.uid);if(uids.length)this.s.choice={kind:'spiritLuck',player:ctx.p,uids};else this.draw(ctx.p,1,false);}}else if(op.op==='sharvat'){this.s.choice={kind:'sharvat',player:ctx.p};}else if(op.op==='honored'){const uids=side.discard.filter(c=>this.def(c).type==='Golpe'&&['Soco','Chute'].includes(this.def(c).subtype)).map(c=>c.uid);if(uids.length)this.s.choice={kind:'honored',player:ctx.p,uids,source:ctx.source,combat:ctx.combat};}else if(op.op==='ascension'&&side.extra.length){this.s.choice={kind:'ascension',player:ctx.p,uids:side.extra.map(c=>c.uid),source:ctx.source,combat:ctx.combat};}else if(op.op==='nextFocusSocoBonus')side.nextFocusSocoBonus=(side.nextFocusSocoBonus||0)+op.n;else if(op.op==='destroyExtraChoice'){const target=op.enemy?enemy:side,extras=op.any?[...side.extra,...enemy.extra]:target.extra;if(extras.length)this.s.choice={kind:'extraEffect',player:ctx.p,uids:extras.map(c=>c.uid),required:op.ownExtraCount?Math.min(side.extra.length,extras.length):1,selected:[],draw:op.draw||0};}
   else if(op.op==='searchExtraGuard'&&side.golpeHit&&side.extra.length<4){const uids=side.deck.filter(c=>this.def(c).type==='Guarda').map(c=>c.uid);if(uids.length)this.s.choice={kind:'searchExtraGuard',player:ctx.p,uids};}
   else if(op.op==='searchFlow'){const uids=side.deck.filter(c=>this.script(c).flow).map(c=>c.uid);if(uids.length)this.s.choice={kind:'searchFlow',player:ctx.p,uids};}
   else if(op.op==='searchGuard'){
@@ -328,16 +343,28 @@ const uids=side.deck.filter(c=>this.def(c).type==='Guarda').map(c=>c.uid);if(uid
   else if(op.op==='discardOwn'&&side.hand.length){this.s.choice={kind:'discard',player:ctx.p,uids:side.hand.map(c=>c.uid)};}else if(op.op==='discardOpponentIfNoExtra'&&!enemy.extra.length&&enemy.hand.length){this.s.choice={kind:'discard',player:other(ctx.p),uids:enemy.hand.map(c=>c.uid)};}
  }}
  finishCombat(b){const c=this.find(b.uid)?.card;if(!c)return;const sc=this.script(c);const blockers=b.blocks.filter(x=>!x.cancelled),block=blockers.reduce((n,x)=>n+(b.ignoreBelowPower!==undefined&&x.value<b.ignoreBelowPower?0:x.value),0)+(b.aggregateBlockBonus||0);
-  const rawBasicDamage=b.cancelled?0:Math.max(0,b.attack-block),rawImpetusDamage=!b.cancelled&&blockers.some(x=>{const c=this.find(x.uid)?.card;return c&&!c.token;})?(b.revide&&sc.revideImpetus!==undefined?sc.revideImpetus:(b.impetusBase??sc.impetus??0))+(b.extraImpetus||0):0;
-  const marks=b.token?0:(this.s.players[other(b.p)].golpeDamageMarks||0),basicDamage=this.adjustDamage(other(b.p),rawBasicDamage+(rawBasicDamage>0?marks:0)),impetusDamage=this.adjustDamage(other(b.p),rawImpetusDamage+(rawImpetusDamage>0?marks:0)+(this.effectDamageBonus?.(b.p,rawImpetusDamage)||0));const damage=basicDamage+impetusDamage;if(damage&&!b.token&&this.def(c).name.toLowerCase().includes('redassalt'))this.s.players[b.p].redassaltDealt=true;if(damage&&!b.token&&!b.cancelled)this.s.players[b.p].golpeHit=true;b.basicDamage=basicDamage;b.impetusDamage=impetusDamage;
-  if(!b.cancelled){this.damage(other(b.p),basicDamage,b.p,true);if(this.s.winner===null&&impetusDamage)this.damage(other(b.p),impetusDamage,b.p,true);if(this.s.winner===null&&sc.selfDamageHalfAttack)this.damage(b.p,Math.ceil(Math.max(0,b.attack)/2),b.p);if(this.s.winner!==null){if(b.from==='stamina')this.move(b.uid,'discard');return;}if(sc.break&&damage){b.brokeSequence=this.s.players[other(b.p)].od>0;this.s.players[other(b.p)].od=0;this.log('Quebra: sequência adversária zerada.','14.1.1');}
-   if(!b.token&&b.p===this.s.active)this.s.lastComboZone=b.zone;const side=this.s.players[b.p],seq=this.script(side.fighter).sequence;if(!b.fighterOverdrive)side.od=seq[side.od===seq.length?seq.length-1:side.od]===b.zone?Math.min(seq.length,side.od+1):(seq[0]===b.zone?1:0);
+  const rawBasicDamage=b.cancelled?0:Math.max(0,b.attack-block),rawImpetusDamage=!b.cancelled&&blockers.some(x=>{const c=this.find(x.uid)?.card;return c&&!c.token;})?(b.revide&&sc.revideImpetus!==undefined?sc.revideImpetus:(b.impetusBase??sc.impetus??0))+(b.extraImpetus||0)+(b.superHanma021||0):0;
+  const marks=b.token?0:(this.s.players[other(b.p)].golpeDamageMarks||0),basicDamage=this.adjustDamage(other(b.p),rawBasicDamage+(rawBasicDamage>0?marks:0)),impetusDamage=this.adjustDamage(other(b.p),rawImpetusDamage+(rawImpetusDamage>0?marks:0)+(this.effectDamageBonus?.(b.p,rawImpetusDamage+(rawImpetusDamage>0?marks:0))||0));const damage=basicDamage+impetusDamage;if(damage&&!b.token&&this.def(c).name.toLowerCase().includes('redassalt'))this.s.players[b.p].redassaltDealt=true;if(damage&&!b.token&&!b.cancelled)this.s.players[b.p].golpeHit=true;b.basicDamage=basicDamage;b.impetusDamage=impetusDamage;
+  if(!b.cancelled){const defender=this.s.players[other(b.p)];
+   this.damage(other(b.p),basicDamage,b.p,true);if(this.s.winner===null&&impetusDamage)this.damage(other(b.p),impetusDamage,b.p,true);if(this.s.winner===null&&sc.selfDamageHalfAttack)this.damage(b.p,Math.ceil(Math.max(0,b.attack)/2),b.p);if(this.s.winner!==null)return;if(sc.break&&damage){b.brokeSequence=this.s.players[other(b.p)].od>0;this.s.players[other(b.p)].od=0;this.log('Quebra: sequência adversária zerada.','14.1.1');}
+   const side=this.s.players[b.p],seq=this.script(side.fighter).sequence;
+   if(!b.fighterOverdrive)side.od=seq[side.od===seq.length?seq.length-1:side.od]===b.zone?Math.min(seq.length,side.od+1):(seq[0]===b.zone?1:0);
+   if(damage&&b.sequenceStage===this.def(c).sequenceKeyword&&this.def(c).sequenceBreak){b.brokeSequence=defender.od>0;defender.od=0;}
+   if(rawBasicDamage===0&&blockers.some(g=>g.origin==='extra'&&this.def(this.find(g.uid)?.card)?.reverso)){side.od=0;this.log('Reverso: sequência adversária zerada.','Reverso');}
   }
-  const ctx={p:b.p,flow:b.flow,revide:b.revide,combat:b.id,focusPower:this.s.players[b.p].power};const triggers=[];for(const effect of b.endEffects||[])triggers.push({p:effect.p,ops:effect.ops,context:{p:effect.p},label:effect.label});if(damage&&!b.cancelled)for(const effect of b.hitTokenEffects||[])triggers.push({p:effect.p,ops:[{op:'createGalacstrix',name:effect.name,power:effect.power}],context:{p:effect.p},label:effect.name+' — Golpe alvo bateu'});if(!b.cancelled&&b.brokeSequence&&sc.onBreak)triggers.push({p:b.p,ops:sc.onBreak,context:ctx,label:this.def(c).name+' — sequência quebrada'});
+  const ctx={p:b.p,source:b.uid,flow:b.flow,revide:b.revide,combat:b.id,focusPower:this.s.players[b.p].power};const triggers=[];const sequenceEffect=this.def(c).sequenceEffect;
+  if(!b.cancelled&&sequenceEffect?.hit&&sequenceEffect.stage===b.sequenceStage&&damage)triggers.push({p:b.p,ops:sequenceEffect.ops,context:ctx,label:this.def(c).name+' — sequência de Overdrive'});
+  for(const effect of b.endEffects||[])triggers.push({p:effect.p,ops:effect.ops,context:{p:effect.p},label:effect.label});if(damage&&!b.cancelled)for(const effect of b.hitTokenEffects||[])triggers.push({p:effect.p,ops:[{op:'createGalacstrix',name:effect.name,power:effect.power}],context:{p:effect.p},label:effect.name+' — Golpe alvo bateu'});if(!b.cancelled&&b.brokeSequence&&sc.onBreak)triggers.push({p:b.p,ops:sc.onBreak,context:ctx,label:this.def(c).name+' — sequência quebrada'});
   if(damage&&['hanma','len-yin'].includes(b.fighterOverdrive))triggers.push({p:b.p,ops:[{op:'zoneModifier',zone:b.zone,property:b.fighterOverdrive==='hanma'?'attack':'cost',n:b.fighterOverdrive==='hanma'?2:1,untilTurn:this.s.turn+1}],context:{p:b.p},label:'Overdrive — efeito da Zona'});
-  if(!b.cancelled&&basicDamage>0&&(b.impetusBase||b.extraImpetus||(b.revide&&sc.revideImpetus))&&this.script(this.s.players[b.p].fighter).impetusHitDraw)triggers.push({p:b.p,ops:[{op:'draw',n:1}],context:{p:b.p},label:'Hanma — Golpe com Ímpeto bateu'});
+  const attacker=this.s.players[b.p];
+  if(!b.cancelled&&basicDamage>0&&(b.impetusBase||b.extraImpetus||b.superHanma021||(b.revide&&sc.revideImpetus))&&
+     this.script(attacker.fighter).impetusHitDraw&&attacker.impetusDrawTurn!==this.s.turn){
+   attacker.impetusDrawTurn=this.s.turn;
+   triggers.push({p:b.p,ops:[{op:'draw',n:1}],context:{p:b.p,source:attacker.fighter.uid},label:'Hanma — primeiro Golpe com Ímpeto que bateu'});
+  }
+  if(damage&&!b.cancelled)for(const effect of b.hitEffects||[])triggers.push(effect);
   if(damage&&sc.hit)triggers.push({p:b.p,ops:sc.hit,context:ctx,label:this.def(c).name+' — Se Bater'});
-  if(!damage&&!b.cancelled)for(const guard of b.blocks.filter(x=>!x.cancelled)){const card=this.find(guard.uid)?.card;if(!card)continue;const gs=this.script(card),p=other(b.p);if(gs.deflect&&guard.origin==='extra')triggers.push({p,ops:[{op:'fixedDamage',n:guard.value}],context:{p},label:'Defletir'});if(gs.success)triggers.push({p,ops:gs.success,context:{p,combat:b.id},label:this.def(card).name+' — bloqueio com sucesso'});}
+  if(!damage&&!b.cancelled)for(const guard of b.blocks.filter(x=>!x.cancelled)){const card=this.find(guard.uid)?.card;if(!card)continue;const gs=this.script(card),p=other(b.p);if(gs.deflect&&guard.origin==='extra')triggers.push({p,ops:[{op:'fixedDamage',n:guard.value}],context:{p,source:guard.uid},label:'Defletir'});if(gs.success)triggers.push({p,ops:gs.success,context:{p,source:guard.uid,combat:b.id},label:this.def(card).name+' — bloqueio com sucesso'});}
   // Cartas permanecem até gatilhos de resultado terminarem; recolhimento é decisão de ordem.
   b.finished=true;b.damage=damage;b.blockValue=block;this.push({kind:'cleanup',p:b.p,combat:b.id,label:'Concluir combate'});
   this.s.triggerGroups=[this.s.active,other(this.s.active)].map(p=>({p,links:triggers.filter(t=>t.p===p).map(t=>({kind:'effect',...t,orderId:++this.s.next}))}));this.advanceTriggerGroups();
@@ -347,12 +374,13 @@ const uids=side.deck.filter(c=>this.def(c).type==='Guarda').map(c=>c.uid);if(uid
  cleanup(b,orders){for(let p=0;p<2;p++){const cards=this.s.players[p].arena.filter(c=>c.uid===b.uid||b.blocks.some(x=>x.uid===c.uid)||this.s.stack.some(l=>l.uid===c.uid&&l.context?.combat===b.id));
    // Inclui truques associados registrados na ativação.
    const uids=[...new Set([...cards.map(c=>c.uid),...(b.tricks||[])])].filter(uid=>{const f=this.find(uid);return f?.z==='arena'&&f.p===p;});
-   const order=orders?.[p]||uids;if(order.length!==uids.length||new Set(order).size!==uids.length||order.some(uid=>!uids.includes(uid)))throw Error('Ordem de descarte inválida.');order.forEach(uid=>{if(b.from==='stamina'&&uid===b.uid)this.move(uid,'discard');});
+   const order=orders?.[p]||uids;if(order.length!==uids.length||new Set(order).size!==uids.length||order.some(uid=>!uids.includes(uid)))throw Error('Ordem de descarte inválida.');// A origem Estâmina não antecipa o descarte: todos permanecem até clearArena().
   }
   this.s.history.push({id:b.id,p:b.p,idCard:this.find(b.uid)?.card.id,zone:b.zone,attack:b.attack,block:b.blockValue,damage:b.damage,revide:b.revide});this.s.completed.push(copy(b));this.s.combats.pop();for(const uid of [b.uid,...b.blocks.map(x=>x.uid)])this.finishTokenUse(uid);
  }
  assertInvariants(){const uids=[];for(const side of this.s.players){const cs=['hand','stamina','extra','arena','deck','discard','banished'].flatMap(z=>side[z]);if(cs.filter(c=>!c.token&&!this.def(c).specialPermanent).length!==40)throw Error('Invariante: conservação das 40 cartas.');if(side.stamina.length>7||side.extra.length>4)throw Error('Invariante: capacidade de zona.');uids.push(...cs.map(c=>c.uid));}if(new Set(uids).size!==uids.length)throw Error('Invariante: instância duplicada.');}
- view(p){if(!this.s)return null;const s=this.s;return {viewer:p,mode:s.mode||'advanced',version:VERSION,ruleset:RULESET_ID,revision:s.revision,turn:s.turn,active:s.active,priority:s.priority,phase:s.phase,ending:s.ending,autoEnd:s.autoEnd,winner:s.winner,log:copy(s.log),stack:s.stack.map(l=>({id:l.id,label:l.label||l.kind,kind:l.kind,p:l.p})),combats:copy(s.combats),completed:copy(s.completed),history:copy(s.history),choice:s.choice?{kind:s.choice.kind,player:s.choice.player,required:s.choice.required,remaining:s.choice.required?Math.max(0,s.choice.required-(s.choice.selected?.length||0)):undefined,cause:copy(s.choice.cause||null),uids:s.choice.player===p?s.choice.uids:undefined}:null,players:s.players.map((side,i)=>({name:side.name,hp:side.hp,power:side.power,od:side.od,fighter:copy(side.fighter),deckCount:side.deck.length,handCount:side.hand.length,hand:i===p?copy(side.hand):[],stamina:copy(side.stamina),extra:side.extra.map(c=>i===p||c.public||c.publicUntil===s.turn?copy(c):{uid:c.uid,hidden:true,ready:c.ready,slot:c.slot}),arena:copy(side.arena),discard:copy(side.discard),banished:copy(side.banished),prepared:side.prepared,replenished:side.replenished,startSkill:side.startSkill,fighterTapped:!!side.fighterTapped,overdriveLocked:!!side.overdriveLocked})),actions:this.legalActions(p)};}
+ fieldEffectSource(link){if(!['effect','guard','trick'].includes(link.kind)||!link.ops?.some(op=>!(op.when==='flow'&&!link.context?.flow||op.when==='revide'&&!link.context?.revide||op.focus&&(link.context?.focusPower??this.s.players[link.p].power)<op.focus)))return undefined;const isPublic=f=>f&&(['fighter','arena','stamina'].includes(f.z)||f.z==='extra'&&(f.card.token||f.card.public||f.card.publicUntil===this.s.turn));for(const uid of [link.uid,link.context?.source])if(uid&&isPublic(this.find(uid)))return uid;const side=this.s.players[link.p];if(side&&link.label?.toLowerCase().includes(this.def(side.fighter).name.toLowerCase()))return side.fighter.uid;return undefined;}
+ view(p){if(!this.s)return null;const s=this.s;return {viewer:p,mode:s.mode||'advanced',version:VERSION,ruleset:RULESET_ID,revision:s.revision,turn:s.turn,active:s.active,priority:s.priority,phase:s.phase,ending:s.ending,autoEnd:s.autoEnd,winner:s.winner,log:copy(s.log),stack:s.stack.map(l=>({id:l.id,label:l.label||l.kind,kind:l.kind,p:l.p,source:this.fieldEffectSource(l)})),combats:copy(s.combats),completed:copy(s.completed),history:copy(s.history),choice:s.choice?{kind:s.choice.kind,player:s.choice.player,required:s.choice.required,remaining:s.choice.required?Math.max(0,s.choice.required-(s.choice.selected?.length||0)):undefined,cause:copy(s.choice.cause||null),uids:s.choice.player===p?s.choice.uids:undefined}:null,players:s.players.map((side,i)=>({name:side.name,hp:side.hp,power:side.power,od:side.od,fighter:copy(side.fighter),deckCount:side.deck.length,handCount:side.hand.length,hand:i===p?copy(side.hand):[],stamina:copy(side.stamina),extra:side.extra.map(c=>i===p||c.public||c.publicUntil===s.turn?copy(c):{uid:c.uid,hidden:true,ready:c.ready,slot:c.slot}),arena:copy(side.arena),discard:copy(side.discard),banished:copy(side.banished),prepared:side.prepared,replenished:side.replenished,startSkill:side.startSkill,fighterTapped:!!side.fighterTapped,overdriveLocked:!!side.overdriveLocked})),actions:this.legalActions(p)};}
  legalActions(p){if(!this.s||this.s.winner!==null)return [];const s=this.s;
   if(s.phase==='mulligan')return s.players[p].mulligan?[]:[{type:'mulligan',hand:[],energy:[]}];
   if(s.choice){if(s.choice.player!==p)return [];if(s.choice.kind==='galacstrixCost'){const cost=this.script(this.find(s.choice.uids[s.choice.index]).card).tokenCost;return [{type:'chooseGalacstrix',use:false},...(this.energies(p,true).length>=s.choice.pay.own+cost?[{type:'chooseGalacstrix',use:true}]:[])];}if(s.choice.kind==='ownEnergy')return [{type:'chooseOwnEnergy',required:s.choice.required,options:this.energies(p,true).map(c=>c.uid)}];if(s.choice.kind==='energy')return [{type:'chooseEnergy',required:s.choice.required,options:this.paymentEnergies(p,false).map(c=>c.uid)}];if(s.choice.kind==='psychicCost')return [...s.choice.uids.map(uid=>({type:'choosePsychicCost',uid})),{type:'declinePsychic'}];if(s.choice.kind==='psychicGuess')return ['Golpe','Truque','Guarda'].map(cardType=>({type:'declarePsychicType',cardType}));if(s.choice.kind==='psychicReveal')return [{type:'acknowledgePsychic'}];if(s.choice.kind==='namedSearch')return s.choice.uids.map(uid=>({type:'chooseNamedCard',uid}));if(s.choice.kind==='spiritLuck')return s.choice.uids.map(uid=>({type:'chooseSpiritCard',uid}));if(s.choice.kind==='sharvat')return ['Inferior','Meio','Superior'].map(zone=>({type:'chooseSharvatZone',zone}));if(s.choice.kind==='honored')return [{type:'chooseHonored'},...s.choice.uids.map(uid=>({type:'chooseHonored',uid}))];if(s.choice.kind==='ascension')return [{type:'chooseAscension'},...s.choice.uids.map(uid=>({type:'chooseAscension',uid}))];if(s.choice.kind==='extraEffect')return s.choice.uids.map(uid=>({type:'selectExtraEffect',uid}));if(s.choice.kind==='searchExtraGuard')return s.choice.uids.map(uid=>({type:'selectExtraGuard',uid}));if(s.choice.kind==='guardCost')return s.choice.uids.map(uid=>({type:'chooseGuardDiscard',uid}));if(s.choice.kind==='suruya')return [{type:'chooseSuruya'},...s.choice.uids.map(uid=>({type:'chooseSuruya',uid}))];if(s.choice.kind==='searchFlow')return s.choice.uids.map(uid=>({type:'selectFlowCard',uid}));if(s.choice.kind==='searchGuard')return s.choice.uids.map(uid=>({type:'selectSearchCard',uid}));if(s.choice.kind==='discard')return s.choice.uids.map(uid=>({type:'discardChoice',uid}));if(s.choice.kind==='triggers')return [{type:'orderTriggers',options:s.choice.links.map(l=>({id:l.orderId,label:l.label}))}];if(s.choice.kind==='cleanup')return [{type:'orderDiscard',options:s.choice.options}];if(s.choice.kind!=='revide')return [];}
@@ -366,16 +394,19 @@ const uids=side.deck.filter(c=>this.def(c).type==='Guarda').map(c=>c.uid);if(uid
   const attackAllowed=revide||this.canIndependent(p);
   if(attackAllowed&&own.od===3&&!own.overdriveLocked&&!own.fighterTapped&&this.script(own.fighter).fighterOverdrive)for(const zone of ['Inferior','Meio','Superior'])acts.push({type:'fighterOverdrive',uid:own.fighter.uid,zone});
   for(const c of [...this.usable(p),...own.discard.filter(c=>this.script(c).fromDiscardLife||this.script(c).discardCopy)]){
-   const d=this.def(c),sc=this.script(c);if(c.token){if(!revide&&this.canIndependent(p)&&this.energies(p,true).length>=this.tokenAttackCost(c))for(const zone of c.zone?[c.zone]:['Inferior','Meio','Superior'])acts.push({type:'tokenAttack',uid:c.uid,zone});continue;}if(!this.comboAllowed(c,s.lastComboZone))continue;if(sc.oncePerTurn&&own.onceUsed[d.name])continue;if(d.type==='Guarda'||d.type==='Golpe'&&!attackAllowed||d.type==='Truque'&&(revide||!b&&s.autoEnd))continue;
+   const d=this.def(c),sc=this.script(c);if(c.token){if(!revide&&this.canIndependent(p)&&this.energies(p,true).length>=this.tokenAttackCost(c))for(const zone of c.zone?[c.zone]:['Inferior','Meio','Superior'])acts.push({type:'tokenAttack',uid:c.uid,zone});continue;}if(sc.oncePerTurn&&own.onceUsed[d.name])continue;if(d.type==='Guarda'||d.type==='Golpe'&&!attackAllowed||d.type==='Truque'&&(revide||!b&&s.autoEnd))continue;
    if(sc.requiresHighCostDiscard&&[...own.discard,...this.s.players.flatMap(side=>side.arena)].filter(c=>typeof this.def(c).cost==='number'&&this.def(c).cost>=3).length<2)continue;if(sc.psychicFrom&&!this.psychicAllowed(p,c))continue;if(sc.requiresOwnExtra&&!own.extra.length)continue;if(sc.requiresDisparo&&(!b||b.finished||this.def(this.find(b.uid).card).subtype!=='Disparo'))continue;
    if(sc.requiresBlockTarget&&(!b||b.finished||!b.blocks.some(g=>!g.cancelled)))continue;if(sc.requiresOwnBlocked&&(!b||b.finished||b.cancelled||b.p!==p||!b.blocked||!b.blocks.some(g=>!g.cancelled)))continue;if(sc.requiresAttack&&(!b||b.finished))continue;
    if(sc.variable&&p!==s.active)continue;
    for(const mode of (this.find(c.uid).z==='discard'?(sc.discardCopy?['banishCopy']:['life']):['normal','alternative'])){if(mode==='alternative'&&!Number.isInteger(d.alternateCost))continue;const max=sc.variable?this.energies(p,true).length:0;for(let x=0;x<=max;x++){const pay=this.payment(p,c,mode,x);if((!pay.life||own.hp>=pay.life)&&this.energies(p,true).length>=pay.own&&this.paymentEnergies(other(p),false).length>=pay.opp){if(mode==='banishCopy'||sc.requiresCopyBanish)for(const copy of own.discard.filter(other=>other.id===c.id&&other.uid!==c.uid))acts.push({type:'play',uid:c.uid,mode,x,copyUid:copy.uid});else if(sc.requiresBlockTarget)for(const g of b.blocks.filter(g=>!g.cancelled))acts.push({type:'play',uid:c.uid,mode,x,blockTarget:g.uid});else if(sc.chooseBuff)for(const option of ['attack','block'])acts.push({type:'play',uid:c.uid,mode,x,option});else acts.push({type:'play',uid:c.uid,mode,x});}}}
   }
-  if(attackAllowed&&own.od===3&&!own.overdriveLocked&&!own.fighterTapped&&!this.script(own.fighter).fighterOverdrive)own.stamina.filter(c=>c.active&&this.def(c).type==='Golpe'&&this.comboAllowed(c,s.lastComboZone)).forEach(c=>acts.push({type:'overdrive',uid:c.uid}));
-  if(!revide&&b&&!b.blocked&&p===other(b.p))acts.push({type:'block',uids:[],options:this.usable(p).filter(c=>(!this.script(c).additionalDiscard||own.hand.filter(h=>h.uid!==c.uid).length>=this.script(c).additionalDiscard)).filter(c=>!this.script(c).extraOnly||this.find(c.uid).z==='extra').filter(c=>this.def(c).type!=='Guarda'||!(b.noGuards||this.script(this.find(b.uid).card).noGuardsWhenFlow&&b.flow)&&this.paymentEnergies(other(p),false).length>=this.guardCost(p,c)).map(c=>c.uid)});
-  if(!revide&&b&&!b.finished)for(const c of own.hand.filter(c=>this.script(c).finta))for(const g of own.hand.filter(c=>this.def(c).type==='Guarda'))for(const target of b.blocks.filter(t=>!t.cancelled&&this.def(this.find(t.uid).card).type==='Guarda'&&this.def(this.find(t.uid).card).cost===this.def(g).cost))acts.push({type:'finta',uid:c.uid,guardUid:g.uid,target:target.uid});
-  if(!revide&&b&&!b.finished&&!b.cancelled)for(const c of own.hand.filter(c=>this.script(c).desvio))for(const g of own.hand.filter(c=>this.def(c).type==='Golpe'&&this.def(c).zone===b.zone))acts.push({type:'desvio',uid:c.uid,golpeUid:g.uid});
+  if(attackAllowed&&own.od===3&&!own.overdriveLocked&&!own.fighterTapped&&!this.script(own.fighter).fighterOverdrive)own.stamina.filter(c=>c.active&&this.def(c).type==='Golpe').forEach(c=>acts.push({type:'overdrive',uid:c.uid}));
+  if(!revide&&b&&!b.finished&&(!b.blocked||b.blockOpen019)&&!b.cancelled&&p===other(b.p))acts.push({type:'block',uids:[],options:this.usable(p).filter(c=>(!this.script(c).additionalDiscard||own.hand.filter(h=>h.uid!==c.uid).length>=this.script(c).additionalDiscard)).filter(c=>!this.script(c).extraOnly||this.find(c.uid).z==='extra').filter(c=>this.def(c).type!=='Guarda'||!(b.noGuards||this.script(this.find(b.uid).card).noGuardsWhenFlow&&b.flow)&&this.paymentEnergies(other(p),false).length>=this.guardCost(p,c,b.blocks.filter(g=>this.def(this.find(g.uid)?.card)?.type==='Guarda').length)).map(c=>c.uid)});
+  if(!revide&&b&&!b.finished&&!b.cancelled)for(const c of own.hand)for(const discard of own.hand.filter(x=>x!==c))for(const energy of own.stamina){
+   const cost={uid:c.uid,discardUid:discard.uid,energyUid:energy.uid};
+   if(this.script(c).desvio)acts.push({type:'desvio',...cost});
+   if(this.script(c).finta)for(const guard of b.blocks.filter(g=>!g.cancelled&&this.def(this.find(g.uid)?.card)?.type==='Guarda'))acts.push({type:'finta',...cost,target:guard.uid});
+  }
   return acts;
  }
  replay(){return {format:'overdrive-replay/1',version:VERSION,ruleset:RULESET_ID,initial:copy(this.initial),commands:copy(this.commands)};}
@@ -389,7 +420,7 @@ Engine.prototype.resolveTop=function(){const top=this.s.stack.at(-1);if(top?.kin
 Engine.prototype.apply=function(p,a){if(this.s.choice?.kind==='cleanup'){
  const choice=this.s.choice;if(p!==choice.player||a.type!=='orderDiscard')throw Error('Ordene suas cartas para o descarte.');const expected=choice.options[p],uids=a.uids||expected;if(uids.length!==expected.length||new Set(uids).size!==expected.length||uids.some(x=>!expected.includes(x)))throw Error('Ordem de descarte inválida.');choice.orders[p]=uids;
  if(p===0){choice.player=1;this.s.priority=1;return;}const b=this.current(),resume=b.resume;this.s.stack.pop();this.cleanup(b,choice.orders);this.s.choice=null;this.s.priority=this.s.active;this.s.passes=0;
- if(resume){const link=this.s.stack.find(l=>l.id===resume);if(link){const top=this.s.stack.at(-1);if(top.id===resume&&top.kind!=='attack')this.resolveTop();else if(top.kind==='attack'&&!this.current()?.blocked)this.s.priority=other(this.current().p);}}
+ if(resume){const link=this.s.stack.find(l=>l.id===resume);if(link){const top=this.s.stack.at(-1);if(top.id===resume&&top.kind!=='attack')this.resolveTop();else if(top.kind==='attack'&&!this.current()?.blocked&&!this.current()?.cancelled)this.s.priority=other(this.current().p);}}
  return;
 }return originalApply.call(this,p,a);};
 const originalPaid=Engine.prototype.activatePaid;
@@ -397,6 +428,8 @@ Engine.prototype.activatePaid=function(p,a){const result=originalPaid.call(this,
 const originalOps=Engine.prototype.runOps;
 Engine.prototype.runOps=function(ops,ctx){for(const op of ops){if(this.s.winner!==null)return;if(op.op==='fixedDamage')this.damage(other(ctx.p),op.n);else originalOps.call(this,[op],ctx);}};
 function chooseAI(view,catalog){const acts=view.actions.filter(a=>a.type!=='resign');if(!acts.length)return null;const byId=new Map(catalog.map(c=>[c.id,c]));const player=view.viewer??1,own=view.players[player],find=uid=>[...own.hand,...own.extra,...own.stamina,...own.discard].find(c=>c.uid===uid),def=uid=>Rivals06.definition(find(uid),find(uid)?.tokenDefinition||byId.get(find(uid)?.id),view);
+ if(view.choice?.kind==='playtestFlush')return acts.find(a=>!a.decline)||acts[0];
+ if(view.choice?.kind?.startsWith('playtest'))return acts[0];
  if(view.choice?.kind==='maha:curseTarget')return acts.find(a=>a.uid===view.players[1-player].fighter.uid)||acts[0];
  if(view.choice?.kind==='rivals:06Extras'){const enemy=new Set(view.players[1-player].extra.map(c=>c.uid));return acts.find(a=>enemy.has(a.uid))||acts.find(a=>a.option==='done')||acts[0];}if(view.choice?.kind?.startsWith('rivals:'))return acts.find(a=>a.target===1-player)||acts.find(a=>a.uid)||acts[0];
  if(view.choice?.kind?.startsWith('expansion:'))return acts.find(a=>a.option==='done')&&acts.filter(a=>a.uid).length===0?acts.find(a=>a.option==='done'):acts.find(a=>a.uid)||acts[0];
@@ -404,12 +437,12 @@ function chooseAI(view,catalog){const acts=view.actions.filter(a=>a.type!=='resi
  if(view.choice?.kind==='triggers')return {type:'orderTriggers',ids:acts[0].options.map(x=>x.id)};
  if(view.choice?.kind==='cleanup')return {type:'orderDiscard',uids:acts[0].options[player]};
  if(['psychicCost','psychicGuess','psychicReveal'].includes(view.choice?.kind))return acts[0];if(view.choice?.kind==='namedSearch')return acts[0];if(view.choice?.kind==='spiritLuck')return acts[0];if(view.choice?.kind==='sharvat')return acts[1];if(view.choice?.kind==='honored')return acts.at(-1);if(view.choice?.kind==='ascension')return acts.find(a=>a.uid&&def(a.uid)?.type==='Guarda')||acts[0];if(['extraEffect','searchExtraGuard'].includes(view.choice?.kind))return acts[0];if(view.choice?.kind==='guardCost')return acts[0];if(view.choice?.kind==='suruya')return acts.at(-1);if(view.choice?.kind==='searchFlow')return acts[0];if(view.choice?.kind==='searchGuard')return acts[0];if(view.choice?.kind==='discard')return [...acts].sort((a,b)=>(def(b.uid)?.cost||0)-(def(a.uid)?.cost||0))[0];
- const desvio=acts.find(a=>a.type==='desvio');if(desvio&&view.combats.at(-1)?.p!==player&&view.combats.at(-1)?.attack>0)return desvio;const block=acts.find(a=>a.type==='block');if(block){const combat=view.combats.at(-1),opts=block.options.map(uid=>({uid,d:def(uid)})).sort((a,b)=>b.d.block-a.d.block);const chosen=[],reserved=new Set();let value=0,cost=0,guards=0;for(const c of opts){if(reserved.has(c.uid))continue;const sc=CardScripts.scripts[c.d.number]||{},available=own.hand.filter(h=>h.uid!==c.uid&&!chosen.includes(h.uid)&&!reserved.has(h.uid));const needed=sc.psychicCost?available.find(h=>byId.get(h.id)?.name.toLowerCase().includes('psychic')):sc.additionalDiscard?available[0]:null;if(sc.additionalDiscard&&!needed)continue;const n=c.d.type==='Guarda'?Math.max(0,c.d.cost+(guards===0?(own.r05NextTax||0)-(own.r05GuardDiscount||0):0)):0;if(cost+n>view.players[1-player].stamina.filter(x=>!x.active&&!x.r05Lock).length)continue;if(value>=combat.attack)break;chosen.push(c.uid);if(c.d.type==='Guarda')guards++;if(needed)reserved.add(needed.uid);value+=c.d.block;cost+=n;}return {type:'block',uids:chosen};}
+ const desvio=acts.find(a=>a.type==='desvio');if(desvio&&view.combats.at(-1)?.p!==player&&view.combats.at(-1)?.attack>0)return desvio;const block=acts.find(a=>a.type==='block');if(block){const combat=view.combats.at(-1),opts=block.options.map(uid=>({uid,d:def(uid)})).sort((a,b)=>b.d.block-a.d.block);const chosen=[],reserved=new Set();let value=0,cost=0,guards=0;for(const c of opts){if(reserved.has(c.uid))continue;const sc=CardScripts.scripts[c.d.number]||{},available=own.hand.filter(h=>h.uid!==c.uid&&!chosen.includes(h.uid)&&!reserved.has(h.uid));const needed=sc.psychicCost?available.find(h=>byId.get(h.id)?.name.toLowerCase().includes('psychic')):sc.additionalDiscard?available[0]:null;if(sc.additionalDiscard&&!needed)continue;const n=c.d.type==='Guarda'?Math.max(0,c.d.cost+(guards===0?(own.r05NextTax||0)-(own.r05GuardDiscount||0):0)):0;if(cost+n>view.players[1-player].stamina.filter(x=>!x.active&&!x.r05Lock).length)continue;if(value>=combat.attack&&chosen.length)break;chosen.push(c.uid);if(c.d.type==='Guarda')guards++;if(needed)reserved.add(needed.uid);value+=c.d.block;cost+=n;}return {type:'block',uids:chosen};}
  if(acts.some(a=>a.type==='remainingChoose'))return acts.find(a=>a.target===1-player)||acts.find(a=>a.use===true)||acts[0];if(view.phase==='mulligan')return {type:'mulligan',hand:[],energy:[]};
  const finta=acts.find(a=>a.type==='finta');if(finta&&view.combats.at(-1)?.p===player)return finta;
  const boost=acts.find(a=>a.type==='play'&&def(a.uid)?.number===104);if(boost&&view.combats.at(-1)?.p===player)return boost;
  const tokenAttack=acts.find(a=>a.type==='tokenAttack');if(tokenAttack)return tokenAttack;const od=acts.find(a=>a.type==='overdrive'||a.type==='fighterOverdrive'||a.type==='mahaOverdrive');if(od)return od;const newOD=acts.find(a=>a.type==='expansionMournerOD'||a.type==='rivalsOverdrive');if(newOD)return newOD;const newSkill=acts.find(a=>a.type==='expansionReveal'||a.type==='expansionMournerSkill'||a.type==='expansionPlacideSkill');if(newSkill)return newSkill;
- const attack=acts.filter(a=>a.type==='play'&&(def(a.uid)?.type==='Golpe'||a.mode==='guardStrike')&&(a.mode!=='life'||own.hp>def(a.uid).cost)).sort((a,b)=>((b.mode==='guardStrike'?def(b.uid).block:def(b.uid).power||0)-(def(b.uid).cost||0)*.35)-((a.mode==='guardStrike'?def(a.uid).block:def(a.uid).power||0)-(def(a.uid).cost||0)*.35));if(attack.length){const chosen=attack[0];if(chosen.mode==='guardStrike'){const seq=byId.get(own.fighter.id)&&scripts[byId.get(own.fighter.id).number]?.sequence,next=seq?.[Math.min(own.od,seq.length-1)];return attack.find(a=>a.uid===chosen.uid&&a.zone===next)||chosen;}return chosen;}
+ const attack=acts.filter(a=>a.type==='play'&&(def(a.uid)?.type==='Golpe'||a.mode==='guardStrike')&&(a.mode!=='life'||own.hp>def(a.uid).cost+1)).sort((a,b)=>((b.mode==='guardStrike'?def(b.uid).block:def(b.uid).power||0)-(def(b.uid).cost||0)*.35)-((a.mode==='guardStrike'?def(a.uid).block:def(a.uid).power||0)-(def(a.uid).cost||0)*.35));if(attack.length){const chosen=attack[0];if(chosen.mode==='guardStrike'){const seq=byId.get(own.fighter.id)&&scripts[byId.get(own.fighter.id).number]?.sequence,next=seq?.[Math.min(own.od,seq.length-1)];return attack.find(a=>a.uid===chosen.uid&&a.zone===next)||chosen;}return chosen;}
  const replen=acts.filter(a=>a.type==='replenish');if(replen.length&&(own.hand.length<=1||!attack.length))return replen.at(-1);
  const skill=acts.find(a=>a.type==='startSkill');if(skill&&own.handCount<5)return skill;
  const utility=player===view.active&&!view.stack.length&&!view.combats.length&&acts.find(a=>a.type==='play'&&a.mode==='normal'&&def(a.uid)?.type==='Truque');if(utility)return utility;const prep=acts.filter(a=>a.type==='prepare').sort((a,b)=>(def(b.uid)?.block||0)-(def(a.uid)?.block||0));if(prep.length&&own.handCount>2)return prep[0];
@@ -466,7 +499,7 @@ if(typeof module==='object'&&module.exports)require('./strict-features.js')(Engi
 // Balanceamento First Drive 0.1: camada de regras, sem DOM.
 const balanceOps=Engine.prototype.runOps,balanceApply=Engine.prototype.apply,balanceLegal=Engine.prototype.legalActions,balancePaid=Engine.prototype.activatePaid,balanceMove=Engine.prototype.move,balanceScript=Engine.prototype.script,balancePrepare=Engine.prototype.prepareTurn;
 const balanceName=s=>s.toLowerCase().replace(/darsmagius/g,'darsmagium');
-Engine.prototype.script=function(card){if(card?.token&&card.balanceToken){const ops={owl:[{op:'balanceSearch',name:'Galacstrix',types:['Golpe','Guarda','Truque'],from:'deck'}],dragon:[{op:'draw',n:1}],raven:[{op:'balanceSearch',name:'Galacstrix',types:['Golpe','Guarda','Truque'],from:'discard'}],tiger:[{op:'nextAttackBonus',n:2}]};return card.balanceToken==='raven'?{success:ops.raven}:{hit:ops[card.balanceToken]};}return balanceScript.call(this,card);};
+Engine.prototype.script=function(card){if(card?.token&&card.balanceToken){const ops={owl:[{op:'playtestSearch',name:'Galacstrix: Dragão'}],dragon:[{op:'destroyExtraChoice',any:true}],raven:[{op:'balanceSearch',name:'Galacstrix',types:['Golpe','Guarda','Truque'],from:'discard'}],tiger:[{op:'playtestSearch',name:'Galacstrix: Coruja'}]};return card.balanceToken==='raven'?{success:ops.raven}:{hit:ops[card.balanceToken]};}return balanceScript.call(this,card);};
 Engine.prototype.finishTokenUse=function(uid){const f=this.find(uid);if(!f?.card.token||!f.card.pendingUse)return false;delete f.card.pendingUse;if(f.card.fugaz&&!f.card.balanceToken)this.destroyToken(uid,'fugaz-use');return true;};
 Engine.prototype.energies=function(p,active){return this.s.players[p].stamina.filter(c=>c.active===active&&!(c.lockedUntil>=this.s.turn));};
 Engine.prototype.prepareTurn=function(){const locked=this.s.players[this.s.active].stamina.filter(c=>c.lockedUntil>=this.s.turn);balancePrepare.call(this);locked.forEach(c=>c.active=false);};
@@ -509,7 +542,7 @@ const u09={};for(const k of ['script','runOps','apply','legalActions','activateP
 const psychicAction=(e,c)=>['Golpe','Guarda','Truque'].includes(e.def(c).type)&&e.def(c).name.toLowerCase().includes('psychic');
 Engine.prototype.refreshBoydd=function(){if(!this.s)return;const count=this.s.players.reduce((n,s)=>n+s.extra.length,0);for(const b of this.s.combats){if(b.boyddExtraBonus===undefined)continue;b.attack+=count-b.boyddExtraBonus;b.boyddExtraBonus=count;const m=b.attackModifiers?.find(m=>m.name==='Boydd · primeiro Golpe · Zonas Extras');if(m)m.value=count;}};
 for(const k of ['move','createToken','destroyToken'])Engine.prototype[k]=function(...args){const result=u09[k].apply(this,args);this.refreshBoydd();return result;};
-Engine.prototype.script=function(card){if(card?.token&&card.balanceToken){const sc=u09.script.call(this,card),ops=sc.hit||sc.success;return card.balanceToken==='raven'?{onBlock:ops}:{onAttack:ops};}return u09.script.call(this,card);};
+Engine.prototype.script=function(card){if(card?.token&&card.balanceToken){const sc=u09.script.call(this,card),ops=sc.hit||sc.success;return card.balanceToken==='raven'?{onBlock:ops}:card.balanceToken==='tiger'?{hit:ops}:{onAttack:ops};}return u09.script.call(this,card);};
 Engine.prototype.activatePaid=function(p,a){
  if(a.type==='balanceDiscard'&&this.script(this.find(a.uid).card).balanceDiscard==='psychic'){
   const from=this.script(this.find(a.uid).card).discardSearchFrom;
@@ -528,15 +561,15 @@ Engine.prototype.runOps=function(ops,ctx){for(const op of ops){
  else u09.runOps.call(this,[op],ctx);
 }};
 Engine.prototype.beginPayment=function(p,intent,pay){if(intent.type==='balanceDiscard'){
- const color=this.script(this.find(intent.uid).card).discardColor,options=this.energies(p,true).filter(c=>this.def(c).color===color);
+ const color=this.script(this.find(intent.uid).card).discardColor,options=this.energies(p,true).filter(c=>this.energyHasColor(c,color));
  if(!options.length)throw Error('Este efeito exige 1 energia '+color.toLowerCase()+' ativa.');pay={...pay,ownColor:color};
  if(!intent.selectEnergy&&!intent.energyUids)intent={...intent,energyUids:[options[0].uid]};
 }return u09.beginPayment.call(this,p,intent,pay);};
-Engine.prototype.completePayment=function(p,intent,pay,uids){if(pay.ownColor&&(intent.energyUids||[]).some(uid=>this.def(this.find(uid)?.card)?.color!==pay.ownColor))throw Error('Cor de energia inválida.');return u09.completePayment.call(this,p,intent,pay,uids);};
+Engine.prototype.completePayment=function(p,intent,pay,uids){if(pay.ownColor&&(intent.energyUids||[]).some(uid=>!this.energyHasColor(this.find(uid)?.card,pay.ownColor)))throw Error('Cor de energia inválida.');return u09.completePayment.call(this,p,intent,pay,uids);};
 Engine.prototype.legalActions=function(p){const c=this.s?.choice;
  if(c?.player===p&&c.kind==='balanceScry')return c.uids.map(uid=>({type:'balanceChoose',uid}));
  if(c?.player===p&&c.kind==='balancePsychic09')return ['Golpe','Truque','Guarda'].map(cardType=>({type:'balanceDeclare',cardType}));
- return u09.legalActions.call(this,p).map(a=>a.type==='chooseOwnEnergy'&&c?.pay?.ownColor?{...a,options:a.options.filter(uid=>this.def(this.find(uid).card).color===c.pay.ownColor)}:a).filter(a=>a.type!=='balanceDiscard'||this.energies(p,true).some(e=>this.def(e).color===this.script(this.find(a.uid).card).discardColor));
+ return u09.legalActions.call(this,p).map(a=>a.type==='chooseOwnEnergy'&&c?.pay?.ownColor?{...a,options:a.options.filter(uid=>this.energyHasColor(this.find(uid).card,c.pay.ownColor))}:a).filter(a=>a.type!=='balanceDiscard'||this.energies(p,true).some(e=>this.energyHasColor(e,this.script(this.find(a.uid).card).discardColor)));
 };
 Engine.prototype.apply=function(p,a){const c=this.s.choice,side=this.s.players[p];
  if(c?.player===p&&c.kind==='balanceScry'){
@@ -559,12 +592,245 @@ Engine.prototype.apply=function(p,a){const c=this.s.choice,side=this.s.players[p
 Engine.prototype.finishCombat=function(b){this.refreshBoydd();return u09.finishCombat.call(this,b);};
 Engine.prototype.view=function(p){const v=u09.view.call(this,p);if(v&&this.s.choice?.update09Reveal)v.revealedCards=this.s.choice.uids.map(uid=>copy(this.find(uid).card));return v;};
 MahaZeno.install(Engine,scripts,SUPPORTED);
+const playtestApply=Engine.prototype.apply,playtestLegal=Engine.prototype.legalActions,playtestView=Engine.prototype.view;
+const playtestOps=Engine.prototype.runOps,playtestScript=Engine.prototype.script;
+Engine.prototype.playtestStage=function(p,zone){
+ const side=this.s.players[p],sequence=this.script(side.fighter).sequence,step=side.od;
+ if(step<sequence.length&&sequence[step]===zone)return step===0?'start':step===sequence.length-1?'finish':'continue';
+ if(zone===sequence[0]&&sequence[Math.min(step,sequence.length-1)]!==zone)return 'start';
+ return null;
+};
+Engine.prototype.script=function(card){
+ const sc=playtestScript.call(this,card),d=this.def(card);
+ if(!d?.playtest)return sc;
+ const updated={...sc};
+ if(d.type==='Truque'){updated.finta=d.playtestFinta;updated.desvio=d.playtestDesvio;}
+ if(d.number===8)updated.onPlay=[{op:'playtestCancelVigor'}];
+ if([41,61].includes(d.number))updated.hit=[{op:'powerDown'}];
+ if(d.number===203)updated.onPlay=[{op:'mahaSearchOnly'}];
+ if(d.sequenceBreak)updated.break=false;
+ if(d.sequenceEffect&&[42,43,94,97].includes(d.number)){delete updated.onPlay;delete updated.hit;}
+ if([111,128,144,146].includes(d.number))delete updated.onPlay;
+ if(d.number===146)updated.onPlay=[{op:'expansionReactivate',when:'revide'}];
+ if(d.number===43)delete updated.break;
+ if([80,84].includes(d.number)){delete updated.focusThreshold;delete updated.hit;}
+ if(d.number===146)delete updated.hit;
+ if(d.number===100)updated.revideAttack=2;
+ if(d.number===91)updated.hit=[{op:'powerDown'}];
+ if(d.number===93)updated.onPlay=[{op:'playtestMagenta'}];
+ if(d.number===55&&d.sequenceImpetus){delete updated.onPlay;delete updated.revideImpetus;}
+ return updated;
+};
+Engine.prototype.runOps=function(ops,ctx){
+ if(!ops.some(op=>op.op.startsWith('playtest')))return playtestOps.call(this,ops,ctx);
+ for(const op of ops){
+  if(this.s.winner!==null)return;
+  const side=this.s.players[ctx.p];
+  if(op.op==='playtestSearch'){
+   const uids=side.deck.filter(c=>this.def(c).name===op.name).map(c=>c.uid);
+   if(uids.length)this.s.choice={kind:'namedSearch',player:ctx.p,uids,from:'deck',to:'hand'};
+  }else if(op.op==='playtestEnergy'){
+   if(side.deck.length&&side.stamina.length<7)this.move(side.deck[0].uid,'stamina').active=false;
+  }else if(op.op==='playtestGlacius'){
+   const uids=side.deck.filter(c=>this.def(c).type==='Guarda'&&this.def(c).name.startsWith('Glacius')).map(c=>c.uid);
+   if(uids.length&&side.extra.length<4)this.s.choice={kind:'searchExtraGuard',player:ctx.p,uids};
+  }else if(op.op==='playtestMagenta'){
+   const hit=[...this.s.completed,...this.s.combats].some(b=>b.p===ctx.p&&b.finished&&!b.cancelled&&b.damage>0&&this.script(this.find(b.uid)?.card||{id:b.idCard}).flow);
+   if(hit)side.power++;
+  }else if(op.op==='playtestTroca'){
+   const source=this.find(ctx.source),energy=this.find(ctx.energyUid);
+   if(source?.z==='arena'&&energy?.z==='stamina'&&energy.p===ctx.p){
+    const active=energy.card.active;
+    this.move(ctx.energyUid,'hand');
+    const incoming=this.move(ctx.source,'stamina');incoming.active=active;incoming.public=true;
+   }
+  }else playtestOps.call(this,[op],ctx);
+ }
+};
+Engine.prototype.apply=function(p,a){
+ if(a.type==='playtestTroca'){
+  if(!this.legalActions(p).some(x=>x.type===a.type&&x.uid===a.uid&&x.energyUid===a.energyUid))throw Error('Troca indisponível.');
+  this.move(a.uid,'arena');
+  this.push({kind:'effect',p,ops:[{op:'playtestTroca'}],context:{p,source:a.uid,energyUid:a.energyUid},label:'Troca'});
+  this.s.priority=other(p);this.s.passes=0;return;
+ }
+ if(['toggleSuper','toggleSuperDefense'].includes(a.type))throw Error('Supers agora são Ações exclusivas do Baralho Adicional e ainda não estão disponíveis nesta prévia.');
+ return playtestApply.call(this,p,a);
+};
+Engine.prototype.legalActions=function(p){
+ const actions=playtestLegal.call(this,p);
+ if(this.s&&this.s.winner===null&&this.s.priority===p&&!this.s.choice&&this.canIndependent(p)){
+  for(const c of this.usable(p).filter(c=>this.def(c).troca))
+   for(const energy of this.s.players[p].stamina)actions.push({type:'playtestTroca',uid:c.uid,energyUid:energy.uid});
+ }
+ return actions;
+};
+Engine.prototype.view=function(p){
+ const view=playtestView.call(this,p);
+ view?.players.forEach((side,i)=>Object.assign(side,{superCharge:Math.max(0,Math.min(this.def(this.s.players[i].fighter).superMax||0,this.s.players[i].superCharge||0)),superMax:this.def(this.s.players[i].fighter).superMax||0}));
+ return view;
+};
+
+for(const number of [211,214,215])if(!SUPPORTED.includes(number))SUPPORTED.push(number);
+scripts[211]={requiresAttack:true,onPlay:[{op:'playtestRetaliation'}]};
+scripts[214]={};
+scripts[215]={onPlay:[{op:'playtestFury'}]};
+const revisedPlay=Engine.prototype.play,revisedLegal=Engine.prototype.legalActions,revisedApply=Engine.prototype.apply;
+const revisedOps=Engine.prototype.runOps,revisedMove=Engine.prototype.move,revisedPaid=Engine.prototype.activatePaid;
+Engine.prototype.continuationTarget=function(combat=this.current()){
+ if(!combat||combat.finished||combat.cancelled||combat.sequenceStage!=='continue')return null;
+ const card=this.find(combat.uid)?.card;
+ return card&&this.def(card).type==='Golpe'&&this.def(card).sequenceKeyword==='continue'?combat:null;
+};
+Engine.prototype.play=function(p,a,revide){
+ if(this.def(this.find(a.uid)?.card)?.number===211&&!this.continuationTarget())throw Error('Retaliação exige um Golpe com Continuação realizando essa etapa.');
+ return revisedPlay.call(this,p,a,revide);
+};
+Engine.prototype.move=function(uid,to){
+ const before=this.find(uid),trigger=before?.z==='extra'&&to==='deck'&&this.def(before.card).number===214,owner=before?.p;
+ const card=revisedMove.call(this,uid,to);
+ if(trigger&&this.s.winner===null)this.push({kind:'effect',p:owner,ops:[{op:'playtestFlushOffer'}],context:{p:owner,source:uid},label:'Guarda Flush — retornou ao Baralho'});
+ return card;
+};
+Engine.prototype.activatePaid=function(p,a){
+ if(a.type!=='playtestFlushPay')return revisedPaid.call(this,p,a);
+ return this.push({kind:'effect',p,ops:[{op:'playtestFlushPlace'}],context:{p,source:a.uid,cardUid:a.cardUid},label:'Guarda Flush — preparar carta'});
+};
+Engine.prototype.runOps=function(ops,ctx){
+ const custom=['playtestCancelVigor','playtestRetaliation','playtestDiscardOpponent','playtestFlushOffer','playtestFlushPlace','playtestBoostContinuation','playtestFury'];
+ if(!ops.some(op=>custom.includes(op.op)))return revisedOps.call(this,ops,ctx);
+ for(const op of ops){
+  if(this.s.winner!==null)return;
+  const p=ctx.p,side=this.s.players[p];
+  if(op.op==='playtestCancelVigor'){
+   const uids=this.energies(other(p),true).map(c=>c.uid);
+   if((side.receivedDamage||0)>=5&&uids.length)this.s.choice={kind:'playtestFreeze',player:p,uids,selected:[],required:Math.min(2,uids.length)};
+  }else if(op.op==='playtestRetaliation'){
+   const b=this.continuationTarget(this.s.combats.find(b=>b.id===ctx.target));
+   if(b){b.attack++;(b.attackModifiers||(b.attackModifiers=[])).push({name:'Retaliação',value:1});(b.hitEffects||(b.hitEffects=[])).push({p,ops:[{op:'playtestDiscardOpponent'}],context:{p,source:ctx.source},label:'Retaliação — descartar'});}
+  }else if(op.op==='playtestDiscardOpponent'){
+   const target=other(p),uids=this.s.players[target].hand.map(c=>c.uid);
+   if(uids.length)this.s.choice={kind:'discard',player:target,uids};
+  }else if(op.op==='playtestFlushOffer'){
+   if(side.extra.length<4&&side.discard.length&&this.energies(p,true).some(c=>this.energyHasColor(c,'Roxo')))this.s.choice={kind:'playtestFlush',player:p,source:ctx.source,uids:side.discard.map(c=>c.uid)};
+  }else if(op.op==='playtestFlushPlace'){
+   if(this.find(ctx.cardUid)?.p===p&&this.find(ctx.cardUid)?.z==='discard'&&side.extra.length<4){const card=this.putEffectExtra(p,ctx.cardUid,true);card.ready=this.s.turn+1;}
+  }else if(op.op==='playtestBoostContinuation'){
+   const b=this.continuationTarget(this.s.combats.find(b=>b.id===ctx.combat));
+   if(b){b.attack++;(b.attackModifiers||(b.attackModifiers=[])).push({name:'Fúria Abrasiva',value:1});}
+  }else if(op.op==='playtestFury'){
+   const hit=[...this.s.completed,...this.s.combats].some(b=>b.p===p&&b.finished&&!b.cancelled&&b.damage>0&&this.script(this.find(b.uid)?.card||{id:b.idCard}).fury);
+   if(hit)this.s.choice={kind:'playtestFury',player:p,uids:this.s.players.map(s=>s.fighter.uid)};
+  }else revisedOps.call(this,[op],ctx);
+ }
+};
+Engine.prototype.legalActions=function(p){
+ const choice=this.s?.choice;
+ if(choice?.kind.startsWith('playtest')){
+  if(choice.player!==p||this.s.winner!==null)return [];
+  if(choice.kind==='playtestFreeze')return choice.uids.map(uid=>({type:'playtestFreeze',uid}));
+  if(choice.kind==='playtestFury')return choice.uids.flatMap(uid=>['Inferior','Meio','Superior'].map(zone=>({type:'playtestFury',uid,zone})));
+  if(choice.kind==='playtestFlush'){
+   const actions=[{type:'playtestFlush',decline:true}];
+   if(this.s.players[p].extra.length<4)for(const energy of this.energies(p,true).filter(c=>this.energyHasColor(c,'Roxo')))for(const cardUid of choice.uids.filter(uid=>this.find(uid)?.z==='discard'))actions.push({type:'playtestFlush',uid:choice.source,energyUid:energy.uid,cardUid});
+   return actions;
+  }
+ }
+ const actions=revisedLegal.call(this,p).filter(a=>a.type!=='play'||this.def(this.find(a.uid)?.card)?.number!==211||this.continuationTarget());
+ const b=this.continuationTarget();
+ if(this.s&&this.s.winner===null&&this.s.priority===p&&!choice&&b)for(const card of this.s.players[p].discard.filter(c=>this.def(c).number===215))actions.push({type:'playtestAbrasiva',uid:card.uid,combat:b.id});
+ return actions;
+};
+Engine.prototype.apply=function(p,a){
+ const choice=this.s.choice;
+ if(choice?.kind.startsWith('playtest')||a.type==='playtestAbrasiva'){
+  if(!this.legalActions(p).some(legal=>Object.keys(legal).every(key=>legal[key]===a[key])&&Object.keys(a).every(key=>key in legal)))throw Error('Escolha de efeito inválida.');
+  if(a.type==='playtestFreeze'){
+   choice.selected.push(a.uid);choice.uids=choice.uids.filter(uid=>uid!==a.uid);
+   if(choice.selected.length<choice.required)return;
+   for(const uid of choice.selected){const card=this.find(uid).card;card.active=false;card.lockedUntil=this.s.turn+1;}
+   if(this.s.active===other(p)&&!this.energies(other(p),true).length)this.s.autoEnd=true;
+  }else if(a.type==='playtestFury'){
+   const target=this.s.players.find(side=>side.fighter.uid===a.uid);
+   target.expansionFury||={};target.expansionFury[a.zone]=(target.expansionFury[a.zone]||0)+2;
+  }else if(a.type==='playtestFlush'&&!a.decline){
+   this.s.choice=null;
+   return this.beginPayment(p,{type:'playtestFlushPay',uid:a.uid,cardUid:a.cardUid,energyUids:[a.energyUid]},{own:1,opp:0});
+  }else if(a.type==='playtestAbrasiva'){
+   this.move(a.uid,'banished');
+   this.push({kind:'effect',p,ops:[{op:'playtestBoostContinuation'}],context:{p,source:a.uid,combat:a.combat},label:'Fúria Abrasiva — Continuação'});
+   this.s.priority=other(p);this.s.passes=0;return;
+  }
+  this.s.choice=null;this.s.priority=this.s.active;return;
+ }
+ return revisedApply.call(this,p,a);
+};
+// Remaining 0.17 actions: choices use public instance UIDs, never client-side effects.
+const complete018={ops:Engine.prototype.runOps,legal:Engine.prototype.legalActions,apply:Engine.prototype.apply,paid:Engine.prototype.activatePaid,script:Engine.prototype.script,od:Engine.prototype.fighterOverdrive,newTurn:Engine.prototype.newTurn};
+Engine.prototype.excaliumTargets018=function(source){
+ const targets=new Set();
+ for(const link of this.s.stack){if(link.cancelled||!['attack','guard','trick','effect'].includes(link.kind))continue;const uid=link.uid||link.context?.source,f=uid&&this.find(uid);if(uid!==source&&f?.z==='arena'&&['Golpe','Guarda','Truque'].includes(this.def(f.card).type))targets.add(uid);}
+ for(const b of this.s.combats.filter(b=>!b.finished&&!b.cancelled)){const f=this.find(b.uid);if(f&&b.uid!==source&&this.def(f.card).type==='Golpe'&&!b.token)targets.add(b.uid);for(const g of b.blocks.filter(g=>!g.cancelled))if(g.uid!==source&&this.find(g.uid)?.z==='arena')targets.add(g.uid);}
+ return [...targets];
+};
+Engine.prototype.runOps=function(ops,ctx){for(const op of ops){
+ if(this.s.winner!==null)return;const p=ctx.p,side=this.s.players[p];
+ if(op.op==='playtestExcaliumRevelation'){
+  const count=(side.expansionRevealedActions||[]).length;
+  if(count>=4)side.excaliumNoGuards018=true;
+  else if(count===3){const uids=this.excaliumTargets018(ctx.source);if(uids.length)this.s.choice={kind:'playtestCompleteNegate',player:p,uids,source:ctx.source};}
+  else if(count>=1){const uids=this.s.players.flatMap(s=>s.extra.map(c=>c.uid));if(uids.length)this.s.choice={kind:'playtestCompleteReturn',player:p,uids,source:ctx.source};}
+ }else if(op.op==='playtestSnowRadiance'){
+  const count=side.blockCountTurn018===this.s.turn?side.blockCount018||0:0;
+  if(count){side.snowBlockBonuses018||={};const turn=this.s.turn+1;side.snowBlockBonuses018[turn]=(side.snowBlockBonuses018[turn]||0)+count*2;side.snowBlockTurn018=turn;side.snowBlockBonus018=side.snowBlockBonuses018[turn];}
+ }else if(op.op==='playtestHarmonicFlow'){
+  if(side.played.some(c=>this.script({id:c.id,owner:p}).fluxo))(side.harmonicBoosts018||=[]).push({turn:this.s.turn,remaining:2});
+ }else complete018.ops.call(this,[op],ctx);
+}};
+Engine.prototype.legalActions=function(p){const c=this.s?.choice;if(c?.kind==='playtestCompleteReturn'||c?.kind==='playtestCompleteNegate')return c.player===p?c.uids.map(uid=>({type:'playtestCompleteChoose',uid})):[];return complete018.legal.call(this,p);};
+Engine.prototype.apply=function(p,a){
+ const c=this.s.choice;
+ if(c?.kind==='playtestCompleteReturn'||c?.kind==='playtestCompleteNegate'){
+  if(p!==c.player||a.type!=='playtestCompleteChoose'||!c.uids.includes(a.uid))throw Error('Escolha uma Ação válida para Revelação Excalium.');
+  if(c.kind==='playtestCompleteReturn'){const f=this.find(a.uid);if(f?.z!=='extra')throw Error('Escolha uma carta na Zona Extra.');if(f.card.token)this.destroyToken(a.uid,'return');else this.expansionReturn(a.uid);}
+  else{
+   if(!this.excaliumTargets018(c.source).includes(a.uid))throw Error('Esta Ação já não pode ser negada.');
+   for(const link of this.s.stack)if(link.uid===a.uid||link.context?.source===a.uid)link.cancelled=true;
+   for(const b of this.s.combats){if(b.uid===a.uid&&!b.finished)b.cancelled=true;for(const g of b.blocks)if(g.uid===a.uid)g.cancelled=true;}
+   this.log('Revelação Excalium negou '+this.def(this.find(a.uid).card).name+'.','efeito de carta');
+  }
+  this.s.choice=null;this.s.priority=this.s.active;this.s.passes=0;return;
+ }
+ return complete018.apply.call(this,p,a);
+};
+Engine.prototype.applyStrikeBoosts018=function(b){
+ if(!b||b.appliedBoosts018)return;b.appliedBoosts018=true;const side=this.s.players[b.p],d=this.def(this.find(b.uid).card);
+ const boosts=(side.harmonicBoosts018||[]).filter(boost=>boost.turn===this.s.turn&&boost.remaining>0);
+ if(boosts.length){for(const boost of boosts)boost.remaining--;b.attack+=boosts.length;(b.attackModifiers||=[]).push({name:'Fluxo Harmônico',value:boosts.length});}
+ if(side.excaliumNoGuards018&&d.type==='Golpe'&&d.name.startsWith('Excalium')){b.noGuards=true;side.excaliumNoGuards018=false;}
+};
+Engine.prototype.activatePaid=function(p,a){const before=this.current()?.id,result=complete018.paid.call(this,p,a);
+ if(a.type==='block'&&a.uids?.length){const side=this.s.players[p];if(side.blockCountTurn018!==this.s.turn){side.blockCountTurn018=this.s.turn;side.blockCount018=0;}side.blockCount018+=a.uids.length;}
+ const b=this.current();if(b&&b.id!==before)this.applyStrikeBoosts018(b);return result;
+};
+Engine.prototype.fighterOverdrive=function(p,a,revide){const result=complete018.od.call(this,p,a,revide);this.applyStrikeBoosts018(this.current());return result;};
+Engine.prototype.script=function(card){const sc=complete018.script.call(this,card),p=card?.owner??(this.s&&card?.uid?this.find(card.uid)?.p:undefined),side=this.s?.players[p],bonus=side?.snowBlockBonuses018?.[this.s?.turn]||0;if(!bonus)return sc;return {...sc,blockBonus:(e,owner)=>(sc.blockBonus?.(e,owner)||0)+bonus};};
+Engine.prototype.newTurn=function(){const result=complete018.newTurn.call(this);for(const side of this.s.players){side.harmonicBoosts018=(side.harmonicBoosts018||[]).filter(boost=>boost.turn===this.s.turn&&boost.remaining>0);for(const turn of Object.keys(side.snowBlockBonuses018||{}))if(Number(turn)<this.s.turn)delete side.snowBlockBonuses018[turn];}return result;};
 Engine.RULESET_ID=RULESET_ID;
 // Voluntary duel forfeit. Hand reordering is presentation-only.
 const interfaceLegal=Engine.prototype.legalActions,interfaceApply=Engine.prototype.apply;
 Engine.prototype.legalActions=function(p){const acts=interfaceLegal.call(this,p);if(this.s&&this.s.winner===null&&[0,1].includes(p))acts.push({type:'resign'});return acts;};
 Engine.prototype.apply=function(p,a){if(a.type==='resign'){this.s.winner=1-p;this.s.phase='finished';this.s.choice=null;this.log('Jogador '+(p+1)+' desistiu do duelo.','Desistência');return;}return interfaceApply.call(this,p,a);};
-return {Engine,chooseAI,SUPPORTED,VERSION,RULESET_ID};
+
+const legal15=Engine.prototype.legalActions;Engine.prototype.legalActions=function(p){const c=this.s?.choice;if(c&&['blossom15Hand','blossom15Energy'].includes(c.kind))return c.player===p?c.uids.map(uid=>({type:'discardChoice',uid})):[];return legal15.call(this,p);};
+
+// Individual paid declarations retain a window to add another blocker.
+const incremental019={legal:Engine.prototype.legalActions,apply:Engine.prototype.apply};
+Engine.prototype.legalActions=function(p){const acts=incremental019.legal.call(this,p),block=acts.find(a=>a.type==='block');if(block)acts.push({...block,type:'addBlock'});return acts;};
+Engine.prototype.apply=function(p,a){if(a.type==='addBlock'){if(this.s.choice||p!==this.s.priority||!this.legalActions(p).some(x=>x.type==='addBlock')||!a.uids?.length)throw Error('Bloqueio indisponível.');return incremental019.apply.call(this,p,{...a,type:'block',incremental019:true});}return incremental019.apply.call(this,p,a);};
+Supers021.install(Engine,scripts,SUPPORTED);
+const chooseWithSuper021=(v,c)=>{if(v.choice?.kind.startsWith('super021')){if(v.choice.kind==='super021Frenzy')return v.players[v.viewer??1].superCharge<5?(v.actions.find(a=>a.uid)||v.actions[0]):v.actions[0];if(v.choice.kind==='super021Rebound')return v.actions.find(a=>a.option==='rebound')||v.actions[0];if(v.choice.kind==='super021Count')return v.actions.at(-1);if(v.choice.kind==='super021Target')return v.actions.find(a=>a.uid===v.players[1-(v.viewer??1)].fighter.uid)||v.actions[0];return v.actions[0];}return v.actions.find(a=>a.type==='activateSuper')||chooseAI(v,c);};
+return {Engine,chooseAI:chooseWithSuper021,SUPPORTED,VERSION,RULESET_ID};
 });
 
 

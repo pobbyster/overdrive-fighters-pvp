@@ -1,27 +1,43 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Instituto de Batalha Roudge · Tutorial</title><link rel="preload" href="assets/tutorial/NeuePlakCondensed-SemiBold.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="tutorial-game.css"></head>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Instituto de Batalha Roudge · Tutorial</title><link rel="preload" href="assets/tutorial/NeuePlakCondensed-SemiBold.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="tutorial-game.css"><link rel="stylesheet" href="motion-015.css"><link rel="stylesheet" href="update-client.css"><link rel="stylesheet" href="update-021.css"></head>
 <body>
-<header class="topbar"><a href="home.html" class="rivals-menu-hud" aria-label="Menu principal"><img src="assets/rivals/menu.webp" alt="Menu"></a><span>INSTITUTO DE BATALHA ROUDGE</span><div class="top-controls"><button id="soundToggle" type="button" aria-label="Controlar música do tutorial" aria-pressed="false">Ativar som</button><button id="chaptersOpen" aria-expanded="false">Lições <b id="progressLabel">0 / 12</b></button></div></header>
+<header class="topbar"><a href="home.html" class="rivals-menu-hud" aria-label="Menu principal"><img src="assets/rivals/menu.webp" alt="Menu"></a><span>INSTITUTO DE BATALHA ROUDGE</span><div class="top-controls"><button id="soundToggle" type="button" aria-label="Controlar música do tutorial" aria-pressed="false">Ativar som</button><button id="chaptersOpen" aria-expanded="false">Escolher assunto <b id="progressLabel">0 / 12</b></button></div></header>
 <nav id="chapters" aria-label="Lições do tutorial" hidden></nav>
-<main>
+<section id="tutorialMenu" class="tutorial-menu" aria-labelledby="menuTitle" hidden>
+<div class="tutorial-welcome"><div><span>APRENDA NO SEU RITMO</span><h1 id="menuTitle" tabindex="-1">O que você quer aprender?</h1><p>Escolha um assunto e pratique com Blossom e Hanma. Você pode voltar aqui a qualquer momento, sem seguir uma ordem.</p></div><img src="assets/tutorial/hanma-normal.webp" alt="Hanma, seu instrutor"></div>
+<div id="topicGroups"></div></section>
+<main id="tutorialTraining" hidden>
 <section class="chapter-heading"><span id="chapterNumber">01 / 12</span><h1 id="chapterTitle">Seu primeiro treino</h1><button id="restart">Reiniciar lição ↻</button></section>
 <div class="training-layout">
 <aside class="mentor blossom"><span>VOCÊ · APRENDIZ</span><div class="portrait-frame"><img id="blossomPortrait" src="assets/tutorial/blossom-normal.webp" alt="Blossom, sua lutadora"></div><div class="character-line" aria-live="polite"><p id="blossomLine">Pronta para o treino!</p></div></aside>
-<section class="table-area" aria-label="Campo de treino">
+<section class="table-area" aria-label="Campo de treino" data-focus="field">
 <div class="scorebar"><div><b>BLOSSOM</b><span id="ownScore"></span></div><span class="training-label">DUELO GUIADO <small id="turnLabel"></small></span><div><b>HANMA</b><span id="enemyScore"></span></div></div>
+<div class="enemy-hand018" id="trainingEnemyHand" aria-label="Mão de Hanma, cartas ocultas"></div>
 <div class="table-perspective"><div id="field" class="table-surface">
 <section class="side enemy"><div class="energy-band"><span>ESTÂMINA <small id="enemyEnergyCount"></small></span><div class="energy" id="enemyStamina" aria-label="Estâmina de Hanma"></div></div><div class="zone-row"><button class="pile" data-zone="enemyDeck" id="enemyDeck">BARALHO</button><div class="extra-group"><span class="extra-caption">ZONA EXTRA · HANMA</span><div id="enemyExtra" class="extra"></div></div><button class="pile" data-zone="enemyDiscard" id="enemyDiscard">DESCARTE</button></div></section>
 <section class="combat" data-region="arena"><button data-zone="arena" class="arena-zone-label">ARENA</button><small class="combat-zones">Superior · Meio · Inferior</small><div id="combatCards"></div><p id="combatResult">Observe o objetivo e interaja com o campo.</p></section>
-<section class="side own"><div class="zone-row"><div class="discard-group"><button class="pile" data-zone="discard" id="ownDiscard">DESCARTE</button><button class="banish" data-zone="banished" id="ownBanished">BANIDAS · 0</button></div><div class="extra-group" data-region="extra"><button class="extra-caption" data-zone="extra">ZONA EXTRA · BLOSSOM</button><div id="ownExtra" class="extra"></div></div><button class="pile" data-zone="deck" id="ownDeck">BARALHO</button></div><div class="energy-band"><span>ESTÂMINA <small id="ownEnergyCount"></small></span><div class="energy" id="ownStamina" aria-label="Sua Estâmina"></div></div></section>
+<section class="side own"><div class="zone-row"><div class="discard-group"><button class="pile" data-zone="discard" id="ownDiscard">DESCARTE</button><button class="banish" data-zone="banished" id="ownBanished">BANIDAS · 0</button></div><div class="extra-group" data-region="extra" data-zone="extra"><button class="extra-caption">ZONA EXTRA · BLOSSOM</button><div id="ownExtra" class="extra"></div></div><button class="pile" data-zone="deck" id="ownDeck">BARALHO</button></div><div class="energy-band"><span>ESTÂMINA <small id="ownEnergyCount"></small></span><div class="energy" id="ownStamina" aria-label="Sua Estâmina"></div></div></section>
 </div></div>
-<section class="hand-area"><span>SUA MÃO <small id="handCount"></small></span><div id="hand"></div></section>
+<section class="hand-area" data-zone="hand" data-region="hand" data-focus="hand"><span>SUA MÃO <small id="handCount"></small></span><div id="hand"></div></section>
+<aside id="trainingControls018" data-zone="phases" data-region="phases" data-focus="phases" aria-label="Fases e opções do duelo de treino">
+<button data-phase="start" data-control="start" style="--phase-art:url(assets/hud018/start.png)" aria-label="Início do turno">Início do turno</button>
+<button data-phase="prepare" data-control="prepare" style="--phase-art:url(assets/hud018/preparation.png)" aria-label="Preparação">Preparação</button>
+<button data-phase="combat" data-control="combat" style="--phase-art:url(assets/hud018/combat.png)" aria-label="Combate">Combate</button>
+<button data-phase="end" data-control="end" style="--phase-art:url(assets/hud018/end.png)" aria-label="Fim do turno">Fim do turno</button>
+<button data-control="replenish" style="--phase-art:url(assets/hud018/replenish.png)" aria-label="Repor">Repor</button>
+<button data-control="response" style="--phase-art:url(assets/hud018/response.png)" aria-label="Resposta">Resposta</button>
+<button data-control="options" style="--phase-art:url(assets/hud018/options.png)" aria-label="Opções">Opções</button>
+<div class="training-calculations018" data-focus="calculations"><b id="trainingAttack018">0</b><b id="trainingBlock018">0</b><b id="trainingDamage018">0</b><span>ATQ</span><span>BLQ</span><span>DANO</span></div>
+</aside>
+<div id="referenceStrip018" hidden></div>
 </section>
 <aside class="mentor hanma"><span>IA · MENTOR</span><div class="portrait-frame"><img id="hanmaPortrait" src="assets/tutorial/hanma-normal.webp" alt="Hanma, seu instrutor"></div><div class="character-line" aria-live="polite"><p id="hanmaLine">Vamos aprender lutando.</p></div></aside>
 </div>
-<section class="dialogue" id="dialogue" data-speaker="hanma" aria-label="Instruções de Hanma"><div class="dialogue-inner"><b id="speaker">HANMA</b><p id="dialogText"></p><div class="objective"><span>SEU OBJETIVO</span><strong id="objective"></strong></div><div id="choices"></div><p id="feedback" role="status" aria-live="polite"></p><div class="dialogue-footer"><span id="stepLabel"></span><button id="nextLesson" hidden>Próxima lição →</button></div></div></section>
+<section class="dialogue" id="dialogue" data-speaker="hanma" aria-label="Instruções de Hanma"><div class="dialogue-inner"><b id="speaker">HANMA</b><p id="dialogText"></p><div class="objective"><span>SEU OBJETIVO</span><strong id="objective"></strong></div><div id="choices"></div><p id="feedback" role="status" aria-live="polite"></p><div class="dialogue-footer"><span id="stepLabel"></span><button id="nextLesson" hidden>Escolher outro assunto →</button></div></div></section>
 <footer class="training-footer"><a href="rules.html">Consultar regras</a><button id="review">Rever a última fala</button></footer>
 </main>
 <aside id="cardZoom" hidden aria-label="Carta ampliada"><img alt=""><p></p></aside><p id="loadError" role="alert" hidden></p>
-<audio id="tutorialMusic" src="assets/tutorial/before-the-first-strike.mp3" preload="auto" autoplay loop></audio>
-<script src="arena-core/strict-card-scripts.js"></script><script src="arena-core/first-drive-expansion.js"></script><script src="arena-core/rivals-04.js"></script><script src="arena-core/rivals-05.js"></script><script src="arena-core/rivals-06.js"></script><script src="arena-core/rules-version.js"></script><script src="arena-core/game-modes.js"></script><script src="arena-core/mahazeno.js"></script><script src="arena-core/strict-engine.js"></script><script src="tutorial-scenarios.js"></script><script src="tutorial-audio.js"></script><script src="tutorial-game.js"></script>
-</body></html>
+<div id="tutorialFocus018" aria-hidden="true" hidden><i></i><i></i><i></i><i></i><span></span></div>
+<audio id="tutorialMusic" src="assets/tutorial/before-the-first-strike.mp3" preload="auto" loop></audio>
+<script src="arena-core/strict-card-scripts.js"></script><script src="arena-core/first-drive-expansion.js"></script><script src="arena-core/rivals-04.js"></script><script src="arena-core/rivals-05.js"></script><script src="arena-core/rivals-06.js"></script><script src="arena-core/rules-version.js"></script><script src="arena-core/game-modes.js"></script><script src="arena-core/mahazeno.js"></script><script src="arena-core/supers-021.js"></script><script src="arena-core/strict-engine.js"></script><script src="tutorial-scenarios.js"></script><script src="audio-focus.js"></script><script src="tutorial-audio.js"></script><script src="tutorial-focus.js"></script><script src="tutorial-game.js"></script>
+<script src="motion-015.js"></script><script src="navigation-017.js"></script><script src="update-client.js"></script><script src="update-021.js"></script></body></html>

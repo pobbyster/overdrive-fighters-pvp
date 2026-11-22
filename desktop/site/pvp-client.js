@@ -10,8 +10,9 @@
   def(card){const base=card?.tokenDefinition||this.catalog.get(typeof card==='string'?card:card?.id)||{name:'Carta oculta',number:0};return OverdriveRivals06.definition(card,base,this.s);}
   script(card){return card?.token?{}:window.OverdriveCardScripts.scripts[this.def(card).number]||{};}
   current(){return this.s.combats.at(-1)||null;}
-  find(uid){for(let p=0;p<2;p++){const s=this.s.players[p];if(s.fighter.uid===uid)return {p,z:'fighter',card:s.fighter};for(const z of ['hand','stamina','extra','arena','discard','banished','reserve']){const i=(s[z]||[]).findIndex(c=>c.uid===uid);if(i>=0)return {p,z,i,card:s[z][i]};}}return this.candidates.find(f=>f.card.uid===uid)||null;}
+  find(uid){for(let p=0;p<2;p++){const s=this.s.players[p];if(s.superCard?.uid===uid)return {p,z:'super',card:s.superCard,i:0};if(s.fighter.uid===uid)return {p,z:'fighter',card:s.fighter};for(const z of ['hand','stamina','extra','arena','discard','banished','reserve','superReserve']){const i=(s[z]||[]).findIndex(c=>c.uid===uid);if(i>=0)return {p,z,i,card:s[z][i]};}}return this.candidates.find(f=>f.card.uid===uid)||null;}
   energies(p,active){return this.s.players[p].stamina.filter(c=>c.active===active);}
+  paymentEnergies(p,active){return this.energies(p,active).filter(c=>!c.r05Lock&&!(c.lockedUntil>=this.s.turn)&&(active||!(c.superLock021>=this.s.turn)));}
   payment(p,c,mode='normal',x=0,zone){return this.costs[[c.uid,mode,x,...(mode==='guardStrike'?[zone]:[])].join(':')]||{own:0,opp:0};}
   guardCost(p,c,index=0){return index===0?(this.guardCosts[c.uid]??this.def(c).cost):this.def(c).cost;}
   explainCard(p,uid){return this.reasons[uid]||[];}
@@ -28,6 +29,7 @@
  const clock=document.createElement('p');clock.id='pvpDecisionClock';clock.setAttribute('role','timer');clock.hidden=true;document.body.append(clock);
  const banner=document.createElement('aside');banner.id='pvpBanner';banner.hidden=true;banner.setAttribute('role','status');banner.innerHTML='<span></span><button id="pvpReconnect">Reconectar</button><button id="pvpResign">Desistir / sair</button>';document.body.append(banner);
  const sideButton=document.createElement('button');sideButton.id='pvpSideDeck';sideButton.textContent='Trocas / próximo duelo';sideButton.hidden=true;banner.append(sideButton);
+ const specDialog=document.createElement('dialog');specDialog.id='spectatorDialog';specDialog.innerHTML='<h2>Espectadores PvP</h2><p>Qualquer jogador pode assistir às salas em partida. Mãos e escolhas privadas continuam ocultas.</p><label>Atraso da transmissão <select id="spectatorDelay"><option value="0">Ao vivo</option><option value="15">15 segundos</option><option value="30">30 segundos</option></select></label><p id="spectatorStatus"></p><label>Assistir a esta sala<input id="spectatorRoomLink" readonly aria-label="Link público da sala"></label><button id="spectatorClose">Fechar</button>';document.body.append(specDialog);const specButton=document.createElement('button');specButton.id='spectatorOptions';specButton.textContent='Espectadores';specButton.disabled=true;lobby.querySelector('.pvp-buttons').append(specButton);const specLive=specButton.cloneNode(true);specLive.id='spectatorLiveOptions';banner.append(specLive);specButton.onclick=specLive.onclick=()=>specDialog.showModal();$('spectatorClose').onclick=()=>specDialog.close();$('spectatorDelay').onchange=()=>send({type:'spectatorDelay',delay:Number($('spectatorDelay').value)});
  let socket,credential,remote,pending=null,sequence=0,room,attempt=0,retry,manual=false,resync=false,selfSeat=0,clockOffset=0,remoteRound=0,sideOpened='';
  try{credential=JSON.parse(sessionStorage.getItem('of-pvp-session')||'null');}catch{}
  const defaultServer='wss://overdrive-fighters-pvp.onrender.com/pvp';
@@ -44,7 +46,8 @@
   manual=false;resync=type==='resume';clearTimeout(retry);status('Conectando ao servidor…');try{socket=new WebSocket(url.href);}catch{status('Não foi possível abrir a conexão. Em páginas HTTPS, utilize um servidor wss://.');return;}
   socket.onopen=()=>{attempt=0;const msg=type==='resume'?{type,code:credential?.code,token:credential?.token}:{type,name:$('pvpName').value,code:$('pvpCode').value.trim().toUpperCase(),mode:$('gameMode')?.value||'standard'};send(msg);};
   socket.onmessage=event=>{const msg=JSON.parse(event.data);if(msg.protocol!==1)return;
-   if(msg.type==='welcome'){selfSeat=msg.seat;credential={url:url.href,code:msg.code,token:msg.token};sequence=msg.sequence;persist();$('pvpCode').value=msg.code;$('pvpResume').hidden=true;return;}
+   if(msg.type==='welcome'){specButton.disabled=specLive.disabled=false;selfSeat=msg.seat;credential={url:url.href,code:msg.code,token:msg.token};sequence=msg.sequence;persist();$('pvpCode').value=msg.code;$('pvpResume').hidden=true;return;}
+   if(msg.type==='spectatorSettings'){$('spectatorDelay').value=String(msg.delay);$('spectatorDelay').disabled=selfSeat!==0;$('spectatorStatus').textContent='Sala pública · '+msg.count+' espectador(es).';const link=new URL('spectator.html',url.href.replace(/^ws/,'http'));link.hash=new URLSearchParams({code:msg.code,server:url.href}).toString();$('spectatorRoomLink').value=link.href;return;}
    if(msg.type==='error'){pending=null;status(msg.message);if(!socket.roomAccepted){manual=true;socket.close();$('pvpCreate').disabled=$('pvpJoin').disabled=false;$('pvpResume').hidden=!credential;}else api.schedule();return;}
    if(msg.type==='roomExpired'){manual=true;credential=null;pending=null;room=null;persist();socket.close();$('pvpCreate').disabled=$('pvpJoin').disabled=false;$('pvpReady').hidden=$('pvpLeave').hidden=$('pvpResume').hidden=true;status(msg.message);return;}
    if(msg.type==='left'){manual=true;credential=null;pending=null;persist();socket.close();location.href='arena.html?pvp';return;}

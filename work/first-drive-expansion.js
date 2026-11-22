@@ -56,7 +56,7 @@
   };
   proto.newTurn=function(){
    previous.newTurn.call(this);
-   for(const side of this.s.players){side.expansionReturned=0;side.expansionFury=side.expansionFury||{};side.expansionFuryTemporary={};side.expansionFirstFury=false;side.expansionMourner=false;side.expansionRevealUsed=false;side.expansionExcaliumRevealed=[];side.expansionReloadHit=false;}
+   for(const side of this.s.players){side.expansionReturned=0;side.expansionRevealedActions=[];side.expansionFury=side.expansionFury||{};side.expansionFuryTemporary={};side.expansionFirstFury=false;side.expansionMourner=false;side.expansionRevealUsed=false;side.expansionExcaliumRevealed=[];side.expansionReloadHit=false;}
   };
   proto.expansionAllowed=function(p,card){
    const side=this.s.players[p],sc=this.script(card),d=this.def(card),loc=this.find(card.uid);
@@ -102,7 +102,7 @@
    const side=this.s.players[p];
    if(a.type==='expansionReveal'){
     side.fighterTapped=true;side.overdriveLocked=true;side.expansionRevealUsed=true;
-    return pushEffect(this,p,{op:'updateReveal'},'Arcturus — revelar Golpes');
+    return pushEffect(this,p,{op:'updateReveal'},'Arcturus — revelar Ações');
    }
    if(a.type==='expansionPlacideSkill'){side.fighterTapped=true;side.overdriveLocked=true;return pushEffect(this,p,{op:'expansionPlacideTop'},'Placide — preparar o topo');}
    if(a.type==='expansionMournerSkill'){
@@ -118,11 +118,11 @@
     for(const link of this.s.stack)if(link.uid===a.uid||link.context?.source===a.uid)if(link.context)link.context.expansion=clone(snapshot);
     if(this.def(loc.card).number===140)addAttack(b,side.puppyReturned||0,'PuppyPunch retornados neste jogo');
     if(sc.revealBonus&&snapshot.revealed)addAttack(b,sc.revealBonus,'Excalium · revelado');
-    if(sc.reloadBonus&&snapshot.reload>=sc.reload)addAttack(b,sc.reloadBonus,'Recarga · cartas anteriores ao custo');
+    if(sc.reloadBonus&&snapshot.reload>=sc.reload)addAttack(b,sc.reloadBonus,'Recarga · após retornar');
     addAttack(b,side.expansionNextAttack||0,'Arcturus · Golpes revelados');side.expansionNextAttack=0;
     addAttack(b,furyAttack(side,b.zone),'Fúria · '+b.zone);
     if(sc.fluxo&&side.expansionMourner)b.expansionUnblockable=true;
-    if(sc.fury&&p===this.s.active){b.expansionFirstFury=!side.expansionFirstFury;side.expansionFirstFury=true;}
+    if(sc.fury)b.expansionFirstFury=true;
    }
    if(a.type==='tokenAttack'){addAttack(this.current(),side.expansionNextAttack||0,'Arcturus · Golpes revelados');side.expansionNextAttack=0;}
    for(const link of a.expansionCostTriggers||[])this.push(link);
@@ -132,7 +132,7 @@
    for(const op of ops){
     if(this.s.winner!==null)return;
     const p=ctx.p,side=this.s.players[p];
-    if(op.op==='expansionPlacideTop'){if(side.deck.length&&side.extra.length<4){const card=this.putEffectExtra(p,side.deck[0].uid,true);card.ready=this.s.turn+1;this.log('Placide colocou o topo do baralho virado para baixo na Zona Extra.','Placide');}}else if(op.op==='updateReveal'){if(side.hand.some(c=>this.def(c).type==='Golpe'))setChoice(this,p,'revealMany',side.hand.filter(c=>this.def(c).type==='Golpe').map(c=>c.uid),{selected:[]});}
+    if(op.op==='expansionPlacideTop'){if(side.deck.length&&side.extra.length<4){const card=this.putEffectExtra(p,side.deck[0].uid,true);card.ready=this.s.turn+1;this.log('Placide colocou o topo do baralho virado para baixo na Zona Extra.','Placide');}}else if(op.op==='updateReveal'){if(side.hand.some(c=>['Golpe','Guarda','Truque'].includes(this.def(c).type)))setChoice(this,p,'revealMany',side.hand.filter(c=>['Golpe','Guarda','Truque'].includes(this.def(c).type)).map(c=>c.uid),{selected:[]});}
     else if(op.op==='expansionPuppyMill')search(this,p,puppy,'deck','discard');
     else if(op.op==='expansionFlowSearch')search(this,p,d=>flow(d)&&(!op.golpe||d.type==='Golpe'));
     else if(op.op==='expansionRevealOne'){
@@ -153,7 +153,7 @@
      else if(n===128)this.draw(p,1,false);
      else if(n===129)search(this,p,()=>true,'discard','hand');
      else if(n===138&&side.stamina.length)setChoice(this,p,'troca',side.stamina.map(c=>c.uid),{source:card.uid});
-     else if(n===139){const enemy=this.s.players[other(p)];setChoice(this,p,'deliciasBanish',side.discard.map(c=>c.uid),{selected:[],limit:Math.min(side.discard.length,enemy.discard.length)});}
+     else if(n===139){const enemy=this.s.players[other(p)];setChoice(this,p,'deliciasBanish',side.discard.map(c=>c.uid),{selected:[],limit:Math.min(3,side.discard.length,enemy.discard.length)});}
      else if(n===141){const options=[];if(side.discard.some(c=>puppy(this.def(c))))options.push('recover');if(side.deck.some(c=>puppy(this.def(c))))options.push('send');if(options.length)setChoice(this,p,'mission',[],{options});}
     }else if(op.op==='expansionReactivate'){
      const uids=this.energies(p,false).filter(c=>!c.r05Lock).map(c=>c.uid);if(uids.length)setChoice(this,p,'reactivate',uids);
@@ -172,7 +172,7 @@
    if(b.basicDamage+b.impetusDamage>0){
     if(sc.reload||sc.reloadDiscard)side.expansionReloadHit=true;
     if(this.def(this.find(b.uid)?.card)?.number===140){for(const card of [...side.discard].filter(c=>puppy(this.def(c))))this.expansionReturn(card.uid);this.shuffle(side.deck);}
-    if(b.expansionFirstFury&&this.def(side.fighter).number===132&&this.s.winner===null)pushEffect(this,b.p,{op:'expansionReactivate'},'Rynhard — primeiro Golpe com Fúria bateu');
+    if(b.expansionFirstFury&&!side.expansionFirstFury&&this.def(side.fighter).number===132&&this.s.winner===null&&(side.expansionFirstFury=true))pushEffect(this,b.p,{op:'expansionReactivate'},'Rynhard — primeiro Golpe com Fúria bateu');
 
    }
   };
@@ -180,6 +180,11 @@
    const side=this.s.players[p],n=this.def(side.fighter).number;
    if(!fighters.includes(n))return previous.fighterOverdrive.call(this,p,a,revide);
    if(n===120)throw Error('O Overdrive de Mourner não realiza um Golpe.');
+   if(n===114&&!this.arcturusSelection021){
+    if(side.od!==3||side.overdriveLocked||side.fighterTapped||!revide&&!this.canIndependent(p)||!zones.includes(a.zone))throw Error('Overdrive indisponível.');
+    const uids=side.discard.filter(c=>['Golpe','Guarda','Truque'].includes(this.def(c).type)&&this.def(c).name.includes('Excalium')).map(c=>c.uid);
+    if(uids.length){setChoice(this,p,'arcturusOD',uids,{selected:[],intent:clone(a),revide});return;}
+   }
    if(n===126&&!a.expansionSelected){
     if(side.od!==3||side.overdriveLocked||side.fighterTapped||!revide&&!this.canIndependent(p)||!zones.includes(a.zone))throw Error('Overdrive indisponível.');
     setChoice(this,p,'placideOD',playableExtra(side.extra).map(c=>c.uid),{selected:[],intent:clone(a),revide});return;
@@ -187,7 +192,7 @@
    // Os três Overdrives realizam ataques normais do lutador e respeitam Revide.
    previous.fighterOverdrive.call(this,p,a,revide);
    const b=this.current();
-   if(n===114)addAttack(b,(side.expansionExcaliumRevealed||[]).length,'Arcturus · Excalium revelados');
+   if(n===114){b.update15Arcturus=true;addAttack(b,side.banished.filter(c=>this.def(c).type==='Golpe'&&this.def(c).name.startsWith('Excalium')).length,'Arcturus · Excalium banidos');}
    if(n===126)addAttack(b,a.expansionSelected.length,'Placide · cartas retornadas');
    addAttack(b,side.expansionNextAttack||0,'Arcturus · Golpes revelados');side.expansionNextAttack=0;
    addAttack(b,furyAttack(side,b.zone),'Fúria · '+b.zone);
@@ -200,7 +205,7 @@
     const kind=c.kind.slice(10),acts=c.uids.map(uid=>({type:'expansionChoose',uid}));
     if(kind==='mission')return c.options.map(option=>({type:'expansionChoose',option}));
     if(kind==='deliciasBanish'&&c.selected.length>=c.limit)return [{type:'expansionChoose',option:'done'}];
-    if(['revealMany','flowReturn','placideOD','quadraPick','deliciasBanish'].includes(kind))acts.push({type:'expansionChoose',option:'done'});
+    if(['revealMany','flowReturn','placideOD','quadraPick','deliciasBanish','arcturusOD'].includes(kind))acts.push({type:'expansionChoose',option:'done'});
     return acts;
    }
    let acts=previous.legalActions.call(this,p).filter(a=>(a.type!=='play'||this.expansionAllowed(p,this.find(a.uid).card))&&!(a.type==='fighterOverdrive'&&this.def(side.fighter).number===120));
@@ -216,7 +221,7 @@
    if(c||s.priority!==p||s.phase==='mulligan')return acts;
    const n=this.def(side.fighter).number,open=!s.ending&&['combat','preparation'].includes(s.phase)&&(!s.autoEnd||!!this.current());
    if(open&&!(p===s.active&&!s.preparedTurn)){
-    if(n===114&&this.energies(p,true).some(c=>this.def(c).color==='Verde')&&!side.fighterTapped&&!side.expansionRevealUsed&&side.hand.some(c=>this.def(c).type==='Golpe'))acts.push({type:'expansionReveal',uid:side.fighter.uid});
+    if(n===114&&this.energies(p,true).some(c=>this.energyHasColor(c,'Verde'))&&!side.fighterTapped&&!side.expansionRevealUsed&&side.hand.some(c=>['Golpe','Guarda','Truque'].includes(this.def(c).type)))acts.push({type:'expansionReveal',uid:side.fighter.uid});
     if(n===126&&!side.fighterTapped&&side.deck.length&&side.extra.length<4&&this.energies(p,true).length>=1)acts.push({type:'expansionPlacideSkill',uid:side.fighter.uid});
     if(n===120&&!side.fighterTapped&&side.deck.some(c=>flow(this.def(c))&&this.def(c).type==='Golpe'))acts.push({type:'expansionMournerSkill',uid:side.fighter.uid});
     if(side.hand.length)for(const card of side.discard.filter(c=>this.script(c).excaliumDiscard))acts.push({type:'expansionExcalium',uid:card.uid});
@@ -235,19 +240,22 @@
      c.selected.push(a.uid);c.uids=c.uids.filter(x=>x!==a.uid);
      if(c.selected.length<c.required){s.choice=c;return;}
      const before=s.stack.length;for(const uid of c.selected)this.expansionReturn(uid,true);
-     return this.beginPayment(p,{...c.intent,expansionCostPaid:true,expansionCostTriggers:s.stack.splice(before)},c.pay);
+     return this.beginPayment(p,{...c.intent,expansionSnapshot:{...c.intent.expansionSnapshot,reload:side.expansionReturned||0},expansionCostPaid:true,expansionCostTriggers:s.stack.splice(before)},c.pay);
     }else if(kind==='puppyCost'){
      const before=s.stack.length;this.expansionReturn(a.uid);this.shuffle(side.deck);
      return this.beginPayment(p,{...c.intent,expansionCostPaid:true,expansionCostTriggers:s.stack.splice(before)},c.pay);
     }else if(kind==='revealMany'){
      if(a.option==='done'){side.expansionNextAttack=(side.expansionNextAttack||0)+c.selected.length;}
-     else{const card=this.find(a.uid).card;card.expansionRevealed=true;card.expansionRevealedTurn=s.turn;if(this.def(card).type==='Golpe'&&this.def(card).name.startsWith('Excalium')){side.expansionExcaliumRevealed||=[];if(!side.expansionExcaliumRevealed.includes(card.uid))side.expansionExcaliumRevealed.push(card.uid);}c.selected.push(a.uid);c.uids=c.uids.filter(x=>x!==a.uid);s.choice=c;this.log('Arcturus revela '+this.def(card).name+'.','revelação');}
+     else{const card=this.find(a.uid).card;card.expansionRevealed=true;card.expansionRevealedTurn=s.turn;side.expansionRevealedActions||=[];if(!side.expansionRevealedActions.includes(card.uid))side.expansionRevealedActions.push(card.uid);if(this.def(card).type==='Golpe'&&this.def(card).name.startsWith('Excalium')){side.expansionExcaliumRevealed||=[];if(!side.expansionExcaliumRevealed.includes(card.uid))side.expansionExcaliumRevealed.push(card.uid);}c.selected.push(a.uid);c.uids=c.uids.filter(x=>x!==a.uid);s.choice=c;this.log('Arcturus revela '+this.def(card).name+'.','revelação');}
     }else if(kind==='revealOne'){
-     const card=this.find(a.uid).card;card.expansionRevealed=true;card.expansionRevealedTurn=s.turn;if(this.def(card).type==='Golpe'&&this.def(card).name.startsWith('Excalium')){side.expansionExcaliumRevealed||=[];if(!side.expansionExcaliumRevealed.includes(card.uid))side.expansionExcaliumRevealed.push(card.uid);}this.log('Excalium revela '+this.def(card).name+'.','revelação');
+     const card=this.find(a.uid).card;card.expansionRevealed=true;card.expansionRevealedTurn=s.turn;side.expansionRevealedActions||=[];if(!side.expansionRevealedActions.includes(card.uid))side.expansionRevealedActions.push(card.uid);if(this.def(card).type==='Golpe'&&this.def(card).name.startsWith('Excalium')){side.expansionExcaliumRevealed||=[];if(!side.expansionExcaliumRevealed.includes(card.uid))side.expansionExcaliumRevealed.push(card.uid);}this.log('Excalium revela '+this.def(card).name+'.','revelação');
     }else if(kind==='flowReturn'){
      if(a.option==='done'){
       for(const uid of c.selected)this.expansionReturn(uid);this.shuffle(side.deck);addAttack(s.combats.find(b=>b.id===c.combat),c.selected.length,'Explendor · cartas retornadas');
      }else{c.selected.push(a.uid);c.uids=c.uids.filter(x=>x!==a.uid);s.choice=c;}
+    }else if(kind==='arcturusOD'){
+     if(a.option==='done'){for(const uid of c.selected)this.move(uid,'banished');this.arcturusSelection021=true;try{this.fighterOverdrive(p,c.intent,c.revide);}finally{this.arcturusSelection021=false;}}
+     else{c.selected.push(a.uid);c.uids=c.uids.filter(x=>x!==a.uid);s.choice=c;}
     }else if(kind==='placideOD'){
      if(a.option==='done'){
       const before=s.stack.length;
@@ -273,7 +281,7 @@
      const loc=this.find(a.uid),source=this.find(c.source);if(loc?.p!==p||loc.z!=='stamina'||source?.p!==p||!['arena','discard'].includes(source.z))throw Error('Alvo de Troca indisponível.');
      const active=loc.card.active;this.move(a.uid,'hand');const replacement=this.move(c.source,'stamina');replacement.active=active;this.log('Troca: Escapatória substitui uma Ação na Estamina, devolvida à mão.','Troca');
     }else if(kind==='greenCost'){
-     const energy=this.find(a.uid);if(energy?.p!==p||energy.z!=='stamina'||!energy.card.active||this.def(energy.card).color!=='Verde')throw Error('Escolha 1 energia verde ativa.');
+     const energy=this.find(a.uid);if(energy?.p!==p||energy.z!=='stamina'||!energy.card.active||!this.energyHasColor(energy.card,'Verde'))throw Error('Escolha 1 energia verde ativa.');
      return previous.beginPayment.call(this,p,{type:'expansionReveal',uid:side.fighter.uid,energyUids:[a.uid]},{own:1,opp:0});
     }else if(kind==='reactivate')this.find(a.uid).card.active=true;
     else if(kind==='search'){
@@ -288,7 +296,7 @@
    if(a.type.startsWith('expansion')){
     if(!this.legalActions(p).some(x=>x.type===a.type&&x.uid===a.uid))throw Error('Habilidade indisponível nesta janela.');
     if(a.type==='expansionReveal'){
-     setChoice(this,p,'greenCost',this.energies(p,true).filter(c=>this.def(c).color==='Verde').map(c=>c.uid));return;
+     setChoice(this,p,'greenCost',this.energies(p,true).filter(c=>this.energyHasColor(c,'Verde')).map(c=>c.uid));return;
     }
     if(a.type==='expansionMournerOD'){side.od=0;this.push({kind:'effect',p,ops:[{op:'expansionMournerOD'}],context:{p},label:'Mourner — Overdrive'});s.priority=other(p);s.passes=0;return;}
     if(a.type==='expansionPlacideSkill'){this.beginPayment(p,a,{own:1,opp:0});return;}

@@ -103,13 +103,14 @@
     "subtype": "Investida",
     "color": "Genérica",
     "cost": 5,
-    "power": "X",
+    "power": 5,
     "block": 3,
-    "alternateCost": 4,
+    "alternateCost": null,
     "group": "Genéricas",
     "source": "07.png",
-    "searchText": "Este Golpe ganha +W (X é igual a quantidade de cartas no seu Descarte). Receba metade do valor de ataque deste Golpe como dano. REVIDE Este Golpe ganha +2U.",
-    "zone": "Superior"
+    "searchText": "Se o seu SUPER estiver em 3 ou mais, este Golpe ganha +2 ATQ.\n\nSe este Golpe bater, aumente o seu SUPER em 1.\n\n\"Este vai ser o meu ataque FINAL!!!\" - Avantasia",
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-008",
@@ -124,8 +125,11 @@
     "alternateCost": null,
     "group": "Genéricas",
     "source": "08.png",
-    "searchText": "Se você causou 5 ou mais de dano neste turno, escolha e inative 1 energia do lutador alvo. Ela fica impedida de reativar até o final do próximo turno.",
-    "zone": null
+    "searchText": "Se você recebeu 5 ou mais de dano neste turno, inative 2 energias do Lutador adversário até o final do próximo turno.",
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-009",
@@ -157,7 +161,7 @@
     "group": "Genéricas",
     "source": "10.png",
     "searchText": "QUEBRA. Se este Golpe bater, cause dano igual à quantidade de cartas nas Zonas Extras do lutador adversário.",
-    "zone": "Superior"
+    "zone": "Inferior"
   },
   {
     "id": "OF-C1-011",
@@ -189,7 +193,8 @@
     "group": "Genéricas",
     "source": "12.png",
     "searchText": "(Se esta Guarda bloquear com sucesso a partir da sua DEFLETIR Zona Extra, cause dano igual ao meu valor.) Se esta Guarda bloquear com SUCeSSO, reduza em I o Poder do Lutador alvo.",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-013",
@@ -204,7 +209,7 @@
     "alternateCost": null,
     "group": "Genéricas",
     "source": "13.png",
-    "searchText": "Bana outra cópia de Freneticamente do seu Descarte como custo adicional para realizar este Golpe.",
+    "searchText": "Se este Golpe bater, reduza o SUPER em 1 do Lutador alvo.\n\nBana outra cópia de Freneticamente do seu Descarte. Aumente o seu SUPER em 1.",
     "zone": "Inferior"
   },
   {
@@ -214,14 +219,17 @@
     "type": "Truque",
     "subtype": "",
     "color": "Genérica",
-    "cost": "X",
+    "cost": 1,
     "power": null,
     "block": 1,
     "alternateCost": null,
     "group": "Genéricas",
     "source": "14.png",
-    "searchText": "Cause X de dano. (X é igual ao custo pago para ativar este Truque). Encerre o seu turno após isso.",
-    "zone": null
+    "searchText": "Cause 2 de dano.",
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-015",
@@ -248,12 +256,14 @@
     "color": "Verde",
     "cost": 3,
     "power": 3,
-    "block": 3,
+    "block": 2,
     "alternateCost": 2,
     "group": "Coloridas",
     "source": "16.png",
-    "searchText": "Declare um tipo de Ação (Golpe, Truque ou Guarda). Revele a carta do topo do seu baralho; se for do mesmo tipo, este Golpe ganha +2 ATQ. REVIDE: ganhe 2 de vida.",
-    "zone": "Meio"
+    "searchText": "GATILHO: declare um tipo de Ação e revele a carta do topo do seu Baralho. Se corresponder, este Golpe ganha +2 ATQ. REVIDE: ganhe 2 de Vida.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "start"
   },
   {
     "id": "OF-C1-017",
@@ -317,7 +327,8 @@
     "group": "Coloridas",
     "source": "20.png",
     "searchText": "(Se esta Guarda bloquear com sucesso a partir da sua DEFLETIR Zona Extra, cause dano igual ao meu valor.) Se esta Guarda bloquear com sucesso, envie I \"Redassalt\" Golpe do seu baralho para o seu descarte.",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-021",
@@ -332,8 +343,9 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "21.png",
-    "searchText": "Você pode jogar esta carta do seu descarte pagando X de vida (X é igual ao meu custo). Se este Golpe bater, busque um Golpe \" Redassalt\" do seu baralho para a sua mão.",
-    "zone": "Meio"
+    "searchText": "Você pode jogar esta carta do seu Descarte pagando X de vida (X é igual ao seu custo +1). Se este Golpe bater, busque um Golpe \" Redassalt\" do seu baralho para a sua mão.",
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-022",
@@ -348,8 +360,9 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "22.png",
-    "searchText": "Você pode jogar esta carta do seu descarte pagando X de vida (X é igual ao meu custo). Se este Golpe bater, conceda +2' ao seu próximo Golpe \"Redassalt\" neste turno.",
-    "zone": "Superior"
+    "searchText": "Você pode jogar esta carta do seu Descarte pagando X de vida (X é igual ao seu custo +1). Se este Golpe bater, conceda +2' ao seu próximo Golpe \"Redassalt\" neste turno.",
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-023",
@@ -364,8 +377,9 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "23.png",
-    "searchText": "Você pode jogar esta carta do seu descarte pagando X de vida (X é igual ao meu custo). Se um Golpe \"Redassalt\" causou dano neste turno, este Golpe ganha Ímpeto 4 (Ímpeto - Se este Golpe for bloqueado, cause 4 de",
-    "zone": "Superior"
+    "searchText": "Você pode jogar esta carta do seu Descarte pagando X de vida (X é igual ao seu custo +1). Se um Golpe \"Redassalt\" causou dano neste turno, este Golpe ganha Ímpeto 4 (Ímpeto - Se este Golpe for bloqueado, cause 4 de",
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-024",
@@ -380,8 +394,9 @@
     "alternateCost": 2,
     "group": "Coloridas",
     "source": "24.png",
-    "searchText": "Crie uma ficha Galacstrix Coruja com 1 de Poder em uma Zona Extra sua, com Fugaz e o efeito: se eu golpear, busque 1 Ação Galacstrix do meu baralho para a mão. Fugaz: me destrua ao final deste turno. REVIDE: Galacstrix Coruja ganha +2 de Poder.",
-    "zone": "Meio"
+    "searchText": "Crie uma Ficha Galacstrix Coruja com 1 de Poder em uma Zona Extra sua com FUGAZ e o efeito: pague 1 energia, golpeie. Busque Galacstrix: Dragão. (Fugaz - Me destrua ao final deste turno.) REVIDE: Galacstrix Coruja ganha +2 de Poder.",
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-025",
@@ -396,8 +411,9 @@
     "alternateCost": 3,
     "group": "Coloridas",
     "source": "25.png",
-    "searchText": "Crie uma ficha Galacstrix Dragão com 3 de Poder em uma Zona Extra sua, com Fugaz e o efeito: se eu golpear, compre 1 carta. Fugaz: me destrua ao final deste turno. REVIDE: este Golpe ganha +3 ATQ.",
-    "zone": "Meio"
+    "searchText": "Crie uma Ficha Galacstrix Dragão com 3 de Poder em uma Zona Extra sua com FUGAZ e o efeito: pague 1 energia, golpeie. Destrua 1 carta na Zona Extra. (Fugaz - Me destrua ao final deste turno.) REVIDE: Este Golpe ganha +3 ATQ.",
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-026",
@@ -428,8 +444,11 @@
     "alternateCost": null,
     "group": "Coloridas",
     "source": "27.png",
-    "searchText": "Crie uma ficha Galacstrix Tigre com 1 de Poder em uma Zona Extra sua, com Fugaz e o efeito: se eu golpear, o seu próximo Golpe ganha +2 ATQ. Fugaz: me destrua ao final deste turno.",
-    "zone": null
+    "searchText": "Crie uma Ficha Galacstrix Tigre com 2 de Poder em uma Zona Extra sua com FUGAZ e o efeito: se eu bater, busque Galacstrix: Coruja. (Fugaz - Me destrua ao final deste turno.)",
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-028",
@@ -512,7 +531,9 @@
       "Roxo"
     ],
     "searchText": "Seu primeiro Golpe no turno ganha +1 ATQ para cada carta nas Zonas Extras em campo. OVERDRIVE: golpeie com meu Poder em uma Zona de Combate escolhida. Ignore bloqueios com valor menor que meu Poder.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-C1-033",
@@ -527,8 +548,20 @@
     "alternateCost": null,
     "group": "Boydd",
     "source": "33.png",
-    "searchText": "\"Primeira lição de combate: Sempre se adapte",
-    "zone": "Inferior"
+    "searchText": "GATILHO: ganhe 1 de PODER.",
+    "zone": "Inferior",
+    "playtest": true,
+    "sequenceKeyword": "start",
+    "sequenceEffect": {
+      "stage": "start",
+      "ops": [
+        {
+          "op": "ownPower",
+          "n": 1
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-034",
@@ -537,14 +570,15 @@
     "type": "Golpe",
     "subtype": "Esmagar",
     "color": "Roxo",
-    "cost": 2,
-    "power": 3,
+    "cost": 3,
+    "power": 2,
     "block": 2,
-    "alternateCost": 1,
+    "alternateCost": 2,
     "group": "Boydd",
     "source": "34.png",
-    "searchText": "Conceda +1' a este golpe. (Preparo -Se você tiver PREPARO I ou mais cartas nas lonas Extras do seu lutador). REVIDE comprei carta.",
-    "zone": "Inferior"
+    "searchText": "PREPARO: este Golpe ganha +1 ATQ. (Preparo - Se você tiver 1 ou mais cartas nas Zonas Extras do seu Lutador.) REVIDE: este Golpe ganha +1 ATQ.",
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-035",
@@ -554,13 +588,25 @@
     "subtype": "Soco",
     "color": "Roxo",
     "cost": 2,
-    "power": 3,
-    "block": 2,
+    "power": 1,
+    "block": 3,
     "alternateCost": null,
     "group": "Boydd",
     "source": "35.png",
-    "searchText": "",
-    "zone": "Inferior"
+    "searchText": "GATILHO: busque uma cópia de Fúria Disciplinada.",
+    "zone": "Inferior",
+    "playtest": true,
+    "sequenceKeyword": "start",
+    "sequenceEffect": {
+      "stage": "start",
+      "ops": [
+        {
+          "op": "playtestSearch",
+          "name": "Fúria Disciplinada"
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-036",
@@ -576,7 +622,8 @@
     "group": "Boydd",
     "source": "36.png",
     "searchText": "Se este golpe bater, destrua I carta na lona Extra PREPARO do seu oponente. (Preparo - Se você tiver I ou mais cartas nas Zonas Extras do seu lutador). REVIDE Este golpe ganha +2«.",
-    "zone": "Inferior"
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-037",
@@ -592,7 +639,10 @@
     "group": "Boydd",
     "source": "37.png",
     "searchText": "DESVIO (Descarte esta carta e um Golpe do mesma Zona, cancele o Golpe alvo.) Destrua I carta na sua lona Extra. Compre 2 cartas.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": true
   },
   {
     "id": "OF-C1-038",
@@ -608,7 +658,10 @@
     "group": "Boydd",
     "source": "38.png",
     "searchText": "Escolha l: • 0 próximo Bloqueio ganha +2' ; • 0 próximo Golpe ganha +2'",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-039",
@@ -624,7 +677,10 @@
     "group": "Boydd",
     "source": "39.png",
     "searchText": "DESVIO (Descarte esta carta e um Golpe do mesma lona, cancele o Golpe alvo.) Se um Golpe seu bateu neste turno, coloque uma Guarda do seu baralho diretamente na sua lona Extra, virado para baixo.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": true
   },
   {
     "id": "OF-C1-040",
@@ -635,12 +691,15 @@
     "color": "Roxo",
     "cost": 5,
     "power": 6,
-    "block": 3,
+    "block": 2,
     "alternateCost": 4,
     "group": "Boydd",
     "source": "40.png",
-    "searchText": "(Se este Golpe bater, interrompa a sequência do lutador QUEBRA adversário.) REVIDE",
-    "zone": "Superior"
+    "searchText": "FINALIZAÇÃO: este Golpe ganha QUEBRA. REVIDE: este Golpe ganha +3 ATQ.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "finish",
+    "sequenceBreak": true
   },
   {
     "id": "OF-C1-041",
@@ -649,14 +708,15 @@
     "type": "Golpe",
     "subtype": "Esmagar",
     "color": "Roxo",
-    "cost": 3,
+    "cost": 4,
     "power": 4,
     "block": 2,
-    "alternateCost": 2,
+    "alternateCost": 3,
     "group": "Boydd",
     "source": "41.png",
-    "searchText": "REVIDE: este Golpe ganha +3 ATQ.",
-    "zone": "Meio"
+    "searchText": "Se Fúria Disciplinada bater, reduza em 1 o PODER do Lutador alvo.",
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-042",
@@ -665,14 +725,26 @@
     "type": "Golpe",
     "subtype": "Esmagar",
     "color": "Roxo",
-    "cost": 3,
+    "cost": 4,
     "power": 4,
     "block": 2,
-    "alternateCost": 2,
+    "alternateCost": 3,
     "group": "Boydd",
     "source": "42.png",
-    "searchText": "Se este Golpe bater, compre 2 cartas. REVIDE: este Golpe ganha +3 ATQ.",
-    "zone": "Meio"
+    "searchText": "CONTINUAÇÃO: busque Quebrafendas. REVIDE: este Golpe ganha +3 ATQ.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceEffect": {
+      "stage": "continue",
+      "ops": [
+        {
+          "op": "playtestSearch",
+          "name": "Quebrafendas"
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-043",
@@ -681,14 +753,26 @@
     "type": "Golpe",
     "subtype": "Soco",
     "color": "Roxo",
-    "cost": 4,
+    "cost": 5,
     "power": 5,
-    "block": 3,
-    "alternateCost": 3,
+    "block": 2,
+    "alternateCost": 4,
     "group": "Boydd",
     "source": "43.png",
-    "searchText": "COMBO Inferior. QUEBRA. Se bater, busque 1 Guarda do seu baralho para sua mão. REVIDE: este Golpe ganha +3 ATQ.",
-    "zone": "Meio"
+    "searchText": "CONTINUAÇÃO: busque uma cópia de A Arte da Guerra.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceEffect": {
+      "stage": "continue",
+      "ops": [
+        {
+          "op": "playtestSearch",
+          "name": "A Arte da Guerra"
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-044",
@@ -697,14 +781,15 @@
     "type": "Golpe",
     "subtype": "Soco",
     "color": "Roxo",
-    "cost": 5,
+    "cost": 6,
     "power": 5,
-    "block": 3,
-    "alternateCost": 4,
+    "block": 2,
+    "alternateCost": 5,
     "group": "Boydd",
     "source": "44.png",
     "searchText": "QUEBRA. PREPARO: escolha uma Zona de Combate; bloqueios a Golpes desta Zona ganham +2 BLQ até o final do próximo turno. Preparo: se você tiver 1 ou mais cartas nas Zonas Extras do seu lutador. REVIDE: este Golpe ganha +3 ATQ.",
-    "zone": "Superior"
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-045",
@@ -713,14 +798,15 @@
     "type": "Golpe",
     "subtype": "Soco",
     "color": "Roxo",
-    "cost": 6,
+    "cost": 7,
     "power": 7,
-    "block": 3,
-    "alternateCost": 5,
+    "block": 2,
+    "alternateCost": 6,
     "group": "Boydd",
     "source": "45.png",
     "searchText": "QUEBRA. PREPARO: se bater, destrua cartas na Zona Extra do lutador adversário em quantidade igual às cartas nas suas Zonas Extras. Preparo: se você tiver 1 ou mais cartas nas Zonas Extras. REVIDE: este Golpe ganha +3 ATQ.",
-    "zone": "Superior"
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-046",
@@ -736,7 +822,8 @@
     "group": "Boydd",
     "source": "46.png",
     "searchText": "Se esta Guarda bloquear, revele a carta no topo do seu baralho. Se tiver Preparo, compre-a. Se não, coloque no fundo do baralho.",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-047",
@@ -752,7 +839,8 @@
     "group": "Boydd",
     "source": "47.png",
     "searchText": "Se esta guarda bloquear com sucesso, conceda +1' ao seu próximo bloqueio neste turno.",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-048",
@@ -768,7 +856,8 @@
     "group": "Boydd",
     "source": "48.png",
     "searchText": "Como custo adicional para bloquear com esta Guarda, descarte I carta. \"A Corporação Toha sempre protege e defende seus",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-049",
@@ -784,7 +873,8 @@
     "group": "Boydd",
     "source": "49.png",
     "searchText": "(Se esta Guarda bloquear com sucesso a partir da DEFLETIR sua Zona Extra, cause dano igual ao meu bloqueio.)",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-050",
@@ -800,7 +890,8 @@
     "group": "Boydd",
     "source": "50.png",
     "searchText": "(Se esta Guarda bloquear com sucesso a partir da DEFLETIR sua Zona Extra, cause dano igual ao meu bloqueio.) Se for um Golpe de lona D/ esta Guarda ganha +1'.",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-051",
@@ -818,8 +909,10 @@
     "colors": [
       "Laranja"
     ],
-    "searchText": "Se um Golpe com Ímpeto bater, compre 1 carta. OVERDRIVE: golpeie com o dobro do meu Poder em uma Zona declarada. Se bater, até o final do próximo turno, todos os Golpes na respectiva Zona ganham +2 ATQ.",
-    "zone": null
+    "searchText": "Quando o primeiro Golpe com Ímpeto bater no turno, compre 1 carta. Overdrive: golpeie com o dobro do seu Poder em uma Zona declarada. Se bater, até o final do próximo turno, todos os Golpes na respectiva Zona ganham +2 ATQ.",
+    "zone": null,
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-C1-052",
@@ -835,7 +928,8 @@
     "group": "Hanma",
     "source": "52.png",
     "searchText": "0 próximo golpe ganha +1 e. (Ímpeto - Se este Golpe ÍMPETO I for bloqueado, cause I de dano).",
-    "zone": "Meio"
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-053",
@@ -851,7 +945,8 @@
     "group": "Hanma",
     "source": "53.png",
     "searchText": "Se você causou dano neste turno, este Golpe ÍMPETO I ganha +2'. (Ímpeto - Se este golpe for bloqueado, cause I de dano).",
-    "zone": "Meio"
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-054",
@@ -866,8 +961,20 @@
     "alternateCost": null,
     "group": "Hanma",
     "source": "54.png",
-    "searchText": "(Ímpeto - Se este golpe for bloqueado, cause I de dano).",
-    "zone": "Meio"
+    "searchText": "GATILHO: ganhe 1 de PODER. ÍMPETO 1.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "start",
+    "sequenceEffect": {
+      "stage": "start",
+      "ops": [
+        {
+          "op": "ownPower",
+          "n": 1
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-055",
@@ -878,12 +985,15 @@
     "color": "Laranja",
     "cost": 1,
     "power": 2,
-    "block": 2,
-    "alternateCost": 2,
+    "block": 1,
+    "alternateCost": null,
     "group": "Hanma",
     "source": "55.png",
-    "searchText": "Se outra ação com Impeto foi ativada neste turno, destrua I carta na lona Extra do lutador adversário. REVIDE Esta Golpe ganha Ímpeto 2.",
-    "zone": "Meio"
+    "searchText": "GATILHO: este Golpe ganha ÍMPETO 2.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "start",
+    "sequenceImpetus": 2
   },
   {
     "id": "OF-C1-056",
@@ -899,7 +1009,10 @@
     "group": "Hanma",
     "source": "56.png",
     "searchText": "Se um Golpe seu for bloqueado, conceda +26 ao Golpe bloqueado alvo.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-057",
@@ -915,7 +1028,10 @@
     "group": "Hanma",
     "source": "57.png",
     "searchText": "FINTA: descarte esta carta e uma Guarda do mesmo valor para cancelar a Guarda alvo. Declare um tipo e uma Zona de Golpe. Revele a carta do topo do seu baralho; se for um Golpe do tipo e Zona declarados, coloque-a na sua Zona Extra. Ela pode ser ativada neste turno.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": true,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-058",
@@ -931,7 +1047,10 @@
     "group": "Hanma",
     "source": "58.png",
     "searchText": "FINTA (Descarte esta carta e uma Guarda do mesmo valor, cancele a Guarda alvo.) Dê +2' ao próximo golpe. (Overdrive - Se a OVERDRIVE 2 sua sequência estiver em 2 ou mais).",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": true,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-059",
@@ -947,7 +1066,10 @@
     "group": "Hanma",
     "source": "59.png",
     "searchText": "Descarte I carta. Conceda ao próximo Golpe do tipo Corte, Ímpeto l. \"Focar atentamente no seu adversário antes de iniciar um combate é uma arte. Você é um artista?\"",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-060",
@@ -963,7 +1085,10 @@
     "group": "Hanma",
     "source": "60.png",
     "searchText": "Se você causou dano neste turno. Dê +3« ao Golpe alvo.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-061",
@@ -978,8 +1103,9 @@
     "alternateCost": null,
     "group": "Hanma",
     "source": "61.png",
-    "searchText": "(Ímpeto - Se este golpe for bloqueado, cause 2 de dano).",
-    "zone": "Superior"
+    "searchText": "Se Ataque das Cinzas bater, reduza em 1 o PODER do Lutador alvo. ÍMPETO 2.",
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-062",
@@ -995,7 +1121,8 @@
     "group": "Hanma",
     "source": "62.png",
     "searchText": "0 próximo Golpe ganha +1'. (ímpeto - Se este Golpe ÍMPETO 2 for bloqueado, cause 2 de dano). \"As técnicas ensinadas em Roudge são sempre focadas",
-    "zone": "Superior"
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-063",
@@ -1010,8 +1137,11 @@
     "alternateCost": null,
     "group": "Hanma",
     "source": "63.png",
-    "searchText": "EFEITO Se você causou dano neste turno, este Golpe ganha +X (X é igual ao valor do meu Poder.)",
-    "zone": "Superior"
+    "searchText": "CONTINUAÇÃO: este Golpe ganha ÍMPETO 2. Se você causou dano neste turno, este Golpe ganha +X ATQ (X é igual ao seu PODER).",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceImpetus": 2
   },
   {
     "id": "OF-C1-064",
@@ -1026,8 +1156,20 @@
     "alternateCost": null,
     "group": "Hanma",
     "source": "64.png",
-    "searchText": "(Ímpeto - Se este golpe for bloqueado, cause 3 ÍMPETO 3 de dano).",
-    "zone": "Superior"
+    "searchText": "CONTINUAÇÃO: busque Fúria de Nahata. ÍMPETO 3.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceEffect": {
+      "stage": "continue",
+      "ops": [
+        {
+          "op": "playtestSearch",
+          "name": "Fúria de Nahata"
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-065",
@@ -1038,12 +1180,13 @@
     "color": "Laranja",
     "cost": 1,
     "power": null,
-    "block": 3,
+    "block": 2,
     "alternateCost": null,
     "group": "Hanma",
     "source": "65.png",
     "searchText": "(Se esta Guarda bloquear com sucesso a partir da sua DEFLETIR Zona Extra, cause dano igual ao meu valor.) Descarte I carta com Ímpeto. Esta Guarda ganha +1'.",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-066",
@@ -1054,12 +1197,13 @@
     "color": "Laranja",
     "cost": 1,
     "power": null,
-    "block": 3,
+    "block": 1,
     "alternateCost": null,
     "group": "Hanma",
     "source": "66.png",
     "searchText": "(Se esta Guarda bloquear com sucesso a partir da sua DEFLETIR Zona Extra, cause dano igual ao meu valor.) Esta Guarda quando bloquear ganha +)(. (X é igual ao valor do seu Poder.)",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-067",
@@ -1070,12 +1214,13 @@
     "color": "Laranja",
     "cost": 3,
     "power": 4,
-    "block": 3,
+    "block": 2,
     "alternateCost": 2,
     "group": "Hanma",
     "source": "67.png",
     "searchText": "(Se este Golpe bater, interrompa a sequência do lutador QUEBRA adversário.) (Ímpeto - Se este golpe for bloqueado, cause 3 ÍMPETO 3 de dano). REVIDE Esta ação tem Ímpeto 4.",
-    "zone": "Superior"
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-068",
@@ -1091,7 +1236,8 @@
     "group": "Hanma",
     "source": "68.png",
     "searchText": "QUEBRA iMPET0 3 (Se este Golpe bater, interrompa a sequência do lutador adversário.) Se este Golpe quebrar a sequência do lutador adversário, cause dano igual ao meu Poder. (Ímpeto - Se este golpe for bloqueado, cause 3 de dano).",
-    "zone": "Superior"
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-069",
@@ -1100,14 +1246,17 @@
     "type": "Golpe",
     "subtype": "Corte",
     "color": "Laranja",
-    "cost": 3,
+    "cost": 4,
     "power": 5,
-    "block": 3,
-    "alternateCost": 1,
+    "block": 2,
+    "alternateCost": 3,
     "group": "Hanma",
     "source": "69.png",
-    "searchText": "(Se este Golpe bater, interrompa a sequência do lutador QUEBRA adversário.) Se bater, crie uma marca no lutador alvo com o seguinte efeito: \"Os próximos golpes que eu levar causam I a mais de dano\". REVIDE Este golpe ganha +2g.",
-    "zone": "Superior"
+    "searchText": "FINALIZAÇÃO: este Golpe ganha QUEBRA. Se bater, coloque 1 marcador de dano no Lutador alvo: os próximos Golpes que ele receber causam 1 dano a mais.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "finish",
+    "sequenceBreak": true
   },
   {
     "id": "OF-C1-070",
@@ -1126,7 +1275,9 @@
       "Verde"
     ],
     "searchText": "O: 0 seu primeiro Golpe com Foco ganha igual a diferença de Poder. omele uma onae opeie como meu Oder atual. Se bater, até o final do próximo turno, todos os Golpes na respectiva ais sta",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-C1-071",
@@ -1142,7 +1293,8 @@
     "group": "Len Yin",
     "source": "71.png",
     "searchText": "FOCO 2: ganhe 1 de Vida. Foco: se meu Poder for maior ou igual a 2.",
-    "zone": "Meio"
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-072",
@@ -1153,12 +1305,24 @@
     "color": "Verde",
     "cost": 2,
     "power": 2,
-    "block": 3,
+    "block": 2,
     "alternateCost": null,
     "group": "Len Yin",
     "source": "72.png",
-    "searchText": "",
-    "zone": "Meio"
+    "searchText": "GATILHO: compre 1 carta.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "start",
+    "sequenceEffect": {
+      "stage": "start",
+      "ops": [
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-073",
@@ -1174,7 +1338,8 @@
     "group": "Len Yin",
     "source": "73.png",
     "searchText": "Compre I carta. Se este Golpe bater, compre mais FOCO 2 I carta. (Foco - Se o meu Poder for maior ou igual a 2). REVIDE Este golpe ganha +1'.",
-    "zone": "Meio"
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-074",
@@ -1190,7 +1355,8 @@
     "group": "Len Yin",
     "source": "74.png",
     "searchText": "Se este Golpe bater, aumento o seu Poder em l. (Foco FOCO 3 Se o meu Poder for maior ou igual a 3). REVIDE Este golpe ganha +1'.",
-    "zone": "Meio"
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-075",
@@ -1205,8 +1371,10 @@
     "alternateCost": null,
     "group": "Len Yin",
     "source": "75.png",
-    "searchText": "\"Primeiro, deve-se aprender a base ideal para defesa. Segundo, aprenderá como revidar de maneira direta.",
-    "zone": null
+    "searchText": "REVERSO: se esta Guarda bloquear com sucesso a partir da Zona Extra, quebre a sequência de Overdrive do Lutador adversário.",
+    "zone": null,
+    "playtest": true,
+    "reverso": true
   },
   {
     "id": "OF-C1-076",
@@ -1222,7 +1390,8 @@
     "group": "Len Yin",
     "source": "76.png",
     "searchText": "Se esta Guarda bloquear com sucesso, conceda -l ao próximo Golpe da lona do Golpe bloqueado até o final do turno. \"Não renegue a sua ancestralidade, pobre oponente. Ela é a nossa força de vida\" - Len Yin",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-077",
@@ -1238,7 +1407,8 @@
     "group": "Len Yin",
     "source": "77.png",
     "searchText": "Se esta Guarda bloquear com sucesso, ganhe 2 de Vida.",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-078",
@@ -1249,12 +1419,13 @@
     "color": "Verde",
     "cost": 2,
     "power": null,
-    "block": 4,
+    "block": 2,
     "alternateCost": null,
     "group": "Len Yin",
     "source": "78.png",
     "searchText": "Se esta Guarda bloquear sozinha, revele as 3 primeiras cartas de seu baralho. Ganhe 1 de Vida para cada Guarda revelada.",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-079",
@@ -1269,8 +1440,10 @@
     "alternateCost": null,
     "group": "Len Yin",
     "source": "79.png",
-    "searchText": "",
-    "zone": null
+    "searchText": "REVERSO: se esta Guarda bloquear com sucesso a partir da Zona Extra, quebre a sequência de Overdrive do Lutador adversário.",
+    "zone": null,
+    "playtest": true,
+    "reverso": true
   },
   {
     "id": "OF-C1-080",
@@ -1279,14 +1452,26 @@
     "type": "Golpe",
     "subtype": "Investida",
     "color": "Verde",
-    "cost": 2,
+    "cost": 3,
     "power": 4,
     "block": 2,
-    "alternateCost": 1,
+    "alternateCost": 2,
     "group": "Len Yin",
     "source": "80.png",
-    "searchText": "Se este Golpe bater, aumente o seu Poder em I FOCO 3 (Foco -Se o meu Poder for maior ou igual a 3). REVIDE Este golpe ganha +1'.",
-    "zone": "Meio"
+    "searchText": "CONTINUAÇÃO: compre 1 carta. REVIDE: este Golpe ganha +1 ATQ.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceEffect": {
+      "stage": "continue",
+      "ops": [
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-081",
@@ -1302,7 +1487,8 @@
     "group": "Len Yin",
     "source": "81.png",
     "searchText": "Se este Golpe bater, conceda -X' ao próximo golpe FOCO 3 do seu oponente, sendo X o valor do meu Poder. (Foco - Se o meu Poder for maior ou igual a 3). REVIDE Este golpe ganha +1'.",
-    "zone": "Meio"
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-082",
@@ -1319,7 +1505,8 @@
     "source": "82.png",
     "searchText": "QUEBRA. FOCO 4: se este Golpe bater, reduza meu Poder em 1 e aumente em 1 o custo do próximo Golpe do adversário. REVIDE: este Golpe ganha +1 ATQ.",
     "zone": "Meio",
-    "combo": null
+    "combo": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-083",
@@ -1336,7 +1523,8 @@
     "source": "83.png",
     "searchText": "QUEBRA. FOCO 4: se este Golpe bater, reduza meu Poder em 1 e destrua todas as cartas na Zona Extra adversária. REVIDE: este Golpe ganha +1 ATQ.",
     "zone": "Meio",
-    "combo": null
+    "combo": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-084",
@@ -1351,9 +1539,12 @@
     "alternateCost": 4,
     "group": "Len Yin",
     "source": "84.png",
-    "searchText": "QUEBRA. FOCO 5: se este Golpe bater, reduza meu Poder em 1 e coloque um marcador no adversário: os três primeiros Golpes de seu próximo turno recebem -1 ATQ. REVIDE: este Golpe ganha +2 ATQ.",
+    "searchText": "FINALIZAÇÃO: este Golpe ganha QUEBRA. REVIDE: este Golpe ganha +2 ATQ.",
     "zone": "Meio",
-    "combo": null
+    "combo": null,
+    "playtest": true,
+    "sequenceKeyword": "finish",
+    "sequenceBreak": true
   },
   {
     "id": "OF-C1-085",
@@ -1369,7 +1560,10 @@
     "group": "Len Yin",
     "source": "85.png",
     "searchText": "DESVIO FOCO a (Descarte esta carta e um Golpe do mesma Zona, cancele o Golpe alvo.) Compre I carta, se for uma ação com Foco, compre mais l. (Foco - Se o meu poder for maior ou igual a 4).",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": true
   },
   {
     "id": "OF-C1-086",
@@ -1385,7 +1579,10 @@
     "group": "Len Yin",
     "source": "86.png",
     "searchText": "(Descarte esta carta e um Golpe do mesma Zona, DESVIO cancele o Golpe alvo.) Aumente o valor do bloqueio alvo em (Xé igual ao valor do seu Poder).",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": true
   },
   {
     "id": "OF-C1-087",
@@ -1401,7 +1598,10 @@
     "group": "Len Yin",
     "source": "87.png",
     "searchText": "Se o seu Poder for maior que o do lutador alvo, cancele o Golpe alvo. Ele compra I carta.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-088",
@@ -1417,7 +1617,10 @@
     "group": "Len Yin",
     "source": "88.png",
     "searchText": "(Descarte esta carta e um Golpe do mesma lona, DESVIO cancele o Golpe alvo.) Conceda ao próximo Soco com Foco +2 e.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": true
   },
   {
     "id": "OF-C1-089",
@@ -1435,8 +1638,10 @@
     "colors": [
       "Rosa"
     ],
-    "searchText": "No começo do seu turno, pague 1 energia própria ativa e vire Blossom: compre 1 carta. OVERDRIVE: jogue 1 Golpe ativo da sua Estamina sem pagar seus custos, com bônus de ataque igual ao seu Poder.",
-    "zone": null
+    "searchText": "No começo do seu turno, vire: substitua uma Ação da sua Mão por uma Ação na sua Estâmina (ela entra como Energia Inativa). OVERDRIVE: jogue 1 Golpe ativo da sua Estâmina sem pagar os seus custos, com +X ATQ (X é igual ao seu Poder).",
+    "zone": null,
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-C1-090",
@@ -1447,12 +1652,13 @@
     "color": "Rosa",
     "cost": 0,
     "power": 1,
-    "block": 1,
+    "block": 0,
     "alternateCost": null,
     "group": "Blossom",
     "source": "90.png",
     "searchText": "\"As rosas nem sempre são indefesas\"",
-    "zone": "Inferior"
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-091",
@@ -1462,13 +1668,14 @@
     "subtype": "Disparo",
     "color": "Rosa",
     "cost": 1,
-    "power": 2,
+    "power": 1,
     "block": 1,
     "alternateCost": null,
     "group": "Blossom",
     "source": "91.png",
-    "searchText": "\"Algumas técnicas de assassinato são mais sutis",
-    "zone": "Superior"
+    "searchText": "Se Petalle Fatalle bater, reduza em 1 o PODER do Lutador alvo.",
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-092",
@@ -1479,12 +1686,13 @@
     "color": "Rosa",
     "cost": 2,
     "power": 2,
-    "block": 2,
+    "block": 1,
     "alternateCost": 1,
     "group": "Blossom",
     "source": "92.png",
     "searchText": "FLUIR: Compre 1 carta se você jogou uma ação antes desta. REVIDE: Compre mais 1 carta quando realizada utilizando o custo em energia inativa do oponente.",
-    "zone": "Inferior"
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-093",
@@ -1495,12 +1703,13 @@
     "color": "Rosa",
     "cost": 1,
     "power": 2,
-    "block": 1,
+    "block": 0,
     "alternateCost": null,
     "group": "Blossom",
     "source": "93.png",
-    "searchText": "",
-    "zone": "Inferior"
+    "searchText": "Se alguma Ação com FLUIR bateu neste turno, ganhe 1 de PODER.",
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-094",
@@ -1510,13 +1719,25 @@
     "subtype": "Disparo",
     "color": "Rosa",
     "cost": 2,
-    "power": 3,
+    "power": 2,
     "block": 1,
     "alternateCost": 1,
     "group": "Blossom",
     "source": "94.png",
-    "searchText": "Se este Golpe bater, busque uma ação com Fluir. REVIDE Se este Golpe ganha+l .",
-    "zone": "Inferior"
+    "searchText": "GATILHO: busque uma cópia de Petalle Fatalle. REVIDE: este Golpe ganha +1 ATQ.",
+    "zone": "Inferior",
+    "playtest": true,
+    "sequenceKeyword": "start",
+    "sequenceEffect": {
+      "stage": "start",
+      "ops": [
+        {
+          "op": "playtestSearch",
+          "name": "Petalle Fatalle"
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-095",
@@ -1532,7 +1753,8 @@
     "group": "Blossom",
     "source": "95.png",
     "searchText": "Compre I carta. (Fluir - Se você jogou uma ação antes FLUIR desta). REVIDE Se bater, compre I carta.",
-    "zone": "Superior"
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-096",
@@ -1543,12 +1765,24 @@
     "color": "Rosa",
     "cost": 2,
     "power": 4,
-    "block": 2,
+    "block": 1,
     "alternateCost": null,
     "group": "Blossom",
     "source": "96.png",
-    "searchText": "",
-    "zone": "Superior"
+    "searchText": "CONTINUAÇÃO: se este Golpe bater, ganhe 1 de PODER.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceEffect": {
+      "stage": "continue",
+      "ops": [
+        {
+          "op": "ownPower",
+          "n": 1
+        }
+      ],
+      "hit": true
+    }
   },
   {
     "id": "OF-C1-097",
@@ -1563,8 +1797,25 @@
     "alternateCost": null,
     "group": "Blossom",
     "source": "97.png",
-    "searchText": "Compre 2 cartas. Descarte I carta. \"Sabe o que eles são? Apenas a maior organização de",
-    "zone": "Superior"
+    "searchText": "CONTINUAÇÃO: compre 2 cartas e descarte 1.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceEffect": {
+      "stage": "continue",
+      "ops": [
+        {
+          "op": "draw",
+          "n": 2
+        },
+        {
+          "op": "discardOwn",
+          "n": 1,
+          "own": true
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-098",
@@ -1574,13 +1825,16 @@
     "subtype": "Soco",
     "color": "Rosa",
     "cost": 2,
-    "power": 4,
-    "block": 2,
+    "power": 3,
+    "block": 1,
     "alternateCost": null,
     "group": "Blossom",
     "source": "98.png",
-    "searchText": "(Se este Golpe bater, interrompa a sequência do QUEBRA lutador adversário.)",
-    "zone": "Superior"
+    "searchText": "CONTINUAÇÃO: este Golpe ganha QUEBRA.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceBreak": true
   },
   {
     "id": "OF-C1-099",
@@ -1590,13 +1844,16 @@
     "subtype": "Disparo",
     "color": "Rosa",
     "cost": 3,
-    "power": 5,
+    "power": 4,
     "block": 1,
     "alternateCost": 2,
     "group": "Blossom",
     "source": "99.png",
-    "searchText": "QUEBRA. REVIDE: Compre 1 carta.",
-    "zone": "Superior"
+    "searchText": "FINALIZAÇÃO: este Golpe ganha QUEBRA. REVIDE: compre 1 carta.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "finish",
+    "sequenceBreak": true
   },
   {
     "id": "OF-C1-100",
@@ -1605,14 +1862,17 @@
     "type": "Golpe",
     "subtype": "Explosão",
     "color": "Rosa",
-    "cost": 5,
-    "power": 6,
+    "cost": 4,
+    "power": 5,
     "block": 2,
-    "alternateCost": 4,
+    "alternateCost": 3,
     "group": "Blossom",
     "source": "100.png",
-    "searchText": "QUEBRA FLUIR (Se este Golpe bater, interrompa a sequência do lutador adversário.) Se este golpe bater, todos os seus Golpes até o final deste turno custam lé a menos. (Fluir - Se você jogou uma ação antes desta). REVIDE Este golpe ganha +1'.",
-    "zone": "Inferior"
+    "searchText": "FINALIZAÇÃO: este Golpe ganha QUEBRA. FLUIR: se bater, seus Golpes custam 1 energia a menos até o fim deste turno. REVIDE: este Golpe ganha +2 ATQ.",
+    "zone": "Inferior",
+    "playtest": true,
+    "sequenceKeyword": "finish",
+    "sequenceBreak": true
   },
   {
     "id": "OF-C1-101",
@@ -1621,14 +1881,15 @@
     "type": "Golpe",
     "subtype": "Explosão",
     "color": "Rosa",
-    "cost": 5,
-    "power": 6,
+    "cost": 4,
+    "power": 5,
     "block": 2,
-    "alternateCost": 4,
+    "alternateCost": 3,
     "group": "Blossom",
     "source": "101.png",
     "searchText": "(Se este Golpe bater, interrompa a sequência do lutador adversário.) Esta ação não pode ser bloqueada por Guardas. (Fluir - Se você jogou uma ação antes desta). REVIDE Este golpe ganha +1 e.",
-    "zone": "Inferior"
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-102",
@@ -1637,14 +1898,17 @@
     "type": "Truque",
     "subtype": "",
     "color": "Rosa",
-    "cost": 2,
+    "cost": 1,
     "power": null,
     "block": 1,
     "alternateCost": null,
     "group": "Blossom",
     "source": "102.png",
     "searchText": "Se você realizou 2 ou mais golpes neste turno. Olhe as 5 cartas do topo do seu baralho, se alguma tiver Fluir, compre-a ou substitua ela por uma energia ativa da Estamina (ela entra como energia inativa).",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-103",
@@ -1660,7 +1924,10 @@
     "group": "Blossom",
     "source": "103.png",
     "searchText": "(Descarte esta carta e uma Guarda do mesmo valor, FINTA cancele a Guarda alvo.) Como custo adicional, descarte I carta. Coloque I ação do seu baralho na sua Estamina, retorne I ação da sua Estamina para a",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": true,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-104",
@@ -1676,7 +1943,10 @@
     "group": "Blossom",
     "source": "104.png",
     "searchText": "FINTA (Descarte esta carta e uma Guarda do mesmo valor, cancele a Guarda alvo.) 0 Disparo alvo ganha +2 g.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": true,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-105",
@@ -1692,7 +1962,8 @@
     "group": "Blossom",
     "source": "105.png",
     "searchText": "DEFLETIR FLUIR (Se esta Guarda bloquear com sucesso a partir da sua Zona Extra, cause dano igual ao meu valor.) Esta guarda ganha +1 (Fluir - Se você jogou uma ação antes desta).",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-106",
@@ -1708,7 +1979,8 @@
     "group": "Blossom",
     "source": "106.png",
     "searchText": "",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-107",
@@ -1719,12 +1991,13 @@
     "color": "Rosa",
     "cost": 1,
     "power": null,
-    "block": 5,
+    "block": 4,
     "alternateCost": null,
     "group": "Blossom",
     "source": "107.png",
     "searchText": "(Se esta Guarda bloquear com sucesso a partir da sua DEFLETIR Zona Extra, cause dano igual ao meu valor.) Descarte I carta como custo adicional para bloquear com esta Guarda.",
-    "zone": null
+    "zone": null,
+    "playtest": true
   },
   {
     "id": "OF-C1-108",
@@ -1740,7 +2013,9 @@
     "zone": "Meio",
     "group": "Psychic",
     "source": "ATUALIZAÇÃO 0.1/OF-C1-107.png",
-    "searchText": "Declare um tipo de Ação (Golpe, Truque ou Guarda). Revele a carta do topo do seu baralho; se for do mesmo tipo, este Golpe ganha +2 ATQ para cada Ação Psychic banida. REVIDE: este Golpe ganha +2 ATQ."
+    "searchText": "CONTINUAÇÃO: declare um tipo de Ação e revele a carta do topo do seu Baralho. Se corresponder, este Golpe ganha +2 ATQ para cada Ação Psychic banida.",
+    "playtest": true,
+    "sequenceKeyword": "continue"
   },
   {
     "id": "OF-C1-109",
@@ -1755,8 +2030,20 @@
     "alternateCost": null,
     "group": "Arcturus",
     "source": "01.png",
-    "searchText": "Se este Golpe for realizado depois de ser revelado, compre 1 carta.",
-    "zone": "Meio"
+    "searchText": "GATILHO: busque Excalium Pellinier. Se este Golpe for realizado depois de ser revelado, compre 1 carta.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "start",
+    "sequenceEffect": {
+      "stage": "start",
+      "ops": [
+        {
+          "op": "playtestSearch",
+          "name": "Excalium - \"Pellinier\""
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-110",
@@ -1772,7 +2059,8 @@
     "group": "Arcturus",
     "source": "02.png",
     "searchText": "Se este Golpe for realizado depois de ser revelado, ganhe +1 ATQ. Bana esta Ação do seu Descarte e revele uma carta da sua mão. REVIDE: este Golpe ganha +1 ATQ.",
-    "zone": "Meio"
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-111",
@@ -1787,8 +2075,20 @@
     "alternateCost": 2,
     "group": "Arcturus",
     "source": "03.png",
-    "searchText": "Se este Golpe for realizado depois de ser revelado, busque 1 Golpe \"Excalium\" do seu Baralho. Bana esta Ação do seu Descarte e revele uma carta da sua mão. REVIDE: este Golpe ganha +2 ATQ.",
-    "zone": "Meio"
+    "searchText": "CONTINUAÇÃO: compre 1 carta. REVIDE: este Golpe ganha +2 ATQ.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceEffect": {
+      "stage": "continue",
+      "ops": [
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-112",
@@ -1804,7 +2104,8 @@
     "group": "Arcturus",
     "source": "04.png",
     "searchText": "Se este Golpe for realizado depois de ser revelado, recicle 1 Ação \"Excalium\" do seu Descarte. Bana esta Ação do seu Descarte e revele uma carta da sua mão. REVIDE: este Golpe ganha +2 ATQ.",
-    "zone": "Inferior"
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-113",
@@ -1819,8 +2120,11 @@
     "alternateCost": 4,
     "group": "Arcturus",
     "source": "05.png",
-    "searchText": "Este Golpe só pode ser realizado depois de ser revelado. Bana esta Ação do seu Descarte e revele uma carta da sua mão. REVIDE: este Golpe ganha +3 ATQ.",
-    "zone": "Inferior"
+    "searchText": "FINALIZAÇÃO: este Golpe ganha QUEBRA. Este Golpe só pode ser realizado depois de ser revelado.",
+    "zone": "Inferior",
+    "playtest": true,
+    "sequenceKeyword": "finish",
+    "sequenceBreak": true
   },
   {
     "id": "OF-C1-114",
@@ -1835,11 +2139,13 @@
     "alternateCost": null,
     "group": "Arcturus",
     "source": "06.png",
-    "searchText": "Vire e pague 1 energia verde: revele X Golpes da mão e conceda +X ATQ ao próximo ataque. OVERDRIVE: golpeie com meu Poder e +1 ATQ para cada Golpe Excalium revelado neste turno.",
+    "searchText": "Vire e pague 1 energia verde: revele X Ações da sua mão. Conceda +X ATQ ao seu próximo ataque. OVERDRIVE: Bana qualquer quantidade de Ações Excalium do seu Descarte. Golpeie com o meu Poder, com +X ATQ para cada Golpe Excalium banido.",
     "zone": null,
     "colors": [
       "Verde"
-    ]
+    ],
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-C1-115",
@@ -1855,7 +2161,8 @@
     "group": "Mourner",
     "source": "01.png",
     "searchText": "FLUXO 1: busque 1 Ação com Fluxo do seu baralho para a sua mão. Fluxo: se a Ação anterior a esta for de um custo 1 ou menor.",
-    "zone": "Superior"
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-116",
@@ -1871,7 +2178,8 @@
     "group": "Mourner",
     "source": "02.png",
     "searchText": "FLUXO 1: o próximo Golpe ganha +1 ATQ. Fluxo: se a Ação anterior a esta for de um custo 1 ou menor.",
-    "zone": "Superior"
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-117",
@@ -1887,7 +2195,8 @@
     "group": "Mourner",
     "source": "03.png",
     "searchText": "FLUXO 2: o próximo Golpe ganha +2 ATQ. Fluxo: se a Ação anterior a esta for de um custo 2 ou menor.",
-    "zone": "Superior"
+    "zone": "Superior",
+    "playtest": true
   },
   {
     "id": "OF-C1-118",
@@ -1902,8 +2211,10 @@
     "alternateCost": null,
     "group": "Mourner",
     "source": "04.png",
-    "searchText": "FLUXO 2: compre 2 cartas. Fluxo: se a Ação anterior a esta for de um custo 2 ou menor.",
-    "zone": "Superior"
+    "searchText": "CONTINUAÇÃO e FLUXO 2: compre 2 cartas.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "continue"
   },
   {
     "id": "OF-C1-119",
@@ -1918,8 +2229,11 @@
     "alternateCost": null,
     "group": "Mourner",
     "source": "05.png",
-    "searchText": "FLUXO 3: retorne X cartas com Fluxo do seu Descarte para o seu Baralho. Este Golpe ganha +X ATQ (X é igual à quantidade de cartas retornadas). Fluxo: se a Ação anterior a esta for de um custo 3 ou menor.",
-    "zone": "Superior"
+    "searchText": "FINALIZAÇÃO: este Golpe ganha QUEBRA. FLUXO 3: retorne X cartas com FLUXO do Descarte ao Baralho. Este Golpe ganha +X ATQ.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "finish",
+    "sequenceBreak": true
   },
   {
     "id": "OF-C1-120",
@@ -1938,7 +2252,9 @@
     "zone": null,
     "colors": [
       "Rosa"
-    ]
+    ],
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-C1-121",
@@ -1949,12 +2265,13 @@
     "color": "Roxo",
     "cost": 1,
     "power": 5,
-    "block": 2,
+    "block": 1,
     "alternateCost": null,
     "group": "Placide",
     "source": "01.png",
-    "searchText": "Como custo adicional, retorne 1 carta da sua Zona Extra para o fundo do seu baralho. RECARGA 1: retorne 1 carta do Descarte do seu oponente para o baralho dele. Recarga conta cartas retornadas ao fundo do seu baralho neste turno, antes deste custo.",
-    "zone": "Inferior"
+    "searchText": "Como custo adicional, retorne 1 carta da sua Zona Extra para o fundo do seu baralho. RECARGA 1: retorne 1 carta do Descarte do seu oponente para o baralho dele. Recarga conta as cartas retornadas ao fundo do seu Baralho neste turno, incluindo as retornadas para realizar este Golpe. Primeiro retorne, depois aplique Recarga.",
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-122",
@@ -1965,12 +2282,13 @@
     "color": "Roxo",
     "cost": 1,
     "power": 5,
-    "block": 2,
+    "block": 1,
     "alternateCost": null,
     "group": "Placide",
     "source": "02.png",
-    "searchText": "Como custo adicional para realizar este Golpe, retorne 1 carta da sua Zona Extra para o fundo do seu baralho. RECARGA 1: compre 1 carta. Recarga conta cartas retornadas ao fundo do seu baralho neste turno, antes do custo deste Golpe.",
-    "zone": "Inferior"
+    "searchText": "Como custo adicional para realizar este Golpe, retorne 1 carta da sua Zona Extra para o fundo do seu baralho. RECARGA 1: compre 1 carta. Recarga conta as cartas retornadas ao fundo do seu Baralho neste turno, incluindo as retornadas para realizar este Golpe. Primeiro retorne, depois aplique Recarga.",
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-123",
@@ -1981,12 +2299,13 @@
     "color": "Roxo",
     "cost": 2,
     "power": 6,
-    "block": 3,
+    "block": 2,
     "alternateCost": null,
     "group": "Placide",
     "source": "03.png",
-    "searchText": "Como custo adicional para realizar este Golpe, retorne 2 cartas da sua Zona Extra para o fundo do seu baralho. RECARGA 2: este Golpe ganha +2 ATQ. Recarga conta cartas retornadas ao fundo do seu baralho neste turno, antes do custo deste Golpe.",
-    "zone": "Meio"
+    "searchText": "Como custo adicional para realizar este Golpe, retorne 2 cartas da sua Zona Extra para o fundo do seu baralho. RECARGA 2: este Golpe ganha +2 ATQ. Recarga conta as cartas retornadas ao fundo do seu Baralho neste turno, incluindo as retornadas para realizar este Golpe. Primeiro retorne, depois aplique Recarga.",
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-124",
@@ -1997,12 +2316,13 @@
     "color": "Roxo",
     "cost": 3,
     "power": 7,
-    "block": 4,
+    "block": 3,
     "alternateCost": null,
     "group": "Placide",
     "source": "04.png",
-    "searchText": "Como custo adicional para realizar este Golpe, retorne 3 cartas da sua Zona Extra para o fundo do seu baralho. RECARGA 2: este Golpe ganha +2 ATQ. Recarga conta cartas retornadas ao fundo do seu baralho neste turno, antes do custo deste Golpe.",
-    "zone": "Inferior"
+    "searchText": "Como custo adicional para realizar este Golpe, retorne 3 cartas da sua Zona Extra para o fundo do seu baralho. RECARGA 2: este Golpe ganha +2 ATQ. Recarga conta as cartas retornadas ao fundo do seu Baralho neste turno, incluindo as retornadas para realizar este Golpe. Primeiro retorne, depois aplique Recarga.",
+    "zone": "Inferior",
+    "playtest": true
   },
   {
     "id": "OF-C1-125",
@@ -2018,7 +2338,10 @@
     "group": "Placide",
     "source": "05.png",
     "searchText": "Descarte uma Ação. Coloque até 2 Ações do seu baralho na sua Zona Extra, viradas para baixo. Elas não podem ser ativadas neste turno.",
-    "zone": null
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-126",
@@ -2037,7 +2360,9 @@
     "zone": null,
     "colors": [
       "Roxo"
-    ]
+    ],
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-C1-127",
@@ -2053,7 +2378,8 @@
     "group": "Rynhard",
     "source": "01.png",
     "searchText": "FÚRIA 1: se este Golpe for bloqueado, seus próximos Golpes na mesma Zona ganham +1 ATQ.",
-    "zone": "Meio"
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-128",
@@ -2068,8 +2394,20 @@
     "alternateCost": null,
     "group": "Rynhard",
     "source": "02.png",
-    "searchText": "Compre 1 carta. FÚRIA 2: se este Golpe for bloqueado, seus próximos Golpes na mesma Zona ganham +2 ATQ.",
-    "zone": "Meio"
+    "searchText": "GATILHO: compre 1 carta. FÚRIA 2.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "start",
+    "sequenceEffect": {
+      "stage": "start",
+      "ops": [
+        {
+          "op": "draw",
+          "n": 1
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-C1-129",
@@ -2078,14 +2416,16 @@
     "type": "Golpe",
     "subtype": "Soco",
     "color": "Laranja",
-    "cost": 2,
+    "cost": 1,
     "power": 1,
     "block": 2,
     "alternateCost": null,
     "group": "Rynhard",
     "source": "03.png",
-    "searchText": "Recicle 1 carta. FÚRIA 2: se este Golpe for bloqueado, seus próximos Golpes na mesma Zona ganham +2 ATQ.",
-    "zone": "Meio"
+    "searchText": "CONTINUAÇÃO: recicle 1 carta. FÚRIA 2.",
+    "zone": "Meio",
+    "playtest": true,
+    "sequenceKeyword": "continue"
   },
   {
     "id": "OF-C1-130",
@@ -2101,7 +2441,8 @@
     "group": "Rynhard",
     "source": "04.png",
     "searchText": "FÚRIA 2: se este Golpe for bloqueado, seus próximos Golpes na mesma Zona ganham +2 ATQ.",
-    "zone": "Meio"
+    "zone": "Meio",
+    "playtest": true
   },
   {
     "id": "OF-C1-131",
@@ -2116,8 +2457,11 @@
     "alternateCost": null,
     "group": "Rynhard",
     "source": "05.png",
-    "searchText": "FÚRIA 3: se este Golpe for bloqueado, seus próximos Golpes na mesma Zona ganham +3 ATQ.",
-    "zone": "Superior"
+    "searchText": "FINALIZAÇÃO: este Golpe ganha QUEBRA. FÚRIA 3.",
+    "zone": "Superior",
+    "playtest": true,
+    "sequenceKeyword": "finish",
+    "sequenceBreak": true
   },
   {
     "id": "OF-C1-132",
@@ -2132,11 +2476,13 @@
     "alternateCost": null,
     "group": "Rynhard",
     "source": "06.png",
-    "searchText": "Se o seu primeiro Golpe com Fúria bater, reative 1 energia. OVERDRIVE: golpeie uma Zona de Combate à sua escolha com meu Poder. Se for bloqueado, todos os marcadores de Fúria na respectiva Zona são dobrados.",
+    "searchText": "A primeira vez que um Golpe com Fúria bater no turno, reative 1 energia. OVERDRIVE: golpeie uma Zona de Combate da sua escolha com meu Poder. Se for bloqueado, todos os marcadores de Fúria na respectiva Zona são dobrados.",
     "zone": null,
     "colors": [
       "Laranja"
-    ]
+    ],
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-C1-133",
@@ -2209,14 +2555,15 @@
     "type": "Truque",
     "subtype": "",
     "color": "Genérica",
-    "cost": 1,
+    "cost": 0,
     "power": null,
     "block": 2,
     "alternateCost": null,
     "group": "Genéricas",
     "source": "Atualização 0.3",
     "searchText": "TROCA: substitua este Truque por uma Ação na sua Estamina.",
-    "zone": null
+    "zone": null,
+    "troca": true
   },
   {
     "id": "OF-C1-139",
@@ -2231,8 +2578,11 @@
     "alternateCost": null,
     "group": "Genéricas",
     "source": "Atualização 0.3",
-    "searchText": "Bana até X cartas do seu Descarte. Retorne a mesma quantidade de cartas do Descarte do seu oponente para o baralho dele. X é a quantidade selecionada pelo jogador.",
-    "zone": null
+    "searchText": "Bana até 3 cartas do seu Descarte. Retorne a mesma quantidade de cartas do Descarte do seu oponente para o Baralho dele.",
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-C1-140",
@@ -2284,7 +2634,9 @@
     "searchText": "Seus Golpes ganham +1 ATQ para cada energia inativa do lutador adversário. OVERDRIVE: até o final deste turno, inative energias do lutador alvo igual à quantidade de Guardas no seu Descarte.",
     "colors": [
       "Azul"
-    ]
+    ],
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-RVAS-002",
@@ -2301,7 +2653,8 @@
     "group": "Missbigotten",
     "source": "02.png",
     "collection": "rivals-ascendentes",
-    "searchText": ""
+    "searchText": "",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-003",
@@ -2318,7 +2671,18 @@
     "group": "Missbigotten",
     "source": "03.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Se no turno anterior você bloqueou com sucesso, coloque 1 Guarda Glacius de seu baralho na Zona Extra, virada para baixo."
+    "searchText": "GATILHO: coloque 1 Guarda Glacius do seu Baralho na Zona Extra virada para baixo.",
+    "playtest": true,
+    "sequenceKeyword": "start",
+    "sequenceEffect": {
+      "stage": "start",
+      "ops": [
+        {
+          "op": "playtestGlacius"
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-RVAS-004",
@@ -2335,7 +2699,8 @@
     "group": "Missbigotten",
     "source": "04.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Se no turno anterior você bloqueou com sucesso, este Golpe ganha +3 ATQ. REVIDE: se bater, reative 1 energia."
+    "searchText": "Se no turno anterior você bloqueou com sucesso, este Golpe ganha +3 ATQ. REVIDE: se bater, reative 1 energia.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-005",
@@ -2352,7 +2717,18 @@
     "group": "Missbigotten",
     "source": "05.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Se no turno anterior você bloqueou, coloque a carta do topo do seu baralho na sua Estamina como energia inativa. REVIDE: se bater, reative 1 energia."
+    "searchText": "CONTINUAÇÃO: coloque a carta do topo do Baralho na Estâmina como inativa. REVIDE: reative 1 Energia.",
+    "playtest": true,
+    "sequenceKeyword": "continue",
+    "sequenceEffect": {
+      "stage": "continue",
+      "ops": [
+        {
+          "op": "playtestEnergy"
+        }
+      ],
+      "hit": false
+    }
   },
   {
     "id": "OF-RVAS-006",
@@ -2369,7 +2745,8 @@
     "group": "Missbigotten",
     "source": "06.png",
     "collection": "rivals-ascendentes",
-    "searchText": "QUEBRA. Este Golpe custa 1 a menos para cada energia inativa do adversário. REVIDE: retorne até 2 cartas de sua Zona Extra para a mão."
+    "searchText": "QUEBRA. Este Golpe custa 1 a menos para cada energia inativa do adversário. REVIDE: retorne até 2 cartas de sua Zona Extra para a mão.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-007",
@@ -2386,7 +2763,10 @@
     "group": "Missbigotten",
     "source": "07.png",
     "collection": "rivals-ascendentes",
-    "searchText": "QUEBRA. REVIDE: compre 2 cartas."
+    "searchText": "FINALIZAÇÃO: este Golpe ganha QUEBRA. REVIDE: compre 2 cartas.",
+    "playtest": true,
+    "sequenceKeyword": "finish",
+    "sequenceBreak": true
   },
   {
     "id": "OF-RVAS-008",
@@ -2395,15 +2775,17 @@
     "type": "Guarda",
     "subtype": "",
     "color": "Azul",
-    "cost": 0,
+    "cost": 1,
     "power": null,
-    "block": 1,
+    "block": 3,
     "alternateCost": null,
     "zone": null,
     "group": "Missbigotten",
     "source": "08.png",
     "collection": "rivals-ascendentes",
-    "searchText": ""
+    "searchText": "REVERSO: se esta Guarda bloquear com sucesso a partir da Zona Extra, quebre a sequência de Overdrive do Lutador adversário.",
+    "playtest": true,
+    "reverso": true
   },
   {
     "id": "OF-RVAS-009",
@@ -2420,7 +2802,8 @@
     "group": "Missbigotten",
     "source": "09.png",
     "collection": "rivals-ascendentes",
-    "searchText": "DETER 1: busque 1 Ação Glacius do baralho para a mão. Deter: se esta Guarda bloquear, os próximos Golpes na Zona bloqueada custam 1 a mais até o final do turno."
+    "searchText": "DETER 1: busque 1 Ação Glacius do baralho para a mão. Deter: se esta Guarda bloquear, os próximos Golpes na Zona bloqueada custam 1 a mais até o final do turno.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-010",
@@ -2437,7 +2820,8 @@
     "group": "Missbigotten",
     "source": "10.png",
     "collection": "rivals-ascendentes",
-    "searchText": "DETER 1. Sua próxima Guarda ganha +1 BLOQ. Se bloquear com sucesso, reative 1 energia sua."
+    "searchText": "DETER 1. Sua próxima Guarda ganha +1 BLOQ. Se bloquear com sucesso, reative 1 energia sua.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-011",
@@ -2454,7 +2838,8 @@
     "group": "Missbigotten",
     "source": "11.png",
     "collection": "rivals-ascendentes",
-    "searchText": "DETER 1. Compre 1 carta. Deter: se esta Guarda bloquear, os próximos Golpes na Zona bloqueada custam 1 a mais até o final do turno."
+    "searchText": "DETER 1. Compre 1 carta. Deter: se esta Guarda bloquear, os próximos Golpes na Zona bloqueada custam 1 a mais até o final do turno.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-012",
@@ -2471,7 +2856,8 @@
     "group": "Missbigotten",
     "source": "12.png",
     "collection": "rivals-ascendentes",
-    "searchText": "DETER 2. Inative 1 energia ativa do adversário. Ele compra 1 carta."
+    "searchText": "DETER 2. Inative 1 energia ativa do adversário. Ele compra 1 carta.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-013",
@@ -2488,7 +2874,8 @@
     "group": "Missbigotten",
     "source": "13.png",
     "collection": "rivals-ascendentes",
-    "searchText": "DETER 2. Retorne até 2 cartas das Zonas Extras em campo para o fundo do baralho de seus donos."
+    "searchText": "DETER 2. Retorne até 2 cartas das Zonas Extras em campo para o fundo do baralho de seus donos.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-014",
@@ -2505,7 +2892,11 @@
     "group": "Missbigotten",
     "source": "14.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Escolha um dos efeitos: TROCA (substitua este Truque por uma Ação na sua Estamina, devolvida à mão) OU compre 1 carta e descarte 1 carta."
+    "searchText": "Escolha um dos efeitos: TROCA (substitua este Truque por uma Ação na sua Estamina, devolvida à mão) OU compre 1 carta e descarte 1 carta.",
+    "playtest": true,
+    "troca": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-015",
@@ -2522,7 +2913,10 @@
     "group": "Missbigotten",
     "source": "15.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Olhe as 3 primeiras cartas do baralho. Coloque uma na mão e as restantes no fundo do baralho."
+    "searchText": "Olhe as 3 primeiras cartas do baralho. Coloque uma na mão e as restantes no fundo do baralho.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-016",
@@ -2539,7 +2933,10 @@
     "group": "Missbigotten",
     "source": "16.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Retorne até 2 cartas das Zonas Extras em campo para a mão de seus donos."
+    "searchText": "Retorne até 2 cartas das Zonas Extras em campo para a mão de seus donos.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-017",
@@ -2573,7 +2970,10 @@
     "group": "Missbigotten",
     "source": "18.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Descarte 3 cartas. Coloque o topo de seu baralho na Estamina como energia inativa."
+    "searchText": "Descarte 3 cartas. Coloque o topo de seu baralho na Estamina como energia inativa.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-019",
@@ -2590,7 +2990,10 @@
     "group": "Missbigotten",
     "source": "19.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Se bloqueou com sucesso neste turno, o próximo Golpe do lutador alvo custa 1 a mais para ser realizado."
+    "searchText": "Se bloqueou com sucesso neste turno, o próximo Golpe do lutador alvo custa 1 a mais para ser realizado.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-020",
@@ -2607,7 +3010,10 @@
     "group": "Missbigotten",
     "source": "20.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Retorne todas as cartas das Zonas Extras em campo para o baralho de seus donos. Compre cartas igual à quantidade retornada."
+    "searchText": "Retorne todas as cartas das Zonas Extras em campo para o baralho de seus donos. Compre cartas igual à quantidade retornada.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-021",
@@ -2624,7 +3030,10 @@
     "group": "Missbigotten",
     "source": "01.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Compre 1 carta. Descarte 2 cartas. Reative uma energia inativa."
+    "searchText": "Compre 1 carta. Descarte 2 cartas. Reative uma energia inativa.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-022",
@@ -2641,7 +3050,10 @@
     "group": "Missbigotten",
     "source": "02.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Retorne 1 Energia da sua Estamina para a mão. Compre 2 cartas."
+    "searchText": "Retorne 1 Energia da sua Estamina para a mão. Compre 2 cartas.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-023",
@@ -2658,7 +3070,10 @@
     "group": "Missbigotten",
     "source": "03.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Retorne 1 Energia da sua Estamina para a mão. Retorne até 3 cartas da Zona Extra do lutador alvo para o baralho."
+    "searchText": "Retorne 1 Energia da sua Estamina para a mão. Retorne até 3 cartas da Zona Extra do lutador alvo para o baralho.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-024",
@@ -2675,7 +3090,10 @@
     "group": "Missbigotten",
     "source": "04.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Se você recebeu dano neste turno, sua próxima Guarda custa 1 a menos."
+    "searchText": "Se você recebeu dano neste turno, sua próxima Guarda custa 1 a menos.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-025",
@@ -2692,7 +3110,10 @@
     "group": "Missbigotten",
     "source": "05.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Bana uma Ação do seu Descarte. Simulacro ganha seu efeito até a resolução, permanecendo Truque e sem copiar atributos."
+    "searchText": "Bana uma Ação do seu Descarte. Simulacro ganha seu efeito até a resolução, permanecendo Truque e sem copiar atributos.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-026",
@@ -2709,7 +3130,10 @@
     "group": "Missbigotten",
     "source": "06.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Compre uma carta para cada energia inativa do lutador alvo. A próxima Ação custa X a mais, sendo X a quantidade de cartas compradas por este efeito."
+    "searchText": "Compre uma carta para cada energia inativa do lutador alvo. A próxima Ação custa X a mais, sendo X a quantidade de cartas compradas por este efeito.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-RVAS-027",
@@ -2726,7 +3150,8 @@
     "group": "Missbigotten",
     "source": "07.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Se bater, declare um tipo de Ação e revele o topo do seu baralho. Se corresponder, deixe 1 energia do lutador alvo inativa até o começo do seu próximo turno. REVIDE: se bater, reative 1 Energia."
+    "searchText": "Se bater, declare um tipo de Ação e revele o topo do seu baralho. Se corresponder, deixe 1 energia do lutador alvo inativa até o começo do seu próximo turno. REVIDE: se bater, reative 1 Energia.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-028",
@@ -2743,7 +3168,8 @@
     "group": "Missbigotten",
     "source": "08.png",
     "collection": "rivals-ascendentes",
-    "searchText": "Este Golpe ganha +1 ATQ para cada carta comprada neste turno, exceto por Repor."
+    "searchText": "Este Golpe ganha +1 ATQ para cada carta comprada neste turno, exceto por Repor.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-029",
@@ -2763,7 +3189,9 @@
     "searchText": "Comece a partida com 1 Guarda do seu Baralho preparada na sua Zona Extra. OVERDRIVE: dobre o valor de bloqueio de todas as suas Guardas até o final deste turno.",
     "colors": [
       "Azul"
-    ]
+    ],
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-RVAS-030",
@@ -2780,7 +3208,8 @@
     "group": "Gemite",
     "collection": "rivals-ascendentes",
     "source": "DUKE/14.png",
-    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: compre 1 carta."
+    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: compre 1 carta.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-031",
@@ -2797,7 +3226,8 @@
     "group": "Gemite",
     "collection": "rivals-ascendentes",
     "source": "DUKE/15.png",
-    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: destrua 1 carta na Zona Extra. Fixar: se após bloquear esta Ação seria enviada para o Descarte, coloque-a na sua Zona Extra virada para cima."
+    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: destrua 1 carta na Zona Extra. Fixar: se após bloquear esta Ação seria enviada para o Descarte, coloque-a na sua Zona Extra virada para cima.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-032",
@@ -2814,7 +3244,8 @@
     "group": "Gemite",
     "collection": "rivals-ascendentes",
     "source": "DUKE/16.png",
-    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: busque 1 Guarda Gemite."
+    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: busque 1 Guarda Gemite.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-033",
@@ -2831,7 +3262,8 @@
     "group": "Gemite",
     "collection": "rivals-ascendentes",
     "source": "DUKE/17.png",
-    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: previna 2 de dano neste turno."
+    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: previna 2 de dano neste turno.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-034",
@@ -2840,7 +3272,7 @@
     "type": "Guarda",
     "cost": 2,
     "power": null,
-    "block": 6,
+    "block": 5,
     "alternateCost": null,
     "zone": null,
     "subtype": "",
@@ -2848,7 +3280,8 @@
     "group": "Gemite",
     "collection": "rivals-ascendentes",
     "source": "DUKE/18.png",
-    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: retorne até 2 cartas das Zonas Extras do campo para o Baralho."
+    "searchText": "Esta Guarda pode ser jogada da sua Zona Extra como um Golpe. FIXAR: retorne até 2 cartas das Zonas Extras do campo para o Baralho.",
+    "playtest": true
   },
   {
     "id": "OF-RVAS-035",
@@ -2865,7 +3298,10 @@
     "group": "Gemite",
     "collection": "rivals-ascendentes",
     "source": "DUKE/19.png",
-    "searchText": "Retorne todas as Ações Gemite da sua Zona Extra e Descarte para o fundo do seu baralho. Efeitos cumulativos: 1 ou mais, retorne 2 cartas das Zonas Extras para o Baralho; 3 ou mais, compre 2 cartas; 5 ou mais, inative 2 energias do lutador alvo."
+    "searchText": "Retorne todas as Ações Gemite da sua Zona Extra e Descarte para o fundo do seu baralho. Efeitos cumulativos: 1 ou mais, retorne 2 cartas das Zonas Extras para o Baralho; 3 ou mais, compre 2 cartas; 5 ou mais, inative 2 energias do lutador alvo.",
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-MZ-001",
@@ -2885,7 +3321,9 @@
     "colors": [
       "Laranja"
     ],
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true,
+    "superMax": 5
   },
   {
     "id": "OF-MZ-002",
@@ -2900,11 +3338,12 @@
     "alternateCost": null,
     "group": "MahaZeno",
     "source": "MAHAKA-ONI.png",
-    "searchText": "MahaZeno. Apenas uma cópia no Adicional, somente com MahaZeno. Permanente especial; não é Ação. Cada vez que você causar dano de efeito, cause 1 dano a mais ao lutador alvo.",
+    "searchText": "MahaZeno (Você deve ter MahaZeno como seu lutador para ter esta carta no seu Baralho Adicional e apenas uma dela). Dobre todo dano de efeito causado ao Lutador alvo.",
     "zone": null,
     "specialPermanent": true,
     "exclusiveFighter": 200,
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true
   },
   {
     "id": "OF-MZ-003",
@@ -2919,11 +3358,12 @@
     "alternateCost": null,
     "group": "MahaZeno",
     "source": "ZENO-O-ONI.png",
-    "searchText": "MahaZeno. Apenas uma cópia no Adicional, somente com MahaZeno. Permanente especial; não é Ação. No começo do seu turno, coloque 1 marcador Amaldiçoado no Lutador alvo. No início de cada turno, cause 1 de dano para cada marcador. Os marcadores continuam causando dano após Zeno-O-Oni sair de campo.",
+    "searchText": "Ao final de cada turno, coloque 1 marcador Amaldiçoado no Lutador alvo. No início do seu turno, cause 1 de dano para cada marcador Amaldiçoado seu no Lutador que o recebeu.",
     "zone": null,
     "specialPermanent": true,
     "exclusiveFighter": 200,
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true
   },
   {
     "id": "OF-MZ-004",
@@ -2938,9 +3378,13 @@
     "alternateCost": null,
     "group": "MahaZeno",
     "source": "KASHIGATAMA!.png",
-    "searchText": "TROCA: substitua este Truque por uma Ação na sua Estâmina. Se esta Ação está na Estâmina e um dos seus demônios seria removido da Zona Extra, retorne esta Ação ao fundo do Baralho em vez disso.",
+    "searchText": "Escolha 1 efeito: TROCA — substitua este Truque por uma Ação na sua Estâmina; OU, se Mahaka-Oni ou Zeno-O-Oni estiverem em campo, busque 1 Ação que mencione Mahaka-Oni ou Zeno-O-Oni do seu Baralho para sua mão.",
     "zone": null,
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true,
+    "troca": true,
+    "playtestFinta": false,
+    "playtestDesvio": false
   },
   {
     "id": "OF-MZ-005",
@@ -2957,7 +3401,8 @@
     "source": "KODAI NO AKUMA.png",
     "searchText": "Mahaka-Oni: se bater, busque 1 Golpe com Ímpeto. Zeno-O-Oni: se você causou dano neste turno, recicle 1 Golpe.",
     "zone": "Inferior",
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true
   },
   {
     "id": "OF-MZ-006",
@@ -2972,9 +3417,10 @@
     "alternateCost": null,
     "group": "MahaZeno",
     "source": "OKAMI NO TACHI.png",
-    "searchText": "QUEBRA. Mahaka-Oni: Ímpeto 3. Zeno-O-Oni: se bater, cada vez que seu oponente comprar cartas neste turno, cause 1 de dano.",
+    "searchText": "QUEBRA. Aplique o efeito de acordo com a Maldição em campo: Mahaka-Oni: Ímpeto 3. Zeno-O-Oni: este Golpe ganha +X ATQ (X é igual à quantidade de marcadores Amaldiçoado em campo).",
     "zone": "Inferior",
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true
   },
   {
     "id": "OF-MZ-007",
@@ -2991,7 +3437,8 @@
     "source": "REITEI NO OTO.png",
     "searchText": "Mahaka-Oni: Ímpeto 3. Zeno-O-Oni: se bater, conceda +1 marcador Amaldiçoado.",
     "zone": "Inferior",
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true
   },
   {
     "id": "OF-MZ-008",
@@ -3001,14 +3448,15 @@
     "subtype": "Explosão",
     "color": "Laranja",
     "cost": 3,
-    "power": 6,
+    "power": 5,
     "block": 0,
     "alternateCost": null,
     "group": "MahaZeno",
     "source": "SEN NO AKUMA NO MANAZASHI.png",
-    "searchText": "QUEBRA. Mahaka-Oni: Ímpeto 4; se bater, cause dano igual à quantidade de Ações com Ímpeto no seu Descarte. Zeno-O-Oni: se bater, remova todos os marcadores em campo e cause dano igual à quantidade.",
+    "searchText": "QUEBRA. Aplique o efeito de acordo com a Maldição em campo: Mahaka-Oni: Ímpeto 4. Se bater, cause dano igual à quantidade de Ações com Ímpeto no seu Descarte. Zeno-O-Oni: se bater, dobre todos os marcadores em campo.",
     "zone": "Inferior",
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true
   },
   {
     "id": "OF-MZ-009",
@@ -3025,7 +3473,8 @@
     "source": "SEN NO TAMASHI.png",
     "searchText": "Mahaka-Oni: Ímpeto 2. Zeno-O-Oni: cause 1 de dano.",
     "zone": "Inferior",
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true
   },
   {
     "id": "OF-MZ-010",
@@ -3040,8 +3489,337 @@
     "alternateCost": null,
     "group": "MahaZeno",
     "source": "TAMASHI O MUSOBORO.png",
-    "searchText": "Mahaka-Oni: Ímpeto 2. Zeno-O-Oni: compre 2 cartas.",
+    "searchText": "Mahaka-Oni: Ímpeto 2. Zeno-O-Oni: compre 1 carta.",
     "zone": "Inferior",
-    "collection": "rivals-ascendentes"
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-PT-210",
+    "number": 210,
+    "name": "Revelação Excalium",
+    "type": "Truque",
+    "subtype": "",
+    "color": "Verde",
+    "cost": 2,
+    "block": 1,
+    "power": null,
+    "alternateCost": null,
+    "group": "ARCTURUS",
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false,
+    "searchText": "Aplique o efeito conforme a quantidade de Ações reveladas neste turno: 1 a 2, retorne 1 carta das Zonas Extras ao fundo do Baralho do dono; 3, negue a Ação alvo (Golpe, Guarda ou Truque); 4 ou mais, seu próximo Golpe Excalium não pode ser bloqueado por Guardas."
+  },
+  {
+    "id": "OF-PT-211",
+    "number": 211,
+    "name": "Retaliação",
+    "type": "Truque",
+    "subtype": "",
+    "color": "Genérica",
+    "cost": 1,
+    "block": 2,
+    "power": null,
+    "alternateCost": null,
+    "group": "GENÉRICAS",
+    "zone": null,
+    "playtest": true,
+    "troca": true,
+    "playtestFinta": false,
+    "playtestDesvio": false,
+    "searchText": "TROCA: substitua este Truque por uma Ação na sua Estâmina. O Golpe alvo deve ter CONTINUAÇÃO e estar continuando um Overdrive. Ele ganha +1 ATQ. Se bater, seu oponente descarta 1 carta."
+  },
+  {
+    "id": "OF-PT-212",
+    "number": 212,
+    "name": "Brilho Nevado",
+    "type": "Truque",
+    "subtype": "",
+    "color": "Azul",
+    "cost": 2,
+    "block": 1,
+    "power": null,
+    "alternateCost": null,
+    "group": "MISSBIGOTTEN",
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false,
+    "searchText": "Para cada carta usada para bloquear neste turno, conceda +2 BLQ a todos os seus bloqueios durante o próximo turno."
+  },
+  {
+    "id": "OF-PT-213",
+    "number": 213,
+    "name": "Fluxo Harmônico",
+    "type": "Truque",
+    "subtype": "",
+    "color": "Rosa",
+    "cost": 1,
+    "block": 1,
+    "power": null,
+    "alternateCost": null,
+    "group": "MOURNER",
+    "zone": null,
+    "playtest": true,
+    "troca": true,
+    "playtestFinta": false,
+    "playtestDesvio": false,
+    "searchText": "TROCA: substitua este Truque por uma Ação na sua Estâmina, sem pagar o custo impresso. Se uma Ação com FLUXO foi ativada neste turno, conceda +1 ATQ aos seus dois próximos Golpes neste turno."
+  },
+  {
+    "id": "OF-PT-214",
+    "number": 214,
+    "name": "Guarda Flush",
+    "type": "Guarda",
+    "subtype": "",
+    "color": "Roxo",
+    "cost": 1,
+    "block": 3,
+    "power": null,
+    "alternateCost": null,
+    "group": "PLACIDE",
+    "zone": null,
+    "playtest": true,
+    "searchText": "Ao retornar esta Guarda da sua Zona Extra ao Baralho, ative este efeito: pague 1 energia roxa ativa e coloque 1 carta do seu Descarte na Zona Extra, virada para baixo."
+  },
+  {
+    "id": "OF-PT-215",
+    "number": 215,
+    "name": "Fúria Abrasiva",
+    "type": "Truque",
+    "subtype": "",
+    "color": "Laranja",
+    "cost": 1,
+    "block": 1,
+    "power": null,
+    "alternateCost": null,
+    "group": "RYNHARD",
+    "zone": null,
+    "playtest": true,
+    "playtestFinta": false,
+    "playtestDesvio": false,
+    "searchText": "Se um Golpe com FÚRIA bateu neste turno, coloque 2 marcadores de Fúria na Zona indicada do Lutador alvo. Do Descarte: se o Golpe alvo tiver CONTINUAÇÃO e estiver continuando um Overdrive, bana esta Ação para conceder +1 ATQ ao Golpe."
+  },
+  {
+    "id": "OF-SUP-001",
+    "number": 300,
+    "name": "Boydd, Herói de Kaerg",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Roxo",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Boydd",
+    "source": "BOYDD HEROI DE KAERG.png",
+    "searchText": "SUPER de Boydd. Apenas uma cópia no Baralho Adicional. Seus Golpes recebem +2 ATQ.\n\nSe um Golpe com 9 ou mais de ATQ for bloqueado com sucesso neste turno, ele ganha REBOTE. (Realize o Golpe novamente na mesma Zona.)",
+    "zone": null,
+    "exclusiveFighter": 32,
+    "superFighter": 32,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-002",
+    "number": 301,
+    "name": "Hanma, o Incandescente",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Laranja",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Hanma",
+    "source": "HANMA O INCANDESCENTE.png",
+    "searchText": "SUPER de Hanma. Apenas uma cópia no Baralho Adicional. Todos os seus Golpes com algum bônus de ataque ganham ÍMPETO X. (X é igual ao meu Poder.)\n\nCompre 1 carta e depois descarte 1 carta.",
+    "zone": null,
+    "exclusiveFighter": 51,
+    "superFighter": 51,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-003",
+    "number": 302,
+    "name": "Len Yin, Espiritualista",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Verde",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Len Yin",
+    "source": "LEN YIN ESPIRITUALISTA.png",
+    "searchText": "SUPER de Len Yin. Apenas uma cópia no Baralho Adicional. Se você atingir OVERDRIVE, ganhe 2 de PODER.\n\nAté o final da fase de combate, nenhum Lutador poderá ativar Truques.",
+    "zone": null,
+    "exclusiveFighter": 70,
+    "superFighter": 70,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-004",
+    "number": 303,
+    "name": "Blossom, Homicida Florescida",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Rosa",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Blossom",
+    "source": "BLOSSOM HOMICIDA FLORESCIDA.png",
+    "searchText": "SUPER de Blossom. Apenas uma cópia no Baralho Adicional. A primeira vez em cada combate que você jogar um Golpe da sua Estâmina, após sua resolução, devolva-o para a sua Estâmina como energia ativa.\n\nCompre 1 carta.",
+    "zone": null,
+    "exclusiveFighter": 89,
+    "superFighter": 89,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-005",
+    "number": 304,
+    "name": "Arcturus, Espada Sacra",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Verde",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Arcturus",
+    "source": "ARCTURUS ESPADA SACRA.png",
+    "searchText": "SUPER de Arcturus. Apenas uma cópia no Baralho Adicional. Escolha se suas Ações ganham +X ATQ ou +X BLQ. (X é igual à quantidade de Ações reveladas neste turno.)\n\nRecicle 1 carta.",
+    "zone": null,
+    "exclusiveFighter": 114,
+    "superFighter": 114,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-006",
+    "number": 305,
+    "name": "Mourner, Canção Fatal",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Rosa",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Mourner",
+    "source": "MOURNER CANCAO FATAL.png",
+    "searchText": "SUPER de Mourner. Apenas uma cópia no Baralho Adicional. Se suas Ações com FLUXO forem bloqueadas, busque 1 Ação com FLUXO com 1 de custo a mais.\n\nSuas Ações com FLUXO ganham +1 ATQ/+1 BLQ.",
+    "zone": null,
+    "exclusiveFighter": 120,
+    "superFighter": 120,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-007",
+    "number": 306,
+    "name": "Placide, Senhor da Sorte",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Roxo",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Placide",
+    "source": "PLACIDE SENHOR DA SORTE.png",
+    "searchText": "SUPER de Placide. Apenas uma cópia no Baralho Adicional. Retorne 1 carta da sua Zona Extra para o fundo do seu Baralho. Coloque a carta do topo do seu Baralho na sua Zona Extra.\n\nSeus Golpes ganham +1 ATQ para cada carta retornada para o seu Baralho.",
+    "zone": null,
+    "exclusiveFighter": 126,
+    "superFighter": 126,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-008",
+    "number": 307,
+    "name": "Rynhard, Fúria Abrasiva",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Laranja",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Rynhard",
+    "source": "RYNHARD FURIA ABRASIVA.png",
+    "searchText": "SUPER de Rynhard. Apenas uma cópia no Baralho Adicional. Seus Golpes com FÚRIA ganham DESAFIAR. (Seu oponente deve bloquear este Golpe.)\n\nReative 1 energia.",
+    "zone": null,
+    "exclusiveFighter": 132,
+    "superFighter": 132,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-009",
+    "number": 308,
+    "name": "Eterna Lady Missbigotten",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Azul",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Lady Missbigotten",
+    "source": "ETERNA LADY MISSBIGOTTEN.png",
+    "searchText": "SUPER de Lady Missbigotten. Apenas uma cópia no Baralho Adicional. Bana até 3 cartas do topo do seu Baralho. Inative energias do Lutador alvo igual à quantidade.\n\nEnergias inativadas não podem ser reativadas até o final deste Super.",
+    "zone": null,
+    "exclusiveFighter": 142,
+    "superFighter": 142,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-010",
+    "number": 309,
+    "name": "Duke, Diamante Inquebrável",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Azul",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "Duke",
+    "source": "DUKE DIAMANTE INQUEBRAVEL.png",
+    "searchText": "SUPER de Duke. Apenas uma cópia no Baralho Adicional. Quando você jogar uma Guarda, olhe as 2 cartas do topo do seu Baralho. Você pode revelar uma Guarda entre elas e colocá-la na mão. Coloque as demais no fundo do Baralho em qualquer ordem.",
+    "zone": null,
+    "exclusiveFighter": 170,
+    "superFighter": 170,
+    "collection": "rivals-ascendentes",
+    "playtest": true
+  },
+  {
+    "id": "OF-SUP-011",
+    "number": 310,
+    "name": "MahaZeno, a Convergência",
+    "type": "Super",
+    "subtype": "Transformação",
+    "color": "Laranja",
+    "cost": null,
+    "power": null,
+    "block": null,
+    "alternateCost": null,
+    "group": "MahaZeno",
+    "source": "MAHAZENO A CONVERGENCIA.png",
+    "searchText": "SUPER de MahaZeno. Apenas uma cópia no Baralho Adicional. Até o final deste Super, coloque Mahaka-Oni e Zeno-O-Oni do seu Baralho Adicional na sua Zona Extra, virados para cima.\n\nAté o final deste Super, você pode controlar ambos simultaneamente.",
+    "zone": null,
+    "exclusiveFighter": 200,
+    "superFighter": 200,
+    "collection": "rivals-ascendentes",
+    "playtest": true
   }
 ]

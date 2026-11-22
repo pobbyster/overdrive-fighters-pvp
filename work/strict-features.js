@@ -19,7 +19,6 @@
   if(f.z==='extra'&&f.card.r06Fixed)return ['Gemite com Fixar: revelada na Zona Extra, disponível como Golpe na sua janela de ataque ou Revide; não pode bloquear novamente.'];if(f.z==='extra'&&f.card.ready>s.turn)return ['Carta preparada: disponível a partir do turno '+f.card.ready+'.'];
   if(f.card.token)return [f.card.usedTurn===s.turn?'Esta ficha já atacou ou bloqueou neste turno.':'A ficha não pode ser usada nesta janela.'];
   if(f.z==='stamina'&&f.card.lockedUntil>=s.turn)return ['Energia bloqueada: não pode reativar nem pagar custo até o fim do turno '+f.card.lockedUntil+'.'];if(f.z==='stamina')return ['Esta carta está na Estamina. Se for um Golpe ativo, pode ser usada pelo Overdrive de Blossom com a sequência completa.'];
-  if(sc.comboZone&&s.lastComboZone!==sc.comboZone)messages.push('COMBO exige que o último Golpe válido do Jogador de Ataque tenha sido na Zona '+sc.comboZone+'.');
   if(d.type==='Golpe'&&!this.canIndependent(p))messages.push('Golpes exigem sua fase de Combates livre ou uma janela de Revide.');
   if(d.type==='Guarda'&&!this.current())return ['Guardas são declaradas para bloquear um Golpe adversário.'];
   const modes=f.z==='discard'?(sc.fromDiscardLife?['life']:sc.discardCopy?['banishCopy']:[]):d.type==='Guarda'?['guard']:['normal',...(sc.puppyCost?['puppy']:[]),...(Number.isInteger(d.alternateCost)?['alternative']:[])];
@@ -38,8 +37,8 @@
   const rows=items.map(g=>{const card=this.find(g.uid)?.card,definition=card&&this.def(card),ignored=g.cancelled||b.ignoreBelowPower!==undefined&&g.value<b.ignoreBelowPower;return {uid:g.uid,name:definition?.name||'Bloqueador',base:definition?.block??g.value,value:g.value,ignored,token:!!card?.token,selected:!!g.selected,cancelled:!!g.cancelled};});
   const aggregate=b.aggregateBlockBonus??(items.some(g=>g.selected)?(this.s.players[p].nextBlockBonus||0)+(this.s.players[p].nextBlockTurn||0)+this.zoneModifier(b.zone,'block'):0);
   const block=b.finished?b.blockValue:rows.reduce((sum,g)=>sum+(g.ignored?0:g.value),0)+aggregate,marks=b.token?0:(this.s.players[1-b.p].golpeDamageMarks||0);
-  const raw=b.cancelled?0:Math.max(0,b.attack-block),rawImpetus=!b.cancelled&&rows.some(g=>!g.cancelled&&!g.token)?(b.revide&&sc.revideImpetus!==undefined?sc.revideImpetus:(b.impetusBase??sc.impetus??0))+(b.extraImpetus||0):0;
-  const basic=b.finished?b.basicDamage:raw+(raw>0?marks:0),impetus=b.finished?b.impetusDamage:rawImpetus+(rawImpetus>0?marks:0)+(this.effectDamageBonus?.(b.p,rawImpetus)||0);
+  const raw=b.cancelled?0:Math.max(0,b.attack-block),rawImpetus=!b.cancelled&&rows.some(g=>!g.cancelled&&!g.token)?(b.revide&&sc.revideImpetus!==undefined?sc.revideImpetus:(b.impetusBase??sc.impetus??0))+(b.extraImpetus||0)+(b.superHanma021||0):0;
+  const basic=b.finished?b.basicDamage:raw+(raw>0?marks:0),impetus=b.finished?b.impetusDamage:rawImpetus+(rawImpetus>0?marks:0)+(this.effectDamageBonus?.(b.p,rawImpetus+(rawImpetus>0?marks:0))||0);
   const modifiers=(b.attackModifiers||[]).map(m=>({...m})),accounted=modifiers.reduce((n,m)=>n+m.value,0);if(accounted!==b.attack)modifiers.push({name:'Ajustes posteriores de efeitos',value:b.attack-accounted});
   return {attackName:def.name,zone:b.zone,attack:b.attack,modifiers,block,blockers:rows,aggregate,basic,impetus,total:(basic||0)+(impetus||0),cancelled:b.cancelled,finished:!!b.finished,provisional:!b.finished,marks,...(!b.finished&&this.previewDamage?this.previewDamage(1-b.p,basic,impetus):{}),selfDamage:sc.selfDamageHalfAttack&&!b.cancelled?Math.ceil(Math.max(0,b.attack)/2):0};
  };

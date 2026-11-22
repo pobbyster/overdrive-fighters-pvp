@@ -5,3 +5,5 @@
 #pvpDecisionClock{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:180;background:#fff;color:#8500ce;padding:8px 16px;border-radius:12px;font-weight:bold;box-shadow:0 2px 8px #0003}
 
 .side-deck-picker{width:min(940px,94vw);max-height:90vh;overflow:auto}.side-deck-cards{display:flex;flex-wrap:wrap;gap:6px}.side-deck-cards button{width:72px;padding:1px}.side-deck-cards img{display:block;width:100%}
+
+#spectatorDialog{max-width:550px;width:85vw;border-radius:20px;padding:24px;color:#7600ba;background:white;border:1px solid #d7bce8}#spectatorDialog label{display:block;margin:14px 0}#spectatorInvite{width:100%;font-size:12px}#spectatorDialog::backdrop{background:#21052a88}

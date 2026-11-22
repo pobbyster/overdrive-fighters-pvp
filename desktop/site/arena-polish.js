@@ -42,7 +42,7 @@ addEventListener('of-game-render',event=>{
   else if(choice.kind==='balanceScry')hint.textContent='Olhe as três cartas observadas. Escolha a próxima carta do topo; depois ordene as restantes. Já escolhidas: '+(choice.selectedCount||0)+'.';
   else if(!choice.kind.startsWith('expansion:')&&!choice.kind.startsWith('rivals:')&&$('actionButtons').classList.contains('search-card-grid'))hint.textContent='Busca · escolha 1 carta entre as opções ilustradas. Apenas cartas válidas para este efeito estão disponíveis.';
   else if(choice.kind==='revide')context.textContent='REVIDE: o adversário usou suas energias inativas. Você pode anunciar um Golpe ou continuar sem revidar.';
- }else if(blocking){const n=api.selectedBlocks().length;hint.textContent='Bloqueio · '+n+' carta(s) selecionada(s). Clique nos bloqueadores destacados; confira o cálculo antes de confirmar.';}
+ }else if(blocking){const n=api.selectedBlocks().length;if(!n)hint.textContent='Bloqueio · nenhuma carta selecionada. Clique nos bloqueadores destacados; confira o custo e o cálculo antes de confirmar.';}
  for(const el of document.querySelectorAll('#ownHand [data-card],#ownExtra [data-card]')){
   const uid=el.dataset.card,loc=e.find(uid);if(!loc||loc.p!==0)continue;
   const allowed=view.actions.some(a=>a.type!=='prepare'&&(a.uid===uid||Array.isArray(a.options)&&a.options.includes(uid)));

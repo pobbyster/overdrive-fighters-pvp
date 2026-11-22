@@ -30,7 +30,7 @@
 .card-flight{position:absolute;object-fit:fill;border-radius:5px;box-shadow:0 7px 22px #0009,0 0 12px #62dfff70;will-change:transform,opacity;pointer-events:none}
 .card-flight.banish-flight{box-shadow:0 0 24px #ca6eff,0 8px 26px #0009}
 #ownEnergy .card.playable{outline:2px solid #64d6ff;outline-offset:3px;cursor:pointer}
-#ownEnergy .card.selected{outline:3px solid #ff4b92;box-shadow:0 0 16px #ff4b92;transform:translateY(-5px)}
+#ownEnergy .card.selected{outline:3px solid #ff4b92;box-shadow:0 0 16px #ff4b92;transform:none}
 @media(prefers-reduced-motion:reduce){#cardMenu,#responseHud,#decisionHud,#fieldNotice,.placement-target{animation:none!important;transition:none!important}}
 @media(max-width:700px){#turnTools{top:64px;right:8px;max-width:180px}#turnTools button{font-size:11px;padding:7px}#decisionHud{right:10px;top:18vh;max-height:65vh}#responseHud{top:18vh}#cardMenu{width:235px}#fieldNotice{bottom:12px;font-size:12px}}
 .duel-active main{padding:8px 20px 12px}.duel-active .game-banner{padding:4px 2px;margin:0 0 8px;min-height:46px}.duel-active .game-banner h1{font-size:20px;margin:2px 0}.duel-active .game-banner p{font-size:12px;margin:0}.duel-active .records{margin:8px 0;padding:9px 15px}.duel-active .records summary{font-size:12px}

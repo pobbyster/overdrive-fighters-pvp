@@ -129,4 +129,5 @@ class Rooms {
     }
   }
 }
+require('./spectators.cjs').install(Rooms);
 module.exports={Rooms};
