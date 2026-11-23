@@ -1,4 +1,4 @@
-# Overdrive Fighters PvP — 0.13.0
+# Overdrive Fighters PvP — 0.22.0
 
 Distribuição web preparada do jogo. Instale dependências com npm ci --omit=dev --ignore-scripts e inicie com npm start. Node >=22. PORT fornecido pela hospedagem; saúde em /pvp-health; WebSocket em /pvp.
 

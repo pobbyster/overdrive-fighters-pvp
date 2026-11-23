@@ -1,0 +1,43 @@
+/* Disable this entire layer through Opções → Restaurar HUD clássico. */
+body.arena-corners.rivals-playing #fightHud{display:contents!important}
+body.arena-corners #fightHud>.fight-frame019{display:none}
+body.arena-corners #fightHud .fight-status{position:fixed;inset:auto;left:16px;bottom:18px;width:calc(var(--corner-side,270px) - 25px);height:156px;z-index:18;pointer-events:auto;container-type:inline-size;background:linear-gradient(135deg,#fff 0%,#fff4fd 76%,#efd6ff);border:2px solid white;border-left:5px solid #ff4c22;border-radius:8px 24px 8px 8px;box-shadow:0 8px 30px #22044060;color:#7200c4;isolation:isolate}
+body.arena-corners #fightHud .fight-status[data-player="1"]{left:auto;right:16px;top:18px;bottom:auto;border-left:2px solid white;border-right:5px solid #8100ff;border-radius:24px 8px 8px 8px}
+body.arena-corners #fightHud .fight-portrait{left:8px;top:12px;width:30%;height:70px;z-index:1;clip-path:polygon(0 0,85% 0,100% 100%,15% 100%);background:#ede4f5!important}
+body.arena-corners #fightHud .fight-portrait img{object-fit:cover;width:100%;height:100%}
+body.arena-corners #fightHud .fight-name{left:35%;top:12px;width:62%;font-size:var(--corner-name-font,18px)!important}
+body.arena-corners #fightHud .fight-health{left:35%;top:43px;width:60%;height:9px;overflow:hidden;background:#ded0e6;transform:skewX(-12deg)}
+body.arena-corners #fightHud .fight-health i{display:block;height:100%;background:linear-gradient(90deg,#ff4c22,#a000ff)}
+body.arena-corners #fightHud .fight-hp,body.arena-corners #fightHud .fight-power{left:35%;top:60px;width:auto;color:#ff4c22;font-size:18px;line-height:1.2;font-family:Hud014,sans-serif;font-weight:900}
+body.arena-corners #fightHud .fight-hp::before{content:'VIDA ';font-size:10px}body.arena-corners #fightHud .fight-power{left:70%;color:#7500cb}body.arena-corners #fightHud .fight-power::before{content:'PODER ';font-size:10px}
+body.arena-corners #fightHud .fight-overdrive{left:8px;top:91px;width:43%;height:22px;display:flex;align-items:center;gap:3px;font-size:0;background:none;border:0;padding:0}
+body.arena-corners #fightHud .fight-overdrive i{position:static!important;width:22px!important;height:22px!important;flex:0 0 22px!important;background:#ddd3e6;border-radius:50%;opacity:.4;display:grid;place-items:center}
+body.arena-corners #fightHud .fight-overdrive i.filled{opacity:1;background:#a000dc}
+body.arena-corners #fightHud .fight-super{left:51%;top:93px;width:44%;height:17px}
+body.arena-corners #fightHud .fight-super-meter{display:flex;gap:3px}
+body.arena-corners #fightHud .fight-super-meter i{position:static;width:auto;height:100%;flex:1;background:#dfd4e8;transform:skewX(-12deg)}
+body.arena-corners #fightHud .fight-super-meter i.filled{background:linear-gradient(#ffd944,#ff6a1a)}
+body.arena-corners #fightHud .fight-status .combat-marker-readout{left:8px;top:122px;width:94%;height:24px;justify-content:flex-start;font-size:11px}
+body.arena-corners #fightHud .fighter-marker img{width:16px;height:16px}
+body.arena-corners #fightHud .fight-center{position:fixed;left:50%;top:4px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;z-index:16;background:#fffef5;border-radius:0 0 10px 10px;padding:3px 12px;color:#7200c4;box-shadow:0 4px 14px #22044025;white-space:nowrap}
+body.arena-corners #fightHud .fight-center>b,body.arena-corners #fightHud .fight-score019,body.arena-corners #fightHud .fight-turn019{position:static;inset:auto;width:auto;height:auto;font-size:10px;line-height:1.2}
+body.arena-corners #fightHud .fight-score019{display:flex;gap:5px;font-size:22px}body.arena-corners #fightHud .score-x019{visibility:visible;font-size:12px}
+body.arena-corners.rivals-playing #game .arena-layout{position:fixed!important;left:var(--corner-left)!important;top:var(--corner-top)!important;width:1000px!important;max-width:none!important;margin:0!important;grid-template-columns:minmax(0,1fr)!important;transform:none!important;transform-origin:top left}
+body.arena-corners #opponentCard014{position:fixed!important;left:16px!important;top:18px!important;width:calc(var(--corner-side,270px) - 25px)!important;height:min(61vh,530px,calc(100svh - 204px))!important;max-height:none!important;margin:0!important;aspect-ratio:auto;background:#fff9fd!important;border:1px solid #fff;border-radius:14px;filter:drop-shadow(0 6px 16px #22044030);overflow:hidden}
+body.arena-corners #opponentCard014 .opponent-art014{position:static;display:block;width:100%;height:58%;object-fit:contain;margin:8px auto 0;border-radius:8px}
+body.arena-corners #opponentCard014 .opponent-effect014{position:absolute;left:12px;right:12px;top:61%;bottom:10px;font-size:12px;line-height:1.3}
+body.arena-corners #arenaControls014{position:fixed!important;left:auto!important;right:28px!important;top:190px!important;width:var(--corner-controls,180px)!important;display:block!important;margin:0!important}
+body.arena-corners #combat014{position:fixed!important;left:auto!important;right:18px!important;top:auto!important;bottom:20px!important;width:calc(var(--corner-right,270px) - 35px)!important;margin:0!important}
+body.arena-corners #handArea{overflow:visible!important;min-height:180px!important}
+body.arena-corners #ownHand{position:relative!important;display:flex!important;flex-wrap:nowrap!important;justify-content:center!important;align-items:flex-end!important;gap:0!important;min-height:160px!important;overflow:visible!important;padding:12px 0 0!important}
+body.arena-corners #ownHand .card{position:relative!important;flex:0 0 110px!important;width:110px!important;margin:0!important;margin-left:calc(var(--hand-step,70px) - 110px)!important;z-index:var(--hand-z);transform:none!important;transition:translate .16s;box-shadow:-4px 0 8px #190a2b55}
+body.arena-corners #ownHand .card:first-child{margin-left:0!important}
+body.arena-corners #ownHand .card:hover,body.arena-corners #ownHand .card:focus-visible{z-index:80;translate:0 -28px;outline:3px solid #ffe481;outline-offset:2px}
+@media(max-width:899px){body.arena-corners #fightHud .fight-status{width:calc(50vw - 18px);height:140px;left:10px;bottom:8px}body.arena-corners #fightHud .fight-status[data-player="1"]{right:10px;top:10px;bottom:auto}body.arena-corners #opponentCard014{left:10px!important;top:10px!important;width:calc(50vw - 18px)!important;height:140px!important;display:grid;grid-template-columns:38% 1fr}body.arena-corners #opponentCard014 .opponent-art014{width:100%;height:120px;margin:8px 0}body.arena-corners #opponentCard014 .opponent-effect014{position:static;margin:8px 6px;font-size:10px;overflow:auto}body.arena-corners #fightHud .fight-center{top:148px;padding:2px 6px}body.arena-corners #fightHud .fight-turn019{font-size:7px}body.arena-corners #fightHud .fight-center>b{display:none}body.arena-corners #fightHud .fight-score019{font-size:14px}body.arena-corners #arenaControls014{top:auto!important;bottom:10px!important;right:10px!important;width:calc(50vw - 24px)!important;display:grid!important;grid-template-columns:1fr 1fr;gap:0 5px}body.arena-corners #arenaControls014 .sprite014{width:100%!important;margin:0!important}body.arena-corners #extraTurn014{display:contents}body.arena-corners #combat014{display:block!important;right:10px!important;bottom:150px!important;width:130px!important}body.arena-corners #arenaNotice014{display:none}}
+@media(prefers-reduced-motion:reduce){body.arena-corners #ownHand .card{transition:none}}
+
+body.arena-corners #fightHud .fight-super>span{position:absolute;top:-12px;left:0;width:auto;height:auto;clip-path:none;overflow:visible;white-space:nowrap;font:900 9px Hud014,sans-serif;color:#792499}
+body.arena-corners #fightHud .fight-overdrive::before{content:"OVERDRIVE";position:absolute;left:0;top:-12px;font:900 9px Hud014,sans-serif;color:#792499}
+body.arena-corners #fightHud .fight-portrait img{object-fit:contain}
+
+body.arena-corners #fightHud .fight-portrait img{object-fit:cover;object-position:65% center}body.arena-corners #fightHud [data-player="1"] .fight-portrait img{object-position:30% center}
